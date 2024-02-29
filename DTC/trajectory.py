@@ -7,9 +7,6 @@ class Point:
         self.latitude = latitude
         self.timestamp = timestamp
 
-    def __getattribute__(self, __name: str) -> Any:
-        return __name
-
 class Trajectory:
     def __init__(self) -> None:
         self.points = list[Point]()
