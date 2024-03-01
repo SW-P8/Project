@@ -1,4 +1,5 @@
 from datetime import datetime
+from geopy import distance
 from typing import Any
 
 class Point:
@@ -6,6 +7,9 @@ class Point:
         self.longitude = longitude
         self.latitude = latitude
         self.timestamp = timestamp
+
+    def get_coordinates(self) -> tuple[float, float]:
+        return (self.longitude, self.latitude)
 
 class Trajectory:
     def __init__(self) -> None:
@@ -41,6 +45,8 @@ class TrajectoryPointCloud:
         self.max_longitude = float('-inf')
         self.min_latitude = float('inf')
         self.max_latitude = float('-inf')
+        self.cell_size = 5         #Based on observation in DTC paper that minimal width of a road is 5m
+        self.neighborhood_size = 9 #To be determined but DTC uses 9
 
     def add_trajectory(self,trajectory: Trajectory) -> None:
         self.trajectories.append(trajectory)
@@ -61,13 +67,14 @@ class TrajectoryPointCloud:
         if trajectory.min_latitude < self.min_latitude:
             self.min_latitude = trajectory.min_latitude
 
-    # Bouding rectangle is defined by the tuples (min_lon, min_lat) and (max_lon, max_lat)
+    # Bouding rectangle is defined by the tuples (min_lon, min_lat) and (max_lon, max_lat) with some padding added
     def get_bounding_rectangle(self) -> tuple[tuple[float, float], tuple[float,float]]:
+
+        #TODO: add padding to bounding rectangle
         return ((self.min_longitude, self.min_latitude), (self.max_longitude, self.max_latitude))
     
-    def calculate_distance_between_points(point1: Point, point2: Point):
-        pass
-
-    def calculate_bouding_rectangle_area():
-        pass
-        
+    # Geopy utilizes geodesic distance - shortest distance on the surface of an elipsoid earth model
+    def calculate_bouding_rectangle_area(self):
+        ((min_long, min_lat),(max_long, max_lat)) = self.get_bounding_rectangle()
+        width = distance.distance((min_long, min_lat), (max_long, min_lat)).meters
+        height = distance.distance((min_long, min_lat), (min_long, max_lat)).meters
