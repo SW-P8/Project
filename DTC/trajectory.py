@@ -69,12 +69,22 @@ class TrajectoryPointCloud:
 
     # Bouding rectangle is defined by the tuples (min_lon, min_lat) and (max_lon, max_lat) with some padding added
     def get_bounding_rectangle(self) -> tuple[tuple[float, float], tuple[float,float]]:
+        #Bearing: North (0), East (90), South (180), West (270)
+        # Shift min point south and west
+        shifted_min_point = distance.distance(meters=self.cell_size * self.neighborhood_size).destination((self.min_longitude, self.min_longitude), 270)
+        shifted_min_point = distance.distance(meters=self.cell_size * self.neighborhood_size).destination((self.min_longitude, self.min_longitude), 180)
 
-        #TODO: add padding to bounding rectangle
-        return ((self.min_longitude, self.min_latitude), (self.max_longitude, self.max_latitude))
+        # Shift max point north and east
+        shifted_max_point = distance.distance(meters=self.cell_size * self.neighborhood_size).destination((self.max_longitude, self.max_longitude), 0)
+        shifted_max_point = distance.distance(meters=self.cell_size * self.neighborhood_size).destination((self.min_longitude, self.min_longitude), 90)
+        return (shifted_min_point, shifted_max_point)
     
     # Geopy utilizes geodesic distance - shortest distance on the surface of an elipsoid earth model
     def calculate_bouding_rectangle_area(self):
         ((min_long, min_lat),(max_long, max_lat)) = self.get_bounding_rectangle()
         width = distance.distance((min_long, min_lat), (max_long, min_lat)).meters
         height = distance.distance((min_long, min_lat), (min_long, max_lat)).meters
+        return (width, height)
+
+    def create_grid_system(self):
+        pass
