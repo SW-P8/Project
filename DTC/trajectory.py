@@ -1,6 +1,6 @@
 from datetime import datetime
 from geopy import distance
-from typing import Any
+from math import floor
 
 class Point:
     def __init__(self, longitude: float, latitude: float, timestamp: datetime) -> None:
@@ -67,23 +67,35 @@ class TrajectoryPointCloud:
         if trajectory.min_latitude < self.min_latitude:
             self.min_latitude = trajectory.min_latitude
 
-    # Bouding rectangle is defined by the tuples (min_lon, min_lat) and (max_lon, max_lat) with some padding added
-    def get_bounding_rectangle(self) -> tuple[tuple[float, float], tuple[float,float]]:
-        #Bearing: North (0), East (90), South (180), West (270)
+    def get_shifted_min(self) -> tuple[float, float]:
+        #Bearing: South (180), West (270)
+        shift_distance = self.cell_size * floor(self.neighborhood_size / 2)
+        print(str(shift_distance))
+
         # Shift min point south and west
-        shifted_min_point = distance.distance(meters=self.cell_size * self.neighborhood_size).destination((self.min_longitude, self.min_longitude), 270)
-        shifted_min_point = distance.distance(meters=self.cell_size * self.neighborhood_size).destination((self.min_longitude, self.min_longitude), 180)
+        shifted_min_point = distance.distance(meters=shift_distance).destination((self.min_latitude, self.min_longitude), 270)
+        shifted_min_point = distance.distance(meters=shift_distance).destination((shifted_min_point), 180)
+
+        return (shifted_min_point.longitude, shifted_min_point.latitude)
+    
+    def get_shifted_max(self) -> tuple[float, float]:
+        #Bearing: North (0), East (90)
+        shift_distance = self.cell_size * floor(self.neighborhood_size / 2)
 
         # Shift max point north and east
-        shifted_max_point = distance.distance(meters=self.cell_size * self.neighborhood_size).destination((self.max_longitude, self.max_longitude), 0)
-        shifted_max_point = distance.distance(meters=self.cell_size * self.neighborhood_size).destination((self.min_longitude, self.min_longitude), 90)
-        return (shifted_min_point, shifted_max_point)
+        shifted_max_point = distance.distance(meters=shift_distance).destination((self.max_latitude, self.max_longitude), 0)
+        shifted_max_point = distance.distance(meters=shift_distance).destination((shifted_max_point), 90)
+        return (shifted_max_point.longitude, shifted_max_point.latitude)
+
+    # Bouding rectangle is defined by the tuples (min_lon, min_lat) and (max_lon, max_lat) with some padding added
+    def get_bounding_rectangle(self) -> tuple[tuple[float, float], tuple[float,float]]:
+        return (self.get_shifted_min(), self.get_shifted_max())
     
     # Geopy utilizes geodesic distance - shortest distance on the surface of an elipsoid earth model
     def calculate_bouding_rectangle_area(self):
         ((min_long, min_lat),(max_long, max_lat)) = self.get_bounding_rectangle()
-        width = distance.distance((min_long, min_lat), (max_long, min_lat)).meters
-        height = distance.distance((min_long, min_lat), (min_long, max_lat)).meters
+        width = distance.distance((min_lat, min_long), (min_lat, max_long)).meters
+        height = distance.distance((min_lat, min_long), (max_lat, min_long)).meters
         return (width, height)
 
     def create_grid_system(self):
