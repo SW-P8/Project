@@ -1,6 +1,6 @@
 from datetime import datetime
 from geopy import distance
-from math import floor
+from math import floor, ceil
 
 class Point:
     def __init__(self, longitude: float, latitude: float, timestamp: datetime) -> None:
@@ -87,7 +87,7 @@ class TrajectoryPointCloud:
         shifted_max_point = distance.distance(meters=shift_distance).destination((shifted_max_point), 90)
         return (shifted_max_point.longitude, shifted_max_point.latitude)
 
-    # Bouding rectangle is defined by the tuples (min_lon, min_lat) and (max_lon, max_lat) with some padding added
+    # Bounding rectangle is defined by the tuples (min_lon, min_lat) and (max_lon, max_lat) with some padding added
     def get_bounding_rectangle(self) -> tuple[tuple[float, float], tuple[float,float]]:
         return (self.get_shifted_min(), self.get_shifted_max())
     
@@ -99,4 +99,13 @@ class TrajectoryPointCloud:
         return (width, height)
 
     def create_grid_system(self):
+        (width, height) = self.calculate_bouding_rectangle_area()
+        width_cell_count = ceil(width / self.cell_size)
+        height_cell_count = ceil(height / self.cell_size)
+        # TODO: Initialize mesh grid
+        # TODO: Fill grid with points
+
+    def calculate_index_for_point(self, point: Point):
+        #TODO: Calculate x index
+        #TODO: Calculate y index
         pass
