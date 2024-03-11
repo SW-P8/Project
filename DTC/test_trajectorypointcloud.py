@@ -2,7 +2,6 @@ import pytest
 import trajectory
 from geopy import distance
 from datetime import datetime
-from math import floor
 
 class TestTrajectoryPointCloud():
     def test_adding_trajectory_updates_min_max(self):
@@ -142,7 +141,9 @@ class TestTrajectoryPointCloud():
         # distance shifted west (rounded)
         shifted_west_distance = round(distance.distance((shifted_min_lat, pc.min_longitude), (shifted_min_lat, shifted_min_long)).meters)
 
-
+        # Shifting points south and west should yield lesser long and lat
+        assert shifted_min_long < pc.min_longitude
+        assert shifted_min_lat < pc.min_latitude
         assert shifted_south_distance == expected_shift_distance
         assert shifted_west_distance == expected_shift_distance
 
@@ -166,7 +167,9 @@ class TestTrajectoryPointCloud():
         # distance shifted east (rounded)
         shifted_east_distance = round(distance.distance((shifted_max_lat, pc.max_longitude), (shifted_max_lat, shifted_max_long)).meters)
 
-
+        # Shifting north and east should yield greater long and lat
+        assert shifted_max_long > pc.max_longitude
+        assert shifted_max_lat > pc.max_latitude
         assert shifted_north_distance == expected_shift_distance
         assert shifted_east_distance == expected_shift_distance
         
@@ -202,7 +205,7 @@ class TestTrajectoryPointCloud():
         t4.add_point(1,-0.5,datetime(2024, 1, 1, 1, 1, 3))
         pc.add_trajectory(t4)
 
-        (shifted_width, shifted_height) = pc.calculate_bouding_rectangle_area()
+        (shifted_width, shifted_height) = pc.calculate_bounding_rectangle_area()
         # non_shifted_br  ((0,-1), (2,1))
         expected_width = round(distance.distance((pc.min_latitude, pc.min_longitude), (pc.min_latitude, pc.max_longitude)).meters) + 40
         expected_height = round(distance.distance((pc.min_latitude, pc.min_longitude), (pc.max_latitude, pc.min_longitude)).meters) + 40

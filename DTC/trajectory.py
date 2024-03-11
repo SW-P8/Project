@@ -1,6 +1,6 @@
 from datetime import datetime
 from geopy import distance
-from math import floor, ceil
+from math import floor
 
 class Point:
     def __init__(self, longitude: float, latitude: float, timestamp: datetime) -> None:
@@ -70,7 +70,6 @@ class TrajectoryPointCloud:
     def get_shifted_min(self) -> tuple[float, float]:
         #Bearing: South (180), West (270)
         shift_distance = self.cell_size * floor(self.neighborhood_size / 2)
-        print(str(shift_distance))
 
         # Shift min point south and west
         shifted_min_point = distance.distance(meters=shift_distance).destination((self.min_latitude, self.min_longitude), 270)
@@ -92,20 +91,8 @@ class TrajectoryPointCloud:
         return (self.get_shifted_min(), self.get_shifted_max())
     
     # Geopy utilizes geodesic distance - shortest distance on the surface of an elipsoid earth model
-    def calculate_bouding_rectangle_area(self):
+    def calculate_bounding_rectangle_area(self):
         ((min_long, min_lat),(max_long, max_lat)) = self.get_bounding_rectangle()
         width = distance.distance((min_lat, min_long), (min_lat, max_long)).meters
         height = distance.distance((min_lat, min_long), (max_lat, min_long)).meters
         return (width, height)
-
-    def create_grid_system(self):
-        (width, height) = self.calculate_bouding_rectangle_area()
-        width_cell_count = ceil(width / self.cell_size)
-        height_cell_count = ceil(height / self.cell_size)
-        # TODO: Initialize mesh grid
-        # TODO: Fill grid with points
-
-    def calculate_index_for_point(self, point: Point):
-        #TODO: Calculate x index
-        #TODO: Calculate y index
-        pass
