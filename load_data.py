@@ -1,28 +1,46 @@
 """ Copies the data from csv files into our database """
 import os
+import pandas as pd
 from psycopg2.pool import SimpleConnectionPool
+from tqdm import tqdm
+from pathlib import Path
+
 CSV_DIR = "taxi_log_2008_by_id/"
 COPY_STATEMENT = """
-    COPY TaxiData(taxi_id, date_time, longitude, latitude)
+    COPY TaxiData(taxi_id, date_time, longitude, latitude, trajectory_id)
     FROM STDIN
     DELIMITER ','
     CSV HEADER
 """
 
+
 def load_data_from_csv(db: SimpleConnectionPool):
     """ Loads data from csv file into databases """
     conn = db.getconn()
     cursor = conn.cursor()
-    # overvej om det er lidt for overkil at sort og print hver 100...
-    for i, filename in enumerate(sorted(os.listdir(CSV_DIR), key=__get_numeric_part)):
-        # Check if the current item is a file
-        if i % 100 == 0:
-            print(filename)
-        file = os.path.join(CSV_DIR, filename)
-        if os.path.isfile(file):
-            __get_numeric_part(file)
-            with open(file, 'r', encoding='utf-8') as f:
-                cursor.copy_expert(COPY_STATEMENT, f)
+    
+    trajectory_id = 0
+    file_list = sorted(os.listdir(CSV_DIR), key=__get_numeric_part)
+
+    for filename in tqdm(file_list, desc="Processing Files", unit="file"):
+        file = Path(CSV_DIR) / filename
+
+        if os.path.isfile(file):  # Check if file
+            df = pd.read_csv(file, names=[
+                             'taxi_id', 'date_time', 'longitude', 'latitude'], parse_dates=['date_time'])
+
+            if not df.empty:
+                df['time_diff'] = (
+                    df['date_time'] - df['date_time'].shift().fillna(pd.Timedelta(seconds=0)))
+                df['trajectory_id'] = (df['time_diff'] > pd.Timedelta(
+                    minutes=12)).cumsum() + trajectory_id
+                df = df.drop(columns=['time_diff'])
+
+                cursor.copy_expert(COPY_STATEMENT, df.to_csv(
+                    index=False, sep='\t', header=True) + '\n')
+
+                # Update trajectory ID globaly
+                trajectory_id = df['trajectory_id'].max() + 1
 
     conn.commit()
     cursor.close()
@@ -30,4 +48,4 @@ def load_data_from_csv(db: SimpleConnectionPool):
 
 
 def __get_numeric_part(file_name) -> int:
-    return int(file_name.split('/')[-1].split('.')[0])  
+    return int(file_name.split('/')[-1].split('.')[0])
