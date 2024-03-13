@@ -6,39 +6,39 @@ from datetime import datetime
 class TestGridsystem():
     def test_calculate_index_for_point_is_correct(self):
         pc = trajectory.TrajectoryPointCloud()
-        t1 = trajectory.Trajectory()
+        t = trajectory.Trajectory()
         
         # Add point to use initialization point
-        t1.add_point(1,0,datetime(2024, 1, 1, 1, 1, 1))
+        t.add_point(1,0,datetime(2024, 1, 1, 1, 1, 1))
 
         # Shift second point 20 meters north and east (should result in the two points being 4 cells apart in both x and y)
-        shifted_point = distance.distance(meters=20).destination((t1.points[0].latitude, t1.points[0].longitude), 0)
+        shifted_point = distance.distance(meters=20).destination((t.points[0].latitude, t.points[0].longitude), 0)
         shifted_point = distance.distance(meters=20).destination((shifted_point), 90)
 
-        t1.add_point(shifted_point.longitude, shifted_point.latitude, datetime(2024, 1, 1, 1, 1, 2))
-        pc.add_trajectory(t1)
+        t.add_point(shifted_point.longitude, shifted_point.latitude, datetime(2024, 1, 1, 1, 1, 2))
+        pc.add_trajectory(t)
         gs = gridsystem.GridSystem(pc)
         
-        (x1, y1) = gs.calculate_index_for_point(t1.points[0])
+        (x1, y1) = gs.calculate_index_for_point(t.points[0])
         assert (2, 3) == (x1, y1)
 
-        (x2, y2) = gs.calculate_index_for_point(t1.points[1])
+        (x2, y2) = gs.calculate_index_for_point(t.points[1])
         assert (6, 6) == (x2, y2)
 
 
     def test_grid_is_build_correctly(self):
         pc = trajectory.TrajectoryPointCloud()
-        t1 = trajectory.Trajectory()
+        t = trajectory.Trajectory()
         
         # Add point to use initialization point
-        t1.add_point(1,0,datetime(2024, 1, 1, 1, 1, 1))
+        t.add_point(1,0,datetime(2024, 1, 1, 1, 1, 1))
 
         # Shift second point 20 meters north and east (should result in the two points being 4 cells apart in both x and y)
-        shifted_point = distance.distance(meters=20).destination((t1.points[0].latitude, t1.points[0].longitude), 0)
+        shifted_point = distance.distance(meters=20).destination((t.points[0].latitude, t.points[0].longitude), 0)
         shifted_point = distance.distance(meters=20).destination((shifted_point), 90)
         
-        t1.add_point(shifted_point.longitude, shifted_point.latitude, datetime(2024, 1, 1, 1, 1, 2))
-        pc.add_trajectory(t1)
+        t.add_point(shifted_point.longitude, shifted_point.latitude, datetime(2024, 1, 1, 1, 1, 2))
+        pc.add_trajectory(t)
         gs = gridsystem.GridSystem(pc)
 
         gs.create_grid_system()
