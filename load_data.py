@@ -19,25 +19,17 @@ def load_data_from_csv(db: SimpleConnectionPool):
     conn = db.getconn()
     cursor = conn.cursor()
     
-    trajectory_id = 0
+    trajectory_id = 1
     file_list = sorted(os.listdir(CSV_DIR), key=__get_numeric_part)
 
     for filename in tqdm(file_list, desc="Processing Files", unit="file"):
-        file = Path(CSV_DIR) / filename
+        file = Path(filename)
 
         if os.path.isfile(file):  # Check if file
-            df = pd.read_csv(file, names=[
-                             'taxi_id', 'date_time', 'longitude', 'latitude'], parse_dates=['date_time'])
+            df = pd.read_csv(file, names=['taxi_id', 'date_time', 'longitude', 'latitude'], parse_dates=['date_time'], date_format='%Y-%m-%d %H:%M:%S')
 
             if not df.empty:
-                df.sort_values(by='date_time', inplace=True)
-                df.drop_duplicates(inplace=True)
-                df['time_diff'] = (
-                    df['date_time'] - df['date_time'].shift().fillna(pd.Timedelta(seconds=0)))
-                df['trajectory_id'] = (df['time_diff'] > pd.Timedelta(
-                    minutes=12)).cumsum() + trajectory_id
-                df = df.drop(columns=['time_diff'])
-
+                df = __transform_data(df, trajectory_id)
                 cursor.copy_expert(COPY_STATEMENT, df.to_csv(
                     index=False, sep='\t', header=True) + '\n')
 
@@ -51,3 +43,25 @@ def load_data_from_csv(db: SimpleConnectionPool):
 
 def __get_numeric_part(file_name) -> int:
     return int(file_name.split('/')[-1].split('.')[0])
+
+def __transform_data(df: pd.DataFrame, trajectory_id: int) -> pd.DataFrame:
+    valid_longitude = (-180, 180)
+    valid_latitude = (-90, 90)
+
+    mask = (
+        (df['longitude'] < valid_longitude[0]) |
+        (df['longitude'] > valid_longitude[1]) |
+        (df['latitude'] < valid_latitude[0]) |
+        (df['latitude'] > valid_latitude[1])
+    )
+
+    df.sort_values(by='date_time', inplace=True)
+    df.drop_duplicates(inplace=True)
+    df['time_diff'] = df['date_time'].diff().fillna(pd.Timedelta(seconds=0))
+    df['trajectory_id'] = ((df['time_diff'].dt.total_seconds() / 60) > 12).cumsum() + trajectory_id
+    df = df.drop(columns=['time_diff'])
+    df = df[~mask]
+
+
+
+    return df
