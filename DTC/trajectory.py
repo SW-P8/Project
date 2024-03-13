@@ -39,14 +39,14 @@ class Trajectory:
             self.min_latitude = latitude
 
 class TrajectoryPointCloud:
-    def __init__(self) -> None:
+    def __init__(self, cell_size = 5, neighborhood_size = 9) -> None:
         self.trajectories = list[Trajectory]()
         self.min_longitude = float('inf')
         self.max_longitude = float('-inf')
         self.min_latitude = float('inf')
         self.max_latitude = float('-inf')
-        self.cell_size = 5         #Based on observation in DTC paper that minimal width of a road is 5m
-        self.neighborhood_size = 9 #To be determined but DTC uses 9
+        self.cell_size = cell_size        #Based on observation in DTC paper that minimal width of a road is 5m
+        self.neighborhood_size = neighborhood_size #To be determined but DTC uses 9
 
     def add_trajectory(self,trajectory: Trajectory) -> None:
         self.trajectories.append(trajectory)

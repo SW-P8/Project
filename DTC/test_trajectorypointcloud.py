@@ -127,11 +127,11 @@ class TestTrajectoryPointCloud():
         expected_shift_distance = 20
 
         # trajectories provide min point (1,0)
-        t1 = trajectory.Trajectory()
-        t1.add_point(1,0,datetime(2024, 1, 1, 1, 1, 1))
-        t1.add_point(2,0,datetime(2024, 1, 1, 1, 1, 2))
-        t1.add_point(1.5,0,datetime(2024, 1, 1, 1, 1, 3))
-        pc.add_trajectory(t1)
+        t = trajectory.Trajectory()
+        t.add_point(1,0,datetime(2024, 1, 1, 1, 1, 1))
+        t.add_point(2,0,datetime(2024, 1, 1, 1, 1, 2))
+        t.add_point(1.5,0,datetime(2024, 1, 1, 1, 1, 3))
+        pc.add_trajectory(t)
 
         (shifted_min_long, shifted_min_lat) = pc.get_shifted_min()
 
@@ -153,11 +153,11 @@ class TestTrajectoryPointCloud():
         expected_shift_distance = 20
 
         # trajectories provide min point (1,0)
-        t1 = trajectory.Trajectory()
-        t1.add_point(1,0,datetime(2024, 1, 1, 1, 1, 1))
-        t1.add_point(2,0,datetime(2024, 1, 1, 1, 1, 2))
-        t1.add_point(1.5,0,datetime(2024, 1, 1, 1, 1, 3))
-        pc.add_trajectory(t1)
+        t = trajectory.Trajectory()
+        t.add_point(1,0,datetime(2024, 1, 1, 1, 1, 1))
+        t.add_point(2,0,datetime(2024, 1, 1, 1, 1, 2))
+        t.add_point(1.5,0,datetime(2024, 1, 1, 1, 1, 3))
+        pc.add_trajectory(t)
 
         (shifted_max_long, shifted_max_lat) = pc.get_shifted_max()
 
