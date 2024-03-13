@@ -30,6 +30,8 @@ def load_data_from_csv(db: SimpleConnectionPool):
                              'taxi_id', 'date_time', 'longitude', 'latitude'], parse_dates=['date_time'])
 
             if not df.empty:
+                df.sort_values(by='date_time', inplace=True)
+                df.drop_duplicates(inplace=True)
                 df['time_diff'] = (
                     df['date_time'] - df['date_time'].shift().fillna(pd.Timedelta(seconds=0)))
                 df['trajectory_id'] = (df['time_diff'] > pd.Timedelta(
