@@ -1,5 +1,5 @@
 import trajectory
-from math import ceil, floor
+from math import ceil, floor, sqrt
 from geopy import distance
 
 class GridSystem:
@@ -7,6 +7,7 @@ class GridSystem:
         self.pc = pc
         self.initialization_point = pc.get_shifted_min()
         self.cell_size = pc.cell_size
+        self.neighborhood_size = pc.neighborhood_size
 
     def create_grid_system(self):
         (width, height) = self.pc.calculate_bounding_rectangle_area()
@@ -14,7 +15,7 @@ class GridSystem:
         height_cell_count = ceil(height / self.cell_size)
 
         # Initialize a 2d array containing empty lists 
-        self.grid = [[list()]*height_cell_count for i in range(width_cell_count)]
+        self.grid = [[[] for j in range(height_cell_count)] for i in range(width_cell_count)]
         self.populated_cells = set()
         
         # Fill grid with points
@@ -35,3 +36,42 @@ class GridSystem:
         y_coordinate = floor(y_offset / self.cell_size) - 1
 
         return (x_coordinate, y_coordinate)
+    
+    def extract_main_route(self):
+        self.main_route = set()
+
+        for cell in self.populated_cells:
+            density_center = self.calculate_density_center(cell)
+            distance_threshold = self.neighborhood_size / 2
+
+            if self.calculate_distance_between_cells(cell, density_center) < distance_threshold:
+                self.main_route.add(cell)
+
+    def calculate_density_center(self, index):
+        (x, y) = index
+        l = floor(self.neighborhood_size / 2)
+        point_count = 0
+        (x_sum, y_sum) = (0, 0)
+ 
+        for i in range(x - l, x + l + 1):
+            for j in range(y - l, y + l + 1):
+                print((i, j))
+                if self.grid[i][j]:
+                    cardinality = len(self.grid[i][j])
+                    x_sum += cardinality * i
+                    y_sum += cardinality * j
+                    point_count += cardinality
+
+        if x_sum != 0:
+            x_sum /= point_count
+
+        if y_sum != 0:
+            y_sum /= point_count
+
+        return (x_sum, y_sum)
+    
+    @staticmethod
+    def calculate_distance_between_cells(cell1, cell2):
+        (x_1, y_1) = cell1
+        (x_2, y_2) = cell2
+        return sqrt((x_2 - x_1)**2 + (y_2 - y_1)**2)
