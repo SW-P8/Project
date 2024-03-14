@@ -48,8 +48,8 @@ def __get_numeric_part(file_name) -> int:
     return int(file_name.split('/')[-1].split('.')[0])
 
 def transform_data(df: pd.DataFrame, trajectory_id: int) -> pd.DataFrame:
-    valid_longitude = (-180, 180)
-    valid_latitude = (-90, 90)
+    valid_longitude = (115.42, 117.51) # South, North bounds for Beijing
+    valid_latitude = (39.44, 41.06) # West, East vounds for Beijing
 
     mask = (
         (df['longitude'] < valid_longitude[0]) |
