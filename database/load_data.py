@@ -4,6 +4,7 @@ import pandas as pd
 from psycopg2.pool import SimpleConnectionPool
 from tqdm import tqdm
 from pathlib import Path
+from io import StringIO
 
 CSV_DIR = "taxi_log_2008_by_id/"
 COPY_STATEMENT = """
@@ -29,9 +30,12 @@ def load_data_from_csv(db: SimpleConnectionPool):
             df = pd.read_csv(file, names=['taxi_id', 'date_time', 'longitude', 'latitude'], parse_dates=['date_time'], date_format='%Y-%m-%d %H:%M:%S')
 
             if not df.empty:
-                df = transform_data(df, trajectory_id)
-                cursor.copy_expert(COPY_STATEMENT, df.to_csv(
-                    index=False, sep='\t', header=True) + '\n')
+                buffer = StringIO()
+                transform_data(df, trajectory_id).to_csv(buffer, index=False, sep=',')
+                buffer.seek(0)
+                cursor.copy_from(buffer, )
+
+                cursor.copy_expert(COPY_STATEMENT, buffer)
 
                 # Update trajectory ID globaly
                 trajectory_id = df['trajectory_id'].max() + 1
