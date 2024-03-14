@@ -29,7 +29,7 @@ def load_data_from_csv(db: SimpleConnectionPool):
             df = pd.read_csv(file, names=['taxi_id', 'date_time', 'longitude', 'latitude'], parse_dates=['date_time'], date_format='%Y-%m-%d %H:%M:%S')
 
             if not df.empty:
-                df = __transform_data(df, trajectory_id)
+                df = transform_data(df, trajectory_id)
                 cursor.copy_expert(COPY_STATEMENT, df.to_csv(
                     index=False, sep='\t', header=True) + '\n')
 
@@ -44,7 +44,7 @@ def load_data_from_csv(db: SimpleConnectionPool):
 def __get_numeric_part(file_name) -> int:
     return int(file_name.split('/')[-1].split('.')[0])
 
-def __transform_data(df: pd.DataFrame, trajectory_id: int) -> pd.DataFrame:
+def transform_data(df: pd.DataFrame, trajectory_id: int) -> pd.DataFrame:
     valid_longitude = (-180, 180)
     valid_latitude = (-90, 90)
 
