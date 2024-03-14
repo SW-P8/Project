@@ -1,7 +1,7 @@
 """ Program entrypoint """
-import db
+import database.db as db
 import time
-from load_data import load_data_from_csv
+from database.load_data import load_data_from_csv
 
 db_pool = db.init_db()
 start_time = time.time()
