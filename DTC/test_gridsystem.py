@@ -53,16 +53,16 @@ class TestGridsystem():
         assert gs.pc.trajectories[0].points[0] == gs.grid[2][3][0]
         assert gs.pc.trajectories[0].points[1] == gs.grid[6][6][0]
 
-    def test_calculate_distance_returns_correctly(self):
+    def test_calculate_euclidian_distance_returns_correctly(self):
         c1 = (0, 0)
         c2 = (1, 0)
         c3 = (0, 1)
         c4 = (1, 1)
 
-        d_c1_c1 = gridsystem.GridSystem.calculate_distance_between_cells(c1, c1)
-        d_c1_c2 = gridsystem.GridSystem.calculate_distance_between_cells(c1, c2)
-        d_c1_c3 = gridsystem.GridSystem.calculate_distance_between_cells(c1, c3)
-        d_c1_c4 = gridsystem.GridSystem.calculate_distance_between_cells(c1, c4)
+        d_c1_c1 = gridsystem.GridSystem.calculate_euclidian_distance_between_cells(c1, c1)
+        d_c1_c2 = gridsystem.GridSystem.calculate_euclidian_distance_between_cells(c1, c2)
+        d_c1_c3 = gridsystem.GridSystem.calculate_euclidian_distance_between_cells(c1, c3)
+        d_c1_c4 = gridsystem.GridSystem.calculate_euclidian_distance_between_cells(c1, c4)
 
 
         assert d_c1_c1 == 0

@@ -44,7 +44,7 @@ class GridSystem:
             density_center = self.calculate_density_center(cell)
             distance_threshold = self.neighborhood_size / 2
 
-            if self.calculate_distance_between_cells(cell, density_center) < distance_threshold:
+            if self.calculate_euclidian_distance_between_cells(cell, density_center) < distance_threshold:
                 self.main_route.add(cell)
 
     def calculate_density_center(self, index):
@@ -55,7 +55,6 @@ class GridSystem:
  
         for i in range(x - l, x + l + 1):
             for j in range(y - l, y + l + 1):
-                print((i, j))
                 if self.grid[i][j]:
                     cardinality = len(self.grid[i][j])
                     x_sum += cardinality * i
@@ -71,7 +70,7 @@ class GridSystem:
         return (x_sum, y_sum)
     
     @staticmethod
-    def calculate_distance_between_cells(cell1, cell2):
+    def calculate_euclidian_distance_between_cells(cell1, cell2):
         (x_1, y_1) = cell1
         (x_2, y_2) = cell2
         return sqrt((x_2 - x_1)**2 + (y_2 - y_1)**2)
