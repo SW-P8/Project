@@ -33,7 +33,6 @@ def load_data_from_csv(db: SimpleConnectionPool):
                 buffer = StringIO()
                 transform_data(df, trajectory_id).to_csv(buffer, index=False, sep=',')
                 buffer.seek(0)
-                cursor.copy_from(buffer, )
 
                 cursor.copy_expert(COPY_STATEMENT, buffer)
 
