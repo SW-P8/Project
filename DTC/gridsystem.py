@@ -37,12 +37,15 @@ class GridSystem:
 
         return (x_coordinate, y_coordinate)
     
-    def extract_main_route(self):
+    def extract_main_route(self, distance_scale: float = 0.2):
         self.main_route = set()
+
+        if d >= 0.5:
+            raise ValueError("d must be less than neighborhood size divided by 2")
+        distance_threshold = distance_scale * self.neighborhood_size
 
         for cell in self.populated_cells:
             density_center = self.calculate_density_center(cell)
-            distance_threshold = self.neighborhood_size / 2
 
             if self.calculate_euclidian_distance_between_cells(cell, density_center) < distance_threshold:
                 self.main_route.add(cell)

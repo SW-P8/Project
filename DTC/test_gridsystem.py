@@ -148,6 +148,21 @@ class TestGridsystem():
 
         assert gs.main_route == {(2, 3)}
 
+    def test_extract_main_route_raises_error_correctly(self):
+        pc = trajectory.TrajectoryPointCloud()
+        t = trajectory.Trajectory()
+        
+        # Add point to use initialization point
+        t.add_point(1,0,datetime(2024, 1, 1, 1, 1, 1))
+
+        pc.add_trajectory(t)
+        gs = gridsystem.GridSystem(pc)
+        gs.create_grid_system()
+        with pytest.raises(ValueError) as e:
+            gs.extract_main_route(0.5)
+        
+        assert str(e.value) == "d must be less than neighborhood size divided by 2"
+
     def test_extract_main_route_returns_correctly_with_two_points(self):
         pc = trajectory.TrajectoryPointCloud()
         t = trajectory.Trajectory()
@@ -164,9 +179,13 @@ class TestGridsystem():
         pc.add_trajectory(t)
         gs = gridsystem.GridSystem(pc)
         gs.create_grid_system()
-        gs.extract_main_route()
+        gs.extract_main_route(0.4)
 
         assert gs.main_route == {(2, 3), (6, 6)}
+
+        # Should return an empty set with default d
+        gs.extract_main_route()
+        assert gs.main_route == set()
 
     def test_extract_main_route_returns_correctly_with_many_points(self):
         pc = trajectory.TrajectoryPointCloud()
