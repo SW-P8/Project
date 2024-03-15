@@ -40,8 +40,8 @@ class GridSystem:
     def extract_main_route(self, distance_scale: float = 0.2):
         self.main_route = set()
 
-        if d >= 0.5:
-            raise ValueError("d must be less than neighborhood size divided by 2")
+        if distance_scale >= 0.5:
+            raise ValueError("distance scale must be less than neighborhood size divided by 2")
         distance_threshold = distance_scale * self.neighborhood_size
 
         for cell in self.populated_cells:

@@ -5,7 +5,21 @@ from datetime import datetime
 from math import sqrt
 
 class TestGridsystem():
-    def test_calculate_index_for_point_is_correct(self):
+    @pytest.fixture
+    def single_point_grid(self):
+        pc = trajectory.TrajectoryPointCloud()
+        t = trajectory.Trajectory()
+        
+        # Add point to use initialization point
+        t.add_point(1,0,datetime(2024, 1, 1, 1, 1, 1))
+
+        pc.add_trajectory(t)
+        gs = gridsystem.GridSystem(pc)
+        gs.create_grid_system()
+        return gs
+
+    @pytest.fixture
+    def two_point_grid(self):
         pc = trajectory.TrajectoryPointCloud()
         t = trajectory.Trajectory()
         
@@ -15,43 +29,31 @@ class TestGridsystem():
         # Shift second point 20 meters north and east (should result in the two points being 4 cells apart in both x and y)
         shifted_point = distance.distance(meters=20).destination((t.points[0].latitude, t.points[0].longitude), 0)
         shifted_point = distance.distance(meters=20).destination((shifted_point), 90)
-
+        
         t.add_point(shifted_point.longitude, shifted_point.latitude, datetime(2024, 1, 1, 1, 1, 2))
         pc.add_trajectory(t)
         gs = gridsystem.GridSystem(pc)
-        
-        (x1, y1) = gs.calculate_index_for_point(t.points[0])
+        gs.create_grid_system()
+        return gs
+
+    def test_calculate_index_for_point_is_correct(self, two_point_grid):
+        (x1, y1) = two_point_grid.calculate_index_for_point(two_point_grid.pc.trajectories[0].points[0])
         assert (2, 3) == (x1, y1)
 
-        (x2, y2) = gs.calculate_index_for_point(t.points[1])
+        (x2, y2) = two_point_grid.calculate_index_for_point(two_point_grid.pc.trajectories[0].points[1])
         assert (6, 6) == (x2, y2)
 
-    def test_grid_is_build_correctly(self):
-        pc = trajectory.TrajectoryPointCloud()
-        t = trajectory.Trajectory()
-        
-        # Add point to use initialization point
-        t.add_point(1,0,datetime(2024, 1, 1, 1, 1, 1))
-
-        # Shift second point 20 meters north and east (should result in the two points being 4 cells apart in both x and y)
-        shifted_point = distance.distance(meters=20).destination((t.points[0].latitude, t.points[0].longitude), 0)
-        shifted_point = distance.distance(meters=20).destination((shifted_point), 90)
-        
-        t.add_point(shifted_point.longitude, shifted_point.latitude, datetime(2024, 1, 1, 1, 1, 2))
-        pc.add_trajectory(t)
-        gs = gridsystem.GridSystem(pc)
-
-        gs.create_grid_system()
-        actual_x_size = len(gs.grid)
+    def test_grid_is_build_correctly(self, two_point_grid):
+        actual_x_size = len(two_point_grid.grid)
         assert actual_x_size == 13
 
-        actual_y_size = len(gs.grid[0])
+        actual_y_size = len(two_point_grid.grid[0])
         assert actual_y_size == 12
 
-        assert gs.populated_cells == {(2, 3), (6, 6)}
+        assert two_point_grid.populated_cells == {(2, 3), (6, 6)}
 
-        assert gs.pc.trajectories[0].points[0] == gs.grid[2][3][0]
-        assert gs.pc.trajectories[0].points[1] == gs.grid[6][6][0]
+        assert two_point_grid.pc.trajectories[0].points[0] == two_point_grid.grid[2][3][0]
+        assert two_point_grid.pc.trajectories[0].points[1] == two_point_grid.grid[6][6][0]
 
     def test_calculate_euclidian_distance_returns_correctly(self):
         c1 = (0, 0)
@@ -70,40 +72,14 @@ class TestGridsystem():
         assert d_c1_c3 == 1
         assert d_c1_c4 == sqrt(2)
 
-    def test_calculate_density_center_returns_correctly_with_single_point(self):
-        pc = trajectory.TrajectoryPointCloud()
-        t = trajectory.Trajectory()
-        
-        # Add point to use initialization point
-        t.add_point(1,0,datetime(2024, 1, 1, 1, 1, 1))
-
-        pc.add_trajectory(t)
-        gs = gridsystem.GridSystem(pc)
-        gs.create_grid_system()
-
-        density_center = gs.calculate_density_center((2, 3))
+    def test_calculate_density_center_returns_correctly_with_single_point(self, single_point_grid):
+        density_center = single_point_grid.calculate_density_center((2, 3))
 
         assert density_center == (2, 3)
 
-    def test_calculate_density_center_returns_correctly_with_two_points(self):
-        pc = trajectory.TrajectoryPointCloud()
-        t = trajectory.Trajectory()
-        
-        # Add point to use initialization point
-        t.add_point(1,0,datetime(2024, 1, 1, 1, 1, 1))
-
-        # Shift second point 20 meters north and east (should result in the two points being 4 cells apart in both x and y)
-        shifted_point = distance.distance(meters=20).destination((t.points[0].latitude, t.points[0].longitude), 0)
-        shifted_point = distance.distance(meters=20).destination((shifted_point), 90)
-        t.add_point(shifted_point.longitude, shifted_point.latitude, datetime(2024, 1, 1, 1, 1, 2))
-
-
-        pc.add_trajectory(t)
-        gs = gridsystem.GridSystem(pc)
-        gs.create_grid_system()
-
-        density_center1 = gs.calculate_density_center((2, 3))
-        density_center2 = gs.calculate_density_center((6, 6))
+    def test_calculate_density_center_returns_correctly_with_two_points(self, two_point_grid):
+        density_center1 = two_point_grid.calculate_density_center((2, 3))
+        density_center2 = two_point_grid.calculate_density_center((6, 6))
 
         # Density center should be the same as their neighborhoods intersect and they are the only points
         assert density_center1 == (4, 4.5)
@@ -134,58 +110,25 @@ class TestGridsystem():
         assert density_center1 == (26 / 11, 36 / 11)
         assert density_center2 == (26 / 11, 36 / 11)
 
-    def test_extract_main_route_returns_correctly_with_single_point(self):
-        pc = trajectory.TrajectoryPointCloud()
-        t = trajectory.Trajectory()
-        
-        # Add point to use initialization point
-        t.add_point(1,0,datetime(2024, 1, 1, 1, 1, 1))
+    def test_extract_main_route_returns_correctly_with_single_point(self, single_point_grid):
+        single_point_grid.extract_main_route()
 
-        pc.add_trajectory(t)
-        gs = gridsystem.GridSystem(pc)
-        gs.create_grid_system()
-        gs.extract_main_route()
+        assert single_point_grid.main_route == {(2, 3)}
 
-        assert gs.main_route == {(2, 3)}
-
-    def test_extract_main_route_raises_error_correctly(self):
-        pc = trajectory.TrajectoryPointCloud()
-        t = trajectory.Trajectory()
-        
-        # Add point to use initialization point
-        t.add_point(1,0,datetime(2024, 1, 1, 1, 1, 1))
-
-        pc.add_trajectory(t)
-        gs = gridsystem.GridSystem(pc)
-        gs.create_grid_system()
+    def test_extract_main_route_raises_error_correctly(self, single_point_grid):
         with pytest.raises(ValueError) as e:
-            gs.extract_main_route(0.5)
+            single_point_grid.extract_main_route(0.5)
         
-        assert str(e.value) == "d must be less than neighborhood size divided by 2"
+        assert str(e.value) == "distance scale must be less than neighborhood size divided by 2"
 
-    def test_extract_main_route_returns_correctly_with_two_points(self):
-        pc = trajectory.TrajectoryPointCloud()
-        t = trajectory.Trajectory()
-        
-        # Add point to use initialization point
-        t.add_point(1,0,datetime(2024, 1, 1, 1, 1, 1))
+    def test_extract_main_route_returns_correctly_with_two_points(self, two_point_grid):
+        two_point_grid.extract_main_route(0.4)
 
-        # Shift second point 20 meters north and east (should result in the two points being 4 cells apart in both x and y)
-        shifted_point = distance.distance(meters=20).destination((t.points[0].latitude, t.points[0].longitude), 0)
-        shifted_point = distance.distance(meters=20).destination((shifted_point), 90)
-        t.add_point(shifted_point.longitude, shifted_point.latitude, datetime(2024, 1, 1, 1, 1, 2))
-
-
-        pc.add_trajectory(t)
-        gs = gridsystem.GridSystem(pc)
-        gs.create_grid_system()
-        gs.extract_main_route(0.4)
-
-        assert gs.main_route == {(2, 3), (6, 6)}
+        assert two_point_grid.main_route == {(2, 3), (6, 6)}
 
         # Should return an empty set with default d
-        gs.extract_main_route()
-        assert gs.main_route == set()
+        two_point_grid.extract_main_route()
+        assert two_point_grid.main_route == set()
 
     def test_extract_main_route_returns_correctly_with_many_points(self):
         pc = trajectory.TrajectoryPointCloud()
