@@ -72,6 +72,40 @@ class GridSystem:
 
         return (x_sum, y_sum)
     
+    def extract_route_skeleton(self):
+        # Smooth MR
+        smr = self.smooth_main_route()
+
+        # Remove outliers
+        cmr = self.filter_outliers_in_main_route(smr)
+        
+        # Sample MR with uniform distance interval
+
+    def smooth_main_route(self, radius: int = 25) -> set:
+        smr = set()
+        for (x1, y1) in self.main_route:
+            ns = {(x2, y2) for (x2, y2) in self.main_route if self.calculate_euclidian_distance_between_cells((x1 + 0.5, y1 + 0.5), (x2 + 0.5, y2 + 0.5)) <= radius}
+            x_sum = sum(x for x, _ in ns)
+            y_sum = sum(y for _, y in ns)
+
+            if x_sum != 0:
+                x_sum /= len(ns)
+
+            if y_sum != 0:
+                y_sum /= len(ns)            
+            smr.add((x_sum, y_sum))
+        return smr
+    
+    def filter_outliers_in_main_route(self, smr: set, radius_prime: int = 20):
+        for (x1, y1) in smr:
+            targets = {(x2, y2) for (x2, y2) in self.main_route if self.calculate_euclidian_distance_between_cells((x1, y1), (x2, y2)) <= radius_prime}
+            if targets < 0.01 * len(self.main_route):
+                smr.remove((x1, y1))
+        return smr
+    
+    def sample_main_route(self, distance_interval: int = 20):
+        pass
+    
     @staticmethod
     def calculate_euclidian_distance_between_cells(cell1, cell2):
         (x_1, y_1) = cell1
