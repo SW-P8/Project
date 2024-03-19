@@ -95,7 +95,7 @@ class TaxiDataHandler:
     
     def delete_trajectory_records(self, trajectory_id):
         """
-        Deletes all datapoints for a trajectories
+        Deletes all datapoints for a trajectory
         Args:
             taxi_id: Integer, trajectory ID of the trajectory datapoint records to be deleted.
         """
