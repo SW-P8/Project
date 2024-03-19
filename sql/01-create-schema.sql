@@ -3,5 +3,5 @@ CREATE TABLE TaxiData (
     date_time TIMESTAMP NOT NULL,
     longitude FLOAT NOT NULL,
     latitude FLOAT NOT NULL,
-    trajectory_id INTEGER NOT NULL PRIMARY KEY
+    trajectory_id INTEGER NOT NULL
 );

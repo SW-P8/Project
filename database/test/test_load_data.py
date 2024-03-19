@@ -29,7 +29,7 @@ def test_transform_data_When_given_dataframe_with_errors_Should_return_cleaned_d
     # Arrange
     test_trajectory_id = 1
     # Act
-    result = load_data.transform_data(create_erroneous_dataframe, test_trajectory_id)
+    result = load_data.__transform_data(create_erroneous_dataframe, test_trajectory_id)
     # Assert
     assert result.shape == (8, 5) # There are two erroneus coordinate points, so there sould only be 8 rows
     assert result['trajectory_id'].nunique() == 2 # There should be two distinct trajectories for taxi 1
