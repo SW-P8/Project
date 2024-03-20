@@ -13,7 +13,7 @@ class TaxiDataHandler:
         Args:
             connection_pool: psycopg2 connection pool object.
         """
-        self.connection_pool = connection_pool
+        self.__connection_pool = connection_pool
 
     def create_record(self, taxi_id, date_time, longitude, latitude, trajectory_id):
         """
@@ -27,12 +27,12 @@ class TaxiDataHandler:
             trajectory_id: Integer, trajectory ID.
         """
         sql = "INSERT INTO TaxiData (taxi_id, date_time, longitude, latitude, trajectory_id) VALUES (%s, %s, %s, %s, %s)"
-        with self.connection_pool.getconn() as conn:
+        with self.__connection_pool.getconn() as conn:
             with conn.cursor() as cursor:
                 cursor.execute(sql, (taxi_id, date_time, longitude, latitude, trajectory_id))
                 conn.commit()
 
-    def read_records_by_id(self, taxi_id):
+    def read_records_by_taxi_id(self, taxi_id):
         """
         Retrieves all records from the TaxiData table associated with the specified taxi ID.
 
@@ -43,7 +43,7 @@ class TaxiDataHandler:
             List of tuples containing records associated with the specified taxi ID.
         """
         sql = "SELECT * FROM TaxiData WHERE taxi_id = %s"
-        with self.connection_pool.getconn() as conn:
+        with self.__connection_pool.getconn() as conn:
             with conn.cursor() as cursor:
                 cursor.execute(sql, (taxi_id,))
                 return cursor.fetchall()
@@ -59,14 +59,14 @@ class TaxiDataHandler:
             List of tuples containing records associated with the specified trajectory ID.
         """
         sql = "SELECT * FROM TaxiData WHERE trajectory_id = %s"
-        with self.connection_pool.getconn() as conn:
+        with self.__connection_pool.getconn() as conn:
             with conn.cursor() as cursor:
                 cursor.execute(sql, (trajectory_id,))
                 return cursor.fetchall()
 
     def update_record(self, taxi_id, new_date_time, new_longitude, new_latitude, new_trajectory_id):
         """
-        Updates a record in the TaxiData table.
+        DO NOT USE THIS METHOD SINCE TAXI_ID IS NOT A UNIQUE IDENTIFIER. Updates a record in the TaxiData table.
 
         Args:
             taxi_id: Integer, taxi ID of the record to be updated.
@@ -76,20 +76,32 @@ class TaxiDataHandler:
             new_trajectory_id: Integer, new trajectory ID.
         """
         sql = "UPDATE TaxiData SET date_time = %s, longitude = %s, latitude = %s, trajectory_id = %s WHERE taxi_id = %s"
-        with self.connection_pool.getconn() as conn:
+        with self.__connection_pool.getconn() as conn:
             with conn.cursor() as cursor:
                 cursor.execute(sql, (new_date_time, new_longitude, new_latitude, new_trajectory_id, taxi_id))
                 conn.commit()
 
-    def delete_record(self, taxi_id):
+    def delete_taxi_records(self, taxi_id):
         """
-        Deletes a record from the TaxiData table.
-
+        Deletes all trajectories for a taxi
         Args:
-            taxi_id: Integer, taxi ID of the record to be deleted.
+            taxi_id: Integer, taxi ID of the trajectory records to be deleted.
         """
         sql = "DELETE FROM TaxiData WHERE taxi_id = %s"
-        with self.connection_pool.getconn() as conn:
+        with self.__connection_pool.getconn() as conn:
             with conn.cursor() as cursor:
                 cursor.execute(sql, (taxi_id,))
                 conn.commit()
+    
+    def delete_trajectory_records(self, trajectory_id):
+        """
+        Deletes all datapoints for a trajectory
+        Args:
+            taxi_id: Integer, trajectory ID of the trajectory datapoint records to be deleted.
+        """
+        sql = "DELETE FROM TaxiData WHERE trajectory_id = %s"
+        with self.__connection_pool.getconn() as conn:
+            with conn.cursor() as cursor:
+                cursor.execute(sql, (trajectory_id,))
+                conn.commit()
+
