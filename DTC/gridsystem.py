@@ -21,19 +21,20 @@ class GridSystem:
         # Fill grid with points
         for trajectory in self.pc.trajectories:
             for point in trajectory.points:
-                (x,y) = self.calculate_index_for_point(point)
-                self.grid[x][y].append(point)
-                self.populated_cells.add((x,y))
+                (x,y) = self.calculate_exact_index_for_point(point)
+                (x_f, y_f) = (floor(x), floor(y))
+                self.grid[x_f][y_f].append(point)
+                self.populated_cells.add((x_f,y_f))
 
     # TODO: Determine if you want to round within some treshold (shifting may not result in precise distances)
-    def calculate_index_for_point(self, point: trajectory.Point):
+    def calculate_exact_index_for_point(self, point: trajectory.Point):
         # Calculate x index
         x_offset = distance.distance((self.initialization_point[1], self.initialization_point[0]), (self.initialization_point[1], point.longitude)).meters
-        x_coordinate = floor(x_offset / self.cell_size) - 1
+        x_coordinate = (x_offset / self.cell_size) - 1
 
         # Calculate y index
         y_offset = distance.distance((self.initialization_point[1], self.initialization_point[0]), (point.latitude ,self.initialization_point[0])).meters
-        y_coordinate = floor(y_offset / self.cell_size) - 1
+        y_coordinate = (y_offset / self.cell_size) - 1
 
         return (x_coordinate, y_coordinate)
     
@@ -109,6 +110,46 @@ class GridSystem:
                 rs.add(c1)
         return rs
     
+    def construct_safe_area(self):
+        #TODO: Create cover set
+
+        #TODO: Refine radius of safe area
+        pass
+    
+    def create_cover_sets(self):
+        cs = dict()
+        for anchor in self.route_skeleton:
+            cs[anchor] = set()
+
+        for (x, y) in self.populated_cells:
+            candidates = self.find_candidate_nearest_neighbors((x + 0.5, y + 0.5))
+            for point in self.grid[x][y]:
+                anchor = self.find_nearest_neighbor_from_candidates(point, candidates)
+                cs[anchor]
+
+
+    def find_candidate_nearest_neighbors(self, cell):
+        min_dist = float("inf")
+        candidates = set()
+        for anchor in self.route_skeleton:
+            dist = self.calculate_euclidian_distance_between_cells(cell, anchor)
+            if dist < min_dist:
+                min_dist = dist
+                candidates.add((anchor, dist))
+
+        return {p for p, d in candidates if d <= min_dist + sqrt(0.5)}
+    
+    def find_nearest_neighbor_from_candidates(self, point, candidates):
+        min_dist = float("inf")
+        nearest_anchor = None
+        (x, y) = self.calculate_exact_index_for_point(point)
+        for candidate in candidates:
+            dist = self.calculate_euclidian_distance_between_cells((x,y), candidate)
+            if dist < min_dist:
+                nearest_anchor = candidate
+                min_dist =dist
+        return nearest_anchor
+
     @staticmethod
     def calculate_euclidian_distance_between_cells(cell1, cell2):
         (x_1, y_1) = cell1
