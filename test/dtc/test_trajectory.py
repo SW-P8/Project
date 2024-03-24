@@ -1,5 +1,4 @@
-import pytest
-import trajectory
+from DTC import trajectory
 from datetime import datetime
 
 class TestTrajectory():
