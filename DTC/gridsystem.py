@@ -1,6 +1,7 @@
 import trajectory
 from math import ceil, floor, sqrt
 from geopy import distance
+from operator import itemgetter
 
 class GridSystem:
     def __init__(self, pc: trajectory.TrajectoryPointCloud) -> None:
@@ -110,22 +111,40 @@ class GridSystem:
                 rs.add(c1)
         return rs
     
-    def construct_safe_area(self):
-        #TODO: Create cover set
+    def construct_safe_areas(self, decrease_factor: float = 0.01):
+        cs = self.create_cover_sets()
+        self.safe_areas = dict()
 
-        #TODO: Refine radius of safe area
-        pass
+        for anchor in self.route_skeleton:
+            #Initialize safe area radius
+            radius = max(cs[anchor], key=itemgetter(1)[1]) * (1 - decrease_factor)
+            removed_count = 0
+            cs_size = len(cs[anchor])
+            removal_threshold = decrease_factor * cs_size
+            filtered_cs = {(p, d) for (p, d) in cs[anchor]}
+
+            #Refine radius of safe area radius
+            while removed_count < removal_threshold:
+                filtered_cs = {(p, d) for (p, d) in filtered_cs if d <= radius}
+                removed_count = cs_size - len(filtered_cs)
+                radius *= (1 - decrease_factor)
+
+            self.safe_areas[anchor] = radius
     
     def create_cover_sets(self):
         cs = dict()
+        # Initialize dictionary with a key for each anchor and an empty set for each
         for anchor in self.route_skeleton:
             cs[anchor] = set()
 
+        # Assign points to their nearest anchor
         for (x, y) in self.populated_cells:
             candidates = self.find_candidate_nearest_neighbors((x + 0.5, y + 0.5))
             for point in self.grid[x][y]:
-                anchor = self.find_nearest_neighbor_from_candidates(point, candidates)
-                cs[anchor]
+                (anchor, dist) = self.find_nearest_neighbor_from_candidates(point, candidates)
+                cs[anchor].add((point, dist))
+        
+        return cs
 
 
     def find_candidate_nearest_neighbors(self, cell):
@@ -148,7 +167,7 @@ class GridSystem:
             if dist < min_dist:
                 nearest_anchor = candidate
                 min_dist =dist
-        return nearest_anchor
+        return (nearest_anchor, min_dist)
 
     @staticmethod
     def calculate_euclidian_distance_between_cells(cell1, cell2):
