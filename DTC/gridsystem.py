@@ -54,7 +54,7 @@ class GridSystem:
 
     def calculate_density_center(self, index):
         (x, y) = index
-        l = floor(self.neighborhood_size / 2)
+        l = self.neighborhood_size // 2
         point_count = 0
         (x_sum, y_sum) = (0, 0)
  
@@ -152,11 +152,11 @@ class GridSystem:
         candidates = set()
         for anchor in self.route_skeleton:
             dist = self.calculate_euclidian_distance_between_cells(cell, anchor)
-            if dist < min_dist:
+            if dist < min_dist + 0.5 ** 2:
                 min_dist = dist
                 candidates.add((anchor, dist))
 
-        return {p for p, d in candidates if d <= min_dist + sqrt(0.5)}
+        return {p for p, d in candidates if d <= min_dist + 0.5 ** 2}
     
     def find_nearest_neighbor_from_candidates(self, point, candidates):
         min_dist = float("inf")
