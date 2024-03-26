@@ -1,5 +1,5 @@
 import pytest
-import trajectory, gridsystem
+from DTC import trajectory, gridsystem
 from geopy import distance
 from datetime import datetime
 from math import sqrt

@@ -1,5 +1,4 @@
-import pytest
-import trajectory
+from DTC import trajectory
 from geopy import distance
 from datetime import datetime
 

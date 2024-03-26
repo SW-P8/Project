@@ -1,4 +1,4 @@
-import trajectory
+from DTC import trajectory
 from math import ceil, floor, sqrt
 from geopy import distance
 from operator import itemgetter
