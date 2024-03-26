@@ -117,7 +117,7 @@ class GridSystem:
 
         for anchor in self.route_skeleton:
             #Initialize safe area radius
-            radius = max(cs[anchor], key=itemgetter(1)[1]) * (1 - decrease_factor)
+            radius = max(cs[anchor], key=itemgetter(1))[1]
             removed_count = 0
             cs_size = len(cs[anchor])
             removal_threshold = decrease_factor * cs_size
@@ -125,9 +125,9 @@ class GridSystem:
 
             #Refine radius of safe area radius
             while removed_count < removal_threshold:
+                radius *= (1 - decrease_factor)
                 filtered_cs = {(p, d) for (p, d) in filtered_cs if d <= radius}
                 removed_count = cs_size - len(filtered_cs)
-                radius *= (1 - decrease_factor)
 
             self.safe_areas[anchor] = radius
     
