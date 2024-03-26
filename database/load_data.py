@@ -51,7 +51,7 @@ def __transform_data(df: pd.DataFrame, trajectory_id: int) -> pd.DataFrame:
     valid_longitude = (115.42, 117.51) # South, North bounds for Beijing
     valid_latitude = (39.44, 41.06) # West, East vounds for Beijing
 
-    mask = (
+    mask = ~(
         (df['longitude'] < valid_longitude[0]) |
         (df['longitude'] > valid_longitude[1]) |
         (df['latitude'] < valid_latitude[0]) |
@@ -63,6 +63,7 @@ def __transform_data(df: pd.DataFrame, trajectory_id: int) -> pd.DataFrame:
     df['time_diff'] = df['date_time'].diff().fillna(pd.Timedelta(seconds=0))
     df['trajectory_id'] = ((df['time_diff'].dt.total_seconds() / 60) > 12).cumsum() + trajectory_id
     df = df.drop(columns=['time_diff'])
-    df = df[~mask]
+    df.reset_index(drop=True, inplace=True)
+    df = df[mask]
 
     return df
