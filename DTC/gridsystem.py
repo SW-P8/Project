@@ -150,13 +150,15 @@ class GridSystem:
     def find_candidate_nearest_neighbors(self, cell):
         min_dist = float("inf")
         candidates = set()
+        distance_to_corner_of_cell = sqrt(0.5 ** 2 + 0.5 ** 2)
         for anchor in self.route_skeleton:
             dist = self.calculate_euclidian_distance_between_cells(cell, anchor)
-            if dist < min_dist + 0.5 ** 2:
-                min_dist = dist
+            if dist <= min_dist + distance_to_corner_of_cell:
+                if dist < min_dist:
+                    min_dist = dist
                 candidates.add((anchor, dist))
 
-        return {p for p, d in candidates if d <= min_dist + 0.5 ** 2}
+        return {a for a, d in candidates if d <= min_dist + distance_to_corner_of_cell}
     
     def find_nearest_neighbor_from_candidates(self, point, candidates):
         min_dist = float("inf")

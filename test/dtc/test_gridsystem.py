@@ -2,7 +2,7 @@ import pytest
 from DTC import trajectory, gridsystem
 from geopy import distance
 from datetime import datetime
-from math import sqrt
+from math import sqrt, floor
 
 class TestGridsystem():
     @pytest.fixture
@@ -37,11 +37,11 @@ class TestGridsystem():
         return gs
 
     def test_calculate_index_for_point_is_correct(self, two_point_grid):
-        (x1, y1) = two_point_grid.calculate_index_for_point(two_point_grid.pc.trajectories[0].points[0])
-        assert (2, 3) == (x1, y1)
+        (x1, y1) = two_point_grid.calculate_exact_index_for_point(two_point_grid.pc.trajectories[0].points[0])
+        assert (2, 3) == (floor(x1), floor(y1))
 
-        (x2, y2) = two_point_grid.calculate_index_for_point(two_point_grid.pc.trajectories[0].points[1])
-        assert (6, 6) == (x2, y2)
+        (x2, y2) = two_point_grid.calculate_exact_index_for_point(two_point_grid.pc.trajectories[0].points[1])
+        assert (6, 6) == (floor(x2), floor(y2))
 
     def test_grid_is_build_correctly(self, two_point_grid):
         actual_x_size = len(two_point_grid.grid)
@@ -275,3 +275,39 @@ class TestGridsystem():
 
         assert (28.5, 3.5) not in single_point_grid.route_skeleton
         assert single_point_grid.route_skeleton != set()
+
+    def test_find_candidate_nearest_neighbors_returns_correctly_with_single_anchor(self, single_point_grid):
+        single_point_grid.route_skeleton = {(2, 2)}
+
+        c1 = (1.5, 1.5)
+        c2 = (2.5, 2.5)
+        c3 = (3.5, 3.5)
+        cnn1 = single_point_grid.find_candidate_nearest_neighbors(c1)
+        cnn2 = single_point_grid.find_candidate_nearest_neighbors(c2)
+        cnn3 = single_point_grid.find_candidate_nearest_neighbors(c3)
+
+        assert cnn1 == {(2, 2)}
+        assert cnn2 == {(2, 2)}
+        assert cnn3 == {(2, 2)}
+
+    def test_find_candidate_nearest_neighbors_returns_correctly_with_multiple_anchors(self, single_point_grid):
+        single_point_grid.route_skeleton = {(2, 2), (2.5, 2.5), (3, 3), (4, 4)}
+
+        c1 = (1.5, 1.5)
+        c2 = (2.5, 2.5)
+        c3 = (3.5, 3.5)
+        cnn1 = single_point_grid.find_candidate_nearest_neighbors(c1)
+        cnn2 = single_point_grid.find_candidate_nearest_neighbors(c2)
+        cnn3 = single_point_grid.find_candidate_nearest_neighbors(c3)
+
+        assert cnn1 == {(2, 2), (2.5, 2.5)}
+        assert cnn2 == {(2, 2), (2.5, 2.5), (3, 3)}
+        assert cnn3 == {(2.5, 2.5), (3, 3), (4, 4)}
+
+    def test_find_nearest_neighbor_from_candidates_returns_correctly_with_single_candidate(self, two_point_grid):
+        candidates = {(3, 3)}
+        nn1 = two_point_grid.find_nearest_neighbor_from_candidates(two_point_grid.pc.trajectories[0].points[0], candidates)
+        nn2 = two_point_grid.find_nearest_neighbor_from_candidates(two_point_grid.pc.trajectories[0].points[1], candidates)
+
+        assert nn1 == ((3, 3))
+        assert nn2 == ((3, 3))
