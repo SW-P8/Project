@@ -8,6 +8,10 @@ class GridSystem:
         self.initialization_point = pc.get_shifted_min()
         self.cell_size = pc.cell_size
         self.neighborhood_size = pc.neighborhood_size
+        self.grid: list(list) = None
+        self.populated_cells: set = None
+        self.main_route: set = None
+        self.route_skeleton: set = None
 
     def create_grid_system(self):
         (width, height) = self.pc.calculate_bounding_rectangle_area()
@@ -88,7 +92,7 @@ class GridSystem:
                 x_sum /= len(ns)
 
             if y_sum != 0:
-                y_sum /= len(ns)            
+                y_sum /= len(ns)
             smr.add((x_sum, y_sum))
         return smr
     
