@@ -280,7 +280,7 @@ class TestGridsystem():
         single_point_grid.extract_route_skeleton()
         assert single_point_grid.route_skeleton == {(15, 3.5), ((2.5 + 27.5 + 32.5)/3, 3.5), (30, 3.5)}
 
-    def test_extract_route_skeleton_returns_correctly_with_two_cells(self, single_point_grid):
+    def test_extract_route_skeleton_returns_correctly_with_many_cells(self, single_point_grid):
         single_point_grid.main_route = set()
         for i in range(1, 27):
             single_point_grid.main_route.add((-24 + 1 * i, 3))
