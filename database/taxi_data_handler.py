@@ -63,6 +63,22 @@ class TaxiDataHandler:
             with conn.cursor() as cursor:
                 cursor.execute(sql, (trajectory_id,))
                 return cursor.fetchall()
+            
+    def read_n_records(self, n: int):
+        """
+        Retrieves n records from the TaxiData table
+
+        Args:
+            n: Integer, amount of records to retrieve
+
+        Returns:
+            List of tuples containing n records
+        """
+        sql = "SELECT * FROM TaxiData limit %s"
+        with self.__connection_pool.getconn() as conn:
+            with conn.cursor() as cursor:
+                cursor.execute(sql, (n,))
+                return cursor.fetchall()
 
     def update_record(self, taxi_id, new_date_time, new_longitude, new_latitude, new_trajectory_id):
         """
