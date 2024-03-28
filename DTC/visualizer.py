@@ -2,7 +2,6 @@ from datetime import datetime
 import matplotlib.pyplot as plt
 from DTC.gridsystem import GridSystem
 from DTC.trajectory import TrajectoryPointCloud, Trajectory, Point
-from typing import Tuple
 
 class Visualizer():
     def __init__(self, grid_system):
