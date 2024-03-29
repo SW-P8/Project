@@ -1,5 +1,4 @@
 import pytest
-from database.taxi_data_handler import TaxiDataHandler
 from database import db
 from DTC.dtc_executor import DTCExecutor
 
