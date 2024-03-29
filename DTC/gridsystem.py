@@ -11,10 +11,6 @@ class GridSystem:
         self.neighborhood_size = pc.neighborhood_size
 
     def create_grid_system(self):
-        (width, height) = self.pc.calculate_bounding_rectangle_area()
-        width_cell_count = ceil(width / self.cell_size)
-        height_cell_count = ceil(height / self.cell_size)
-
         # Initialize a dict to act as grid - assumes sparse population of grid
         self.grid = dict()
         self.populated_cells = set()
