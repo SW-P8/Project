@@ -15,17 +15,19 @@ class GridSystem:
         width_cell_count = ceil(width / self.cell_size)
         height_cell_count = ceil(height / self.cell_size)
 
-        # Initialize a 2d array containing empty lists 
-        self.grid = [[[] for j in range(height_cell_count)] for i in range(width_cell_count)]
+        # Initialize a dict to act as grid - assumes sparse population of grid
+        self.grid = dict()
         self.populated_cells = set()
         
         # Fill grid with points
         for trajectory in self.pc.trajectories:
             for point in trajectory.points:
                 (x,y) = self.calculate_exact_index_for_point(point)
-                (x_f, y_f) = (floor(x), floor(y))
-                self.grid[x_f][y_f].append(point)
-                self.populated_cells.add((x_f,y_f))
+                floored_index = (floor(x), floor(y))
+                if floored_index not in self.populated_cells:
+                    self.populated_cells.add(floored_index)
+                    self.grid[floored_index] = list()
+                self.grid[floored_index].append(point)
 
     # TODO: Determine if you want to round within some treshold (shifting may not result in precise distances)
     def calculate_exact_index_for_point(self, point: trajectory.Point):
@@ -60,8 +62,8 @@ class GridSystem:
  
         for i in range(x - l, x + l + 1):
             for j in range(y - l, y + l + 1):
-                if self.grid[i][j]:
-                    cardinality = len(self.grid[i][j])
+                if (i, j) in self.populated_cells:
+                    cardinality = len(self.grid[(i, j)])
                     x_sum += cardinality * i
                     y_sum += cardinality * j
                     point_count += cardinality
@@ -140,7 +142,7 @@ class GridSystem:
         # Assign points to their nearest anchor
         for (x, y) in self.populated_cells:
             candidates = self.find_candidate_nearest_neighbors((x + 0.5, y + 0.5))
-            for point in self.grid[x][y]:
+            for point in self.grid[(x, y)]:
                 (anchor, dist) = self.find_nearest_neighbor_from_candidates(point, candidates)
                 cs[anchor].add((point, dist))
         
