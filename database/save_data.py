@@ -34,6 +34,7 @@ def insert_safe_areas(model_id, safe_areas, cursor, conn):
     params = [(model_id, anchor_x, anchor_y, radius) for anchor_x, anchor_y, radius in safe_areas]
     try:
         cursor.executemany(sql, params)
+        conn.commit()
     except (Exception, psycopg2.DatabaseError) as error:
         print(error)
         
@@ -72,7 +73,3 @@ def save_data(gs: GridSystem, db: SimpleConnectionPool):
     finally:
         if conn is not None:
             conn.close()
-    
-        
-    
-
