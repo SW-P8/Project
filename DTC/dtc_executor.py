@@ -36,6 +36,7 @@ class DTCExecutor:
             if tid != tid_of_existing_trajectory:
                 pc.add_trajectory(trajectory)
                 trajectory = Trajectory()
+                tid_of_existing_trajectory = tid
 
             trajectory.add_point(longitude, latitude, timestamp)
 

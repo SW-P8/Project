@@ -19,5 +19,5 @@ class TestDTCExecutor:
     def test_create_point_cloud_with_n_points_returns_correctly_with_two_trajectories(self, input_value, second_trajectory_size, dtc_executor: DTCExecutor):
         pc = dtc_executor.create_point_cloud_with_n_points(input_value)
         assert len(pc.trajectories) == 2
-        assert len(pc.trajectories[0].points) == 5
+        assert len(pc.trajectories[0].points) == 7
         assert len(pc.trajectories[1].points) == second_trajectory_size    
