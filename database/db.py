@@ -69,3 +69,6 @@ def __new_db_pool(host: str, db: str, user: str, pwd: str, max_con: int) -> Simp
     )
 
     return pool
+
+def new_tdrive_db_pool() -> SimpleConnectionPool:
+    return __new_db_pool(PG_HOST, PG_TDRIVE_DB, PG_TDRIVE_USER, PG_TDRIVE_PWD, PG_TDRIVE_MAX_CON)

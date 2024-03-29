@@ -63,16 +63,10 @@ class TestGridsystem():
         assert (6, 6) == (floor(x2), floor(y2))
 
     def test_grid_is_build_correctly(self, two_point_grid):
-        actual_x_size = len(two_point_grid.grid)
-        assert actual_x_size == 13
-
-        actual_y_size = len(two_point_grid.grid[0])
-        assert actual_y_size == 12
-
         assert two_point_grid.populated_cells == {(2, 3), (6, 6)}
 
-        assert two_point_grid.pc.trajectories[0].points[0] == two_point_grid.grid[2][3][0]
-        assert two_point_grid.pc.trajectories[0].points[1] == two_point_grid.grid[6][6][0]
+        assert two_point_grid.pc.trajectories[0].points[0] == two_point_grid.grid[(2, 3)][0]
+        assert two_point_grid.pc.trajectories[0].points[1] == two_point_grid.grid[(6, 6)][0]
 
     def test_calculate_euclidian_distance_returns_correctly(self):
         c1 = (0, 0)
