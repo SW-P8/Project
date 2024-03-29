@@ -1,15 +1,20 @@
 from datetime import datetime
 from geopy import distance
 from math import floor
+from typing import Optional
 
 class Point:
-    def __init__(self, longitude: float, latitude: float, timestamp: datetime) -> None:
+    def __init__(self, longitude: float, latitude: float, timestamp: Optional[datetime] = None) -> None:
         self.longitude = longitude
         self.latitude = latitude
         self.timestamp = timestamp
 
     def get_coordinates(self) -> tuple[float, float]:
         return (self.longitude, self.latitude)
+
+    def set_coordinates(self, new_coordinates):
+        self.longitude = new_coordinates[0]
+        self.latitude = new_coordinates[1]
 
 class Trajectory:
     def __init__(self) -> None:
