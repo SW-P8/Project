@@ -110,7 +110,7 @@ class GridSystem:
         return rs
     
     def construct_safe_areas(self, decrease_factor: float = 0.01):
-        cs = self.create_cover_sets(self.find_nearest_neighbor_from_candidates)
+        cs = self.create_cover_sets()
         self.safe_areas = dict()
 
         for anchor in self.route_skeleton:
