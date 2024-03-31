@@ -117,7 +117,7 @@ class GridSystem:
 
         for anchor in self.route_skeleton:
             #Initialize safe area radius
-            radius = max(cs[anchor], key=itemgetter(1))[1]
+            radius = max(cs[anchor], key=itemgetter(1), default=(0,0))[1]
             removed_count = 0
             cs_size = len(cs[anchor])
             removal_threshold = decrease_factor * cs_size
@@ -171,8 +171,18 @@ class GridSystem:
                 min_dist =dist
         return (nearest_anchor, min_dist)
 
+    # Converts cell to point by finding center of cell and calculating lon and lat based on initialization_point
+    def convert_cell_to_point(self, cell) -> trajectory.Point:
+        cell_center = (cell[0] * self.cell_size + self.cell_size / 2, cell[1] * self.cell_size + self.cell_size / 2)
+        
+        delta_lat, delta_lon = distance.distance(meters=cell_center[1]).destination((self.initialization_point[1], self.initialization_point[0]), 0)
+        delta_lon, _ = distance.distance(meters=cell_center[0]).destination((self.initialization_point[1], self.initialization_point[0]), 90)
+
+        return trajectory.Point(self.initialization_point[0] + delta_lon, self.initialization_point[1] + delta_lat)
+
     @staticmethod
     def calculate_euclidian_distance_between_cells(cell1, cell2):
         (x_1, y_1) = cell1
         (x_2, y_2) = cell2
         return sqrt((x_2 - x_1)**2 + (y_2 - y_1)**2)
+

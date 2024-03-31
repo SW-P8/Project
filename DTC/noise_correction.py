@@ -18,8 +18,9 @@ class NoiseCorrection:
         avg_point = self.calculate_average_point(trajectory.points[point_id - 1], trajectory.points[point_id + 1])
         
         # Calculate noisy point to be the center of nearest anchor.
-        nearest_anchor, dist = self.gridsystem.find_nearest_neighbor_from_candidates(avg_point, self.gridsystem.route_skeleton) 
+        nearest_anchor, _ = self.gridsystem.find_nearest_neighbor_from_candidates(avg_point, self.gridsystem.route_skeleton) 
         
+        return nearest_anchor
         # Make funciton in gridsystem that converts nearest_anchor (cell point to coordinate)
 
         # trajectory.points[point_id].set_coordinates(nearest_anchor)
