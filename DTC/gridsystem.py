@@ -117,6 +117,7 @@ class GridSystem:
             #Initialize safe area radius
             radius = max(cs[anchor], key=itemgetter(1))[1]
             removed_count = 0
+            print(removed_count)
             cs_size = len(cs[anchor])
             removal_threshold = decrease_factor * cs_size
             filtered_cs = {(p, d) for (p, d) in cs[anchor]}
@@ -143,7 +144,7 @@ class GridSystem:
             for point in self.grid[(x, y)]:
                 (anchor, dist) = nn_algorithm(point, candidates)
                 cs[anchor].add((point, dist))
-        
+
         return cs
 
 
@@ -159,7 +160,7 @@ class GridSystem:
                 candidates.add((anchor, dist))
 
         return {a for a, d in candidates if d <= min_dist + distance_to_corner_of_cell}
-    
+
     def find_nearest_neighbor_from_candidates(self, point, candidates):
         min_dist = float("inf")
         nearest_anchor = None
