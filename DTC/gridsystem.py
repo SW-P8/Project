@@ -117,7 +117,6 @@ class GridSystem:
             #Initialize safe area radius
             radius = max(cs[anchor], key=itemgetter(1))[1]
             removed_count = 0
-            print(removed_count)
             cs_size = len(cs[anchor])
             removal_threshold = decrease_factor * cs_size
             filtered_cs = {(p, d) for (p, d) in cs[anchor]}
@@ -130,8 +129,8 @@ class GridSystem:
 
             self.safe_areas[anchor] = radius
     
-    def create_cover_sets(self, nn_algorithm = None):
-        if nn_algorithm is None:
+    def create_cover_sets(self, candidate_set_algorithm = None):
+        if candidate_set_algorithm is None:
             nn_algorithm = self.find_nearest_neighbor_from_candidates
         cs = dict()
         # Initialize dictionary with a key for each anchor and an empty set for each
