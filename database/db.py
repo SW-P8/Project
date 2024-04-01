@@ -7,6 +7,8 @@ PG_ROOT_DB = "postgres"
 PG_ROOT_USER = "postgres"
 PG_ROOT_PWD = "postgres"
 SQL_RECREATE = "sql/00-recreate-db.sql"
+SQL_CREATE_SCHEMA = "sql/01-create-schema.sql"
+SQL_SEED_DB = "sql/02-dev-seed.sql"
 
 PG_TDRIVE_DB = "tdrive_db"
 PG_TDRIVE_USER = "tdrive_user"
@@ -25,12 +27,14 @@ def init_db() -> SimpleConnectionPool:
     paths = [os.path.abspath(path) for path in paths if os.path.isfile(path)]
     paths.sort()
 
-    # Execute each file
-    for path in paths:
-        if path.endswith('.sql') and not SQL_RECREATE in path:
-            __pexec(app_db, path)
+    # Create database schema
+    __pexec(app_db, SQL_CREATE_SCHEMA)
 
     return __new_db_pool(PG_HOST, PG_TDRIVE_DB, PG_TDRIVE_USER, PG_TDRIVE_PWD, PG_TDRIVE_MAX_CON)
+
+def seed_db(db: SimpleConnectionPool):
+    """ Seeds database with initial data """
+    __pexec(db, SQL_SEED_DB)
 
 def __pexec(db: SimpleConnectionPool, file):
     """ Executes sql statements from a file """

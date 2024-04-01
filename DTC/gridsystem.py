@@ -129,7 +129,9 @@ class GridSystem:
 
             self.safe_areas[anchor] = radius
     
-    def create_cover_sets(self):
+    def create_cover_sets(self, find_candidate_algorithm = None):
+        if find_candidate_algorithm is None:
+            find_candidate_algorithm = self.find_candidate_nearest_neighbors
         cs = dict()
         # Initialize dictionary with a key for each anchor and an empty set for each
         for anchor in self.route_skeleton:
@@ -137,11 +139,11 @@ class GridSystem:
 
         # Assign points to their nearest anchor
         for (x, y) in self.populated_cells:
-            candidates = self.find_candidate_nearest_neighbors((x + 0.5, y + 0.5))
+            candidates = find_candidate_algorithm((x + 0.5, y + 0.5))
             for point in self.grid[(x, y)]:
                 (anchor, dist) = self.find_nearest_neighbor_from_candidates(point, candidates)
                 cs[anchor].add((point, dist))
-        
+
         return cs
 
 
@@ -157,7 +159,7 @@ class GridSystem:
                 candidates.add((anchor, dist))
 
         return {a for a, d in candidates if d <= min_dist + distance_to_corner_of_cell}
-    
+
     def find_nearest_neighbor_from_candidates(self, point, candidates):
         min_dist = float("inf")
         nearest_anchor = None
