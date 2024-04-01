@@ -16,18 +16,7 @@ class DTCExecutor:
         self.grid_system = None
 
     def execute_dtc_with_n_points(self, n: int):
-        records = self.tdrive_handler.read_n_records(n)
-        tid_of_existing_trajectory = 1
-        trajectory = Trajectory()
-        pc = TrajectoryPointCloud()
-
-        for _, timestamp, longitude, latitude, tid in records:
-            if tid != tid_of_existing_trajectory:
-                pc.add_trajectory(trajectory)
-                trajectory = Trajectory()
-
-            trajectory.add_point(longitude, latitude, timestamp)
-
+        pc = self.create_point_cloud_with_n_points(n)
         gs = GridSystem(pc)
         gs.create_grid_system()
         gs.extract_main_route()
@@ -35,4 +24,22 @@ class DTCExecutor:
         gs.construct_safe_areas()
 
         return gs
+    
+    def create_point_cloud_with_n_points(self, n: int):
+        records = self.tdrive_handler.read_n_records(n)
+        tid_of_existing_trajectory = 1
+        trajectory = Trajectory()
+        pc = TrajectoryPointCloud()
+
+        for _, timestamp, longitude, latitude, tid in records:
+            # Separate points into trajectories based on their trajectory ids
+            if tid != tid_of_existing_trajectory:
+                pc.add_trajectory(trajectory)
+                trajectory = Trajectory()
+                tid_of_existing_trajectory = tid
+
+            trajectory.add_point(longitude, latitude, timestamp)
+
+        pc.add_trajectory(trajectory)
+        return pc
         
