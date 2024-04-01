@@ -1,7 +1,10 @@
 from DTC import trajectory
+from DTC.utils.constants import NORTH, EAST, SOUTH, WEST
 from math import ceil, floor, sqrt
 from geopy import distance
 from operator import itemgetter
+from datetime import datetime
+from typing import Optional
 
 class GridSystem:
     def __init__(self, pc: trajectory.TrajectoryPointCloud) -> None:
@@ -172,13 +175,13 @@ class GridSystem:
         return (nearest_anchor, min_dist)
 
     # Converts cell to point by finding center of cell and calculating lon and lat based on initialization_point
-    def convert_cell_to_point(self, cell) -> trajectory.Point:
-        cell_center = (cell[0] * self.cell_size + self.cell_size / 2, cell[1] * self.cell_size + self.cell_size / 2)
+    def convert_cell_to_point(self, cell, timestamp: Optional[datetime] = None) -> trajectory.Point:
+        new_point = (cell[1] * self.cell_size, cell[0] * self.cell_size)
         
-        delta_lat, delta_lon = distance.distance(meters=cell_center[1]).destination((self.initialization_point[1], self.initialization_point[0]), 0)
-        delta_lon, _ = distance.distance(meters=cell_center[0]).destination((self.initialization_point[1], self.initialization_point[0]), 90)
+        delta_lat_lon = distance.distance(meters=new_point[1]).destination((self.initialization_point[1], self.initialization_point[0]), NORTH)
+        delta_lat_lon = distance.distance(meters=new_point[0]).destination(delta_lat_lon, EAST)
 
-        return trajectory.Point(self.initialization_point[0] + delta_lon, self.initialization_point[1] + delta_lat)
+        return trajectory.Point(delta_lat_lon[1], delta_lat_lon[0], timestamp)
 
     @staticmethod
     def calculate_euclidian_distance_between_cells(cell1, cell2):

@@ -3,6 +3,7 @@ from DTC import trajectory, gridsystem
 from geopy import distance
 from datetime import datetime
 from math import sqrt, floor
+from DTC.utils.constants import NORTH, EAST
 
 class TestGridsystem():
     @pytest.fixture
@@ -456,3 +457,30 @@ class TestGridsystem():
         assert len(five_point_grid.safe_areas) == 2
         assert five_point_grid.safe_areas[(2, 2)] == expected_r1
         assert five_point_grid.safe_areas[(7, 7)] == expected_r2
+
+    def test_convert_cell_to_point_without_timestamp(self, single_point_grid):
+        cell = (10,10)
+
+        new_point = single_point_grid.convert_cell_to_point(cell)
+
+        expected_point = distance.distance(meters=single_point_grid.pc.cell_size * 10).destination((single_point_grid.initialization_point[1], single_point_grid.initialization_point[0]), NORTH)
+        expected_point = distance.distance(meters=single_point_grid.pc.cell_size * 10).destination(expected_point, EAST)
+
+        assert new_point.longitude == expected_point.longitude
+        assert new_point.latitude == expected_point.latitude
+        assert new_point.timestamp == None
+    
+    def test_convert_cell_to_point_with_timestamp(self, single_point_grid):
+        cell = (10,10)
+        
+        time = datetime.now()
+
+        new_point = single_point_grid.convert_cell_to_point(cell, time)
+
+        expected_point = distance.distance(meters=single_point_grid.pc.cell_size * 10).destination((single_point_grid.initialization_point[1], single_point_grid.initialization_point[0]), NORTH)
+        expected_point = distance.distance(meters=single_point_grid.pc.cell_size * 10).destination(expected_point, EAST)
+
+        assert new_point.longitude == expected_point.longitude
+        assert new_point.latitude == expected_point.latitude
+        assert new_point.timestamp == time
+
