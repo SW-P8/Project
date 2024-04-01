@@ -6,25 +6,6 @@ from psycopg2.pool import SimpleConnectionPool
 from DTC.gridsystem import GridSystem
 
 warnings.simplefilter(action='ignore', category=UserWarning)
-CREATE_TABLES_SQL = [
-    """
-    CREATE TABLE IF NOT EXISTS DTC_model_min_coords (
-        model_id SERIAL PRIMARY KEY,
-        min_longitude FLOAT NOT NULL,
-        min_latitude FLOAT NOT NULL
-    );
-    """,
-    """
-    CREATE TABLE IF NOT EXISTS DTC_model_safe_areas (
-        area_id SERIAL PRIMARY KEY,
-        model_id INT NOT NULL,
-        anchor_x FLOAT NOT NULL,
-        anchor_y FLOAT NOT NULL,
-        radius FLOAT NOT NULL,
-        FOREIGN KEY (model_id) REFERENCES DTC_model_min_coords(model_id) ON DELETE CASCADE
-    );
-    """
-]
 
 def insert_safe_areas(model_id, safe_areas, cursor, conn):
     """
@@ -98,8 +79,6 @@ def save_data(gs: GridSystem, db: SimpleConnectionPool):
     try:
         conn = db.getconn()
         cursor = conn.cursor()
-        for sql_cmd in CREATE_TABLES_SQL:
-            cursor.execute(sql_cmd)
         id = insert_long_lat(min_long_lat[0], min_long_lat[1], conn, cursor)
         insert_safe_areas(id, safe_areas, cursor, conn)
     except (Exception, psycopg2.DatabaseError) as error:
