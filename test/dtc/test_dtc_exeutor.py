@@ -5,7 +5,8 @@ from DTC.dtc_executor import DTCExecutor
 class TestDTCExecutor:
     @pytest.fixture
     def dtc_executor(self) -> DTCExecutor:
-        db.init_db()
+        connection = db.init_db()
+        db.seed_db(connection)
         return DTCExecutor()
     
     @pytest.mark.parametrize("input_value", range(1, 8))
