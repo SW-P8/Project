@@ -6,7 +6,9 @@ from database.taxi_data_handler import TaxiDataHandler
 class TestDataHandler():
     @pytest.fixture
     def dal(self) -> TaxiDataHandler:
-        return TaxiDataHandler(db.init_db())
+        connection = db.init_db()
+        db.seed_db(connection)
+        return TaxiDataHandler(connection)
 
     def test_dev_seed(self, dal: TaxiDataHandler):
         res = dal.read_records_by_taxi_id(1)

@@ -74,7 +74,7 @@ class TaxiDataHandler:
         Returns:
             List of tuples containing n records
         """
-        sql = "SELECT * FROM TaxiData limit %s"
+        sql = "SELECT * FROM TaxiData LIMIT %s"
         with self.__connection_pool.getconn() as conn:
             with conn.cursor() as cursor:
                 cursor.execute(sql, (n,))
