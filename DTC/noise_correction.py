@@ -16,7 +16,7 @@ class NoiseCorrection:
                 if i != 0 and i != len(trajectory.points) - 1:
                     self.correct_noisy_point(trajectory, i)
 
-    def correct_noisy_point(self, trajectory: trajectory.Trajectory, point_id: int):
+    def correct_noisy_point(self, trajectory: Trajectory, point_id: int):
         self.calculate_average_point(trajectory.points[point_id], trajectory.points[point_id - 1], trajectory.points[point_id + 1])
         
         # Calculate noisy point to be the center of nearest anchor.
