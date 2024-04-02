@@ -31,14 +31,13 @@ class GridSystem:
                     self.grid[floored_index] = list()
                 self.grid[floored_index].append(point)
 
-    # TODO: Determine if you want to round within some treshold (shifting may not result in precise distances)
     def calculate_exact_index_for_point(self, point: trajectory.Point):
         # Calculate x index
-        x_offset = distance.distance((self.initialization_point[1], self.initialization_point[0]), (self.initialization_point[1], point.longitude)).meters
+        x_offset = round(distance.distance((self.initialization_point[1], self.initialization_point[0]), (self.initialization_point[1], point.longitude)).meters, 2)
         x_coordinate = (x_offset / self.cell_size) - 1
 
         # Calculate y index
-        y_offset = distance.distance((self.initialization_point[1], self.initialization_point[0]), (point.latitude ,self.initialization_point[0])).meters
+        y_offset = round(distance.distance((self.initialization_point[1], self.initialization_point[0]), (point.latitude ,self.initialization_point[0])).meters, 2)
         y_coordinate = (y_offset / self.cell_size) - 1
 
         return (x_coordinate, y_coordinate)
