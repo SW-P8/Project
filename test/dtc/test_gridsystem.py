@@ -58,22 +58,16 @@ class TestGridsystem():
 
     def test_calculate_index_for_point_is_correct(self, two_point_grid):
         (x1, y1) = two_point_grid.calculate_exact_index_for_point(two_point_grid.pc.trajectories[0].points[0])
-        assert (2, 3) == (floor(x1), floor(y1))
+        assert (3, 3) == (floor(x1), floor(y1))
 
         (x2, y2) = two_point_grid.calculate_exact_index_for_point(two_point_grid.pc.trajectories[0].points[1])
-        assert (6, 6) == (floor(x2), floor(y2))
+        assert (7, 7) == (floor(x2), floor(y2))
 
     def test_grid_is_build_correctly(self, two_point_grid):
-        actual_x_size = len(two_point_grid.grid)
-        assert actual_x_size == 13
+        assert two_point_grid.populated_cells == {(3, 3), (7, 7)}
 
-        actual_y_size = len(two_point_grid.grid[0])
-        assert actual_y_size == 12
-
-        assert two_point_grid.populated_cells == {(2, 3), (6, 6)}
-
-        assert two_point_grid.pc.trajectories[0].points[0] == two_point_grid.grid[2][3][0]
-        assert two_point_grid.pc.trajectories[0].points[1] == two_point_grid.grid[6][6][0]
+        assert two_point_grid.pc.trajectories[0].points[0] == two_point_grid.grid[(3, 3)][0]
+        assert two_point_grid.pc.trajectories[0].points[1] == two_point_grid.grid[(7, 7)][0]
 
     def test_calculate_euclidian_distance_returns_correctly(self):
         c1 = (0, 0)
@@ -95,15 +89,15 @@ class TestGridsystem():
     def test_calculate_density_center_returns_correctly_with_single_point(self, single_point_grid):
         density_center = single_point_grid.calculate_density_center((2, 3))
 
-        assert density_center == (2, 3)
+        assert density_center == (3, 3)
 
     def test_calculate_density_center_returns_correctly_with_two_points(self, two_point_grid):
-        density_center1 = two_point_grid.calculate_density_center((2, 3))
-        density_center2 = two_point_grid.calculate_density_center((6, 6))
+        density_center1 = two_point_grid.calculate_density_center((3, 3))
+        density_center2 = two_point_grid.calculate_density_center((7, 7))
 
         # Density center should be the same as their neighborhoods intersect and they are the only points
-        assert density_center1 == (4, 4.5)
-        assert density_center2 == (4, 4.5)
+        assert density_center1 == (5, 5)
+        assert density_center2 == (5, 5)
 
     def test_calculate_density_center_returns_correctly_with_many_points(self):
         pc = trajectory.TrajectoryPointCloud()
@@ -123,17 +117,17 @@ class TestGridsystem():
         gs = gridsystem.GridSystem(pc)
         gs.create_grid_system()
 
-        density_center1 = gs.calculate_density_center((2, 3))
-        density_center2 = gs.calculate_density_center((6, 6))
+        density_center1 = gs.calculate_density_center((3, 3))
+        density_center2 = gs.calculate_density_center((7, 7))
 
-        # Density center should be skewed towards (2,3) as the quantity of points in this cell is higher
-        assert density_center1 == (26 / 11, 36 / 11)
-        assert density_center2 == (26 / 11, 36 / 11)
+        # Density center should be skewed towards (3,3) as the quantity of points in this cell is higher
+        assert density_center1 == (37 / 11, 37 / 11)
+        assert density_center2 == (37 / 11, 37 / 11)
 
     def test_extract_main_route_returns_correctly_with_single_point(self, single_point_grid):
         single_point_grid.extract_main_route()
 
-        assert single_point_grid.main_route == {(2, 3)}
+        assert single_point_grid.main_route == {(3, 3)}
 
     def test_extract_main_route_raises_error_correctly(self, single_point_grid):
         with pytest.raises(ValueError) as e:
@@ -144,8 +138,9 @@ class TestGridsystem():
     def test_extract_main_route_returns_correctly_with_two_points(self, two_point_grid):
         two_point_grid.extract_main_route(0.4)
 
-        assert two_point_grid.main_route == {(2, 3), (6, 6)}
+        assert two_point_grid.main_route == {(3, 3), (7, 7)}
 
+        two_point_grid.main_route = set()
         # Should return an empty set with default d
         two_point_grid.extract_main_route()
         assert two_point_grid.main_route == set()
@@ -169,29 +164,29 @@ class TestGridsystem():
         gs.create_grid_system()
         gs.extract_main_route()
 
-        # Density center is skewed towards (2, 3) enough that (6, 6) is not included in main route
-        assert gs.main_route == {(2, 3)}
+        # Density center is skewed towards (3, 3) enough that (6, 6) is not included in main route
+        assert gs.main_route == {(3, 3)}
 
     # Points in grid are not used here as operations are made only on main route
     def test_smooth_main_route_returns_correctly_with_single_element(self, single_point_grid):
-        single_point_grid.main_route = {(2, 3)}
+        single_point_grid.main_route = {(3, 3)}
         smr = single_point_grid.smooth_main_route()
 
         # Should simply contain the center of the single cell
-        assert smr == {(2.5, 3.5)}
+        assert smr == {(3.5, 3.5)}
 
     # Points in grid are not used here as operations are made only on main route
     def test_smooth_main_route_returns_correctly_with_two_elements(self, single_point_grid):
-        single_point_grid.main_route = {(2, 3), (27, 3)}
+        single_point_grid.main_route = {(3, 3), (27, 3)}
         smr1 = single_point_grid.smooth_main_route()
 
         # Should only contain the avg position of the two cells centers
-        assert smr1 == {(15, 3.5)}
+        assert smr1 == {(15.5, 3.5)}
 
         smr2 = single_point_grid.smooth_main_route(20)
 
         # Should contain the centers of the two cells as they are too far apart
-        assert smr2 == {(2.5, 3.5), (27.5, 3.5)}
+        assert smr2 == {(3.5, 3.5), (27.5, 3.5)}
 
     # Points in grid are not used here as operations are made only on main route
     def test_smooth_main_route_returns_correctly_with_multiple_elements(self, single_point_grid):
@@ -325,40 +320,40 @@ class TestGridsystem():
         assert cnn3 == {(2.5, 2.5), (3, 3), (4, 4)}
 
     def test_find_nearest_neighbor_from_candidates_returns_correctly_with_single_candidate(self, two_point_grid):
-        candidates = {(3, 3)}
-        # Point 1 has exact index (2.9999999999807985, 3.0000000000000018)
+        candidates = {(2.5, 2.5)}
+        # Point 1 has exact index (3, 3)
         (nn1, d1) = two_point_grid.find_nearest_neighbor_from_candidates(two_point_grid.pc.trajectories[0].points[0], candidates)
-        # Point 2 has exact index (6.999999999978899, 6.99999999998021)
+        # Point 2 has exact index (7, 7)
         (nn2, d2) = two_point_grid.find_nearest_neighbor_from_candidates(two_point_grid.pc.trajectories[0].points[1], candidates)
 
-        expected_d1 = two_point_grid.calculate_euclidian_distance_between_cells((2.9999999999807985, 3.0000000000000018), (3, 3))
-        expected_d2 = two_point_grid.calculate_euclidian_distance_between_cells((6.999999999978899, 6.99999999998021), (3, 3))
+        expected_d1 = two_point_grid.calculate_euclidian_distance_between_cells((3, 3), (2.5, 2.5))
+        expected_d2 = two_point_grid.calculate_euclidian_distance_between_cells((7, 7), (2.5, 2.5))
 
-        assert (nn1, d1) == ((3, 3), expected_d1)
-        assert (nn2, d2) == ((3, 3), expected_d2)
+        assert (nn1, d1) == ((2.5, 2.5), expected_d1)
+        assert (nn2, d2) == ((2.5, 2.5), expected_d2)
 
     def test_find_nearest_neighbor_from_candidates_returns_correctly_with_two_candidates(self, two_point_grid):
-        candidates = {(3, 3), (5, 6)}
-        # Point 1 has exact index (2.9999999999807985, 3.0000000000000018)
+        candidates = {(2.5, 2.5), (5, 6)}
+        # Point 1 has exact index (3, 3)
         (nn1, d1) = two_point_grid.find_nearest_neighbor_from_candidates(two_point_grid.pc.trajectories[0].points[0], candidates)
-        # Point 2 has exact index (6.999999999978899, 6.99999999998021)
+        # Point 2 has exact index (7, 7)
         (nn2, d2) = two_point_grid.find_nearest_neighbor_from_candidates(two_point_grid.pc.trajectories[0].points[1], candidates)
 
-        expected_d1 = two_point_grid.calculate_euclidian_distance_between_cells((2.9999999999807985, 3.0000000000000018), (3, 3))
-        expected_d2 = two_point_grid.calculate_euclidian_distance_between_cells((6.999999999978899, 6.99999999998021), (5, 6))
+        expected_d1 = two_point_grid.calculate_euclidian_distance_between_cells((3, 3), (2.5, 2.5))
+        expected_d2 = two_point_grid.calculate_euclidian_distance_between_cells((7, 7), (5, 6))
 
-        assert (nn1, d1) == ((3, 3), expected_d1)
+        assert (nn1, d1) == ((2.5, 2.5), expected_d1)
         assert (nn2, d2) == ((5, 6), expected_d2)
 
     def test_find_nearest_neighbor_from_candidates_returns_correctly_with_many_candidates(self, two_point_grid):
         candidates = {(2, 3), (3, 3), (5, 6), (7, 7)}
-        # Point 1 has exact index (2.9999999999807985, 3.0000000000000018)
+        # Point 1 has exact index (3, 3)
         (nn1, d1) = two_point_grid.find_nearest_neighbor_from_candidates(two_point_grid.pc.trajectories[0].points[0], candidates)
-        # Point 2 has exact index (6.999999999978899, 6.99999999998021)
+        # Point 2 has exact index (7, 7)
         (nn2, d2) = two_point_grid.find_nearest_neighbor_from_candidates(two_point_grid.pc.trajectories[0].points[1], candidates)
 
-        expected_d1 = two_point_grid.calculate_euclidian_distance_between_cells((2.9999999999807985, 3.0000000000000018), (3, 3))
-        expected_d2 = two_point_grid.calculate_euclidian_distance_between_cells((6.999999999978899, 6.99999999998021), (7, 7))
+        expected_d1 = two_point_grid.calculate_euclidian_distance_between_cells((3, 3), (3, 3))
+        expected_d2 = two_point_grid.calculate_euclidian_distance_between_cells((7, 7), (7, 7))
 
         assert (nn1, d1) == ((3, 3), expected_d1)
         assert (nn2, d2) == ((7, 7), expected_d2)        
@@ -367,8 +362,8 @@ class TestGridsystem():
         two_point_grid.route_skeleton = {(3, 3)}
         cs = two_point_grid.create_cover_sets()
 
-        expected_d1 = two_point_grid.calculate_euclidian_distance_between_cells((2.9999999999807985, 3.0000000000000018), (3, 3))
-        expected_d2 = two_point_grid.calculate_euclidian_distance_between_cells((6.999999999978899, 6.99999999998021), (3, 3))
+        expected_d1 = two_point_grid.calculate_euclidian_distance_between_cells((3, 3), (3, 3))
+        expected_d2 = two_point_grid.calculate_euclidian_distance_between_cells((7, 7), (3, 3))
 
         assert len(cs) == 1
         assert cs[(3, 3)] == {(two_point_grid.pc.trajectories[0].points[0], expected_d1), (two_point_grid.pc.trajectories[0].points[1], expected_d2)}
@@ -377,8 +372,8 @@ class TestGridsystem():
         two_point_grid.route_skeleton = {(3, 3), (5, 6)}
         cs = two_point_grid.create_cover_sets()
 
-        expected_d1 = two_point_grid.calculate_euclidian_distance_between_cells((2.9999999999807985, 3.0000000000000018), (3, 3))
-        expected_d2 = two_point_grid.calculate_euclidian_distance_between_cells((6.999999999978899, 6.99999999998021), (5, 6))
+        expected_d1 = two_point_grid.calculate_euclidian_distance_between_cells((3, 3), (3, 3))
+        expected_d2 = two_point_grid.calculate_euclidian_distance_between_cells((7, 7), (5, 6))
 
         assert len(cs) == 2
         assert cs[(3, 3)] == {(two_point_grid.pc.trajectories[0].points[0], expected_d1)}
@@ -389,8 +384,8 @@ class TestGridsystem():
         two_point_grid.route_skeleton = {(2, 3), (3, 3), (5, 6), (7, 7)}
         cs = two_point_grid.create_cover_sets()
 
-        expected_d1 = two_point_grid.calculate_euclidian_distance_between_cells((2.9999999999807985, 3.0000000000000018), (3, 3))
-        expected_d2 = two_point_grid.calculate_euclidian_distance_between_cells((6.999999999978899, 6.99999999998021), (7, 7))
+        expected_d1 = two_point_grid.calculate_euclidian_distance_between_cells((3, 3), (3, 3))
+        expected_d2 = two_point_grid.calculate_euclidian_distance_between_cells((7, 7), (7, 7))
 
         assert len(cs) == 4
         assert cs[(3, 3)] == {(two_point_grid.pc.trajectories[0].points[0], expected_d1)}
@@ -403,7 +398,7 @@ class TestGridsystem():
         two_point_grid.route_skeleton = {(3, 3)}
         two_point_grid.construct_safe_areas(0)
         
-        expected_r = two_point_grid.calculate_euclidian_distance_between_cells((6.999999999978899, 6.99999999998021), (3, 3))
+        expected_r = two_point_grid.calculate_euclidian_distance_between_cells((7, 7), (3, 3))
 
         assert len(two_point_grid.safe_areas) == 1
         assert two_point_grid.safe_areas[(3, 3)] == expected_r
@@ -412,7 +407,7 @@ class TestGridsystem():
         two_point_grid.route_skeleton = {(3, 3)}
         two_point_grid.construct_safe_areas()
         
-        expected_r = two_point_grid.calculate_euclidian_distance_between_cells((6.999999999978899, 6.99999999998021), (3, 3)) * 0.99
+        expected_r = two_point_grid.calculate_euclidian_distance_between_cells((7, 7), (3, 3)) * 0.99
 
         assert len(two_point_grid.safe_areas) == 1
         assert two_point_grid.safe_areas[(3, 3)] == expected_r
@@ -421,7 +416,7 @@ class TestGridsystem():
         five_point_grid.route_skeleton = {(3, 3)}
         five_point_grid.construct_safe_areas()
         
-        expected_r = five_point_grid.calculate_euclidian_distance_between_cells((6.999999999978899, 6.99999999998021), (3, 3)) * 0.99
+        expected_r = five_point_grid.calculate_euclidian_distance_between_cells((7, 7), (3, 3)) * 0.99
 
         assert len(five_point_grid.safe_areas) == 1
         assert five_point_grid.safe_areas[(3, 3)] == expected_r

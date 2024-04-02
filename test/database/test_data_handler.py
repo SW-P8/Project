@@ -6,7 +6,9 @@ from database.taxi_data_handler import TaxiDataHandler
 class TestDataHandler():
     @pytest.fixture
     def dal(self) -> TaxiDataHandler:
-        return TaxiDataHandler(db.init_db())
+        connection = db.init_db()
+        db.seed_db(connection)
+        return TaxiDataHandler(connection)
 
     def test_dev_seed(self, dal: TaxiDataHandler):
         res = dal.read_records_by_taxi_id(1)
@@ -18,6 +20,13 @@ class TestDataHandler():
 
         assert len(res1) == 7
         assert len(res2) == 2
+
+    def test_read_n_records(self, dal:TaxiDataHandler):
+        res1 = dal.read_n_records(4)
+        res2 = dal.read_n_records(9)
+
+        assert len(res1) == 4
+        assert len(res2) == 9
 
     def test_adding_record(self, dal: TaxiDataHandler):
         dal.create_record(420, datetime.datetime(2024, 3, 19, 14, 3, 0), 69, 67, 1337)
