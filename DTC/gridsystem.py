@@ -172,7 +172,7 @@ class GridSystem:
                 min_dist =dist
         return (nearest_anchor, min_dist)
 
-    # Converts cell to point by finding center of cell and calculating lon and lat based on initialization_point
+    # Converts cell to point based on initialization_point
     def convert_cell_to_point(self, cell, timestamp: Optional[datetime] = None) -> trajectory.Point:
         new_point = (cell[1] * self.cell_size, cell[0] * self.cell_size)
         

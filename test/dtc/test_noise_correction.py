@@ -66,7 +66,7 @@ class TestGridsystem():
 
         nc.correct_noisy_point(nc.gridsystem.pc.trajectories[0], 3)
         
-        expected_point = nc.gridsystem.convert_cell_to_point((7,7), nc.gridsystem.pc.trajectories[0].points[3].timestamp)
+        expected_point = nc.gridsystem.convert_cell_to_point((5,5), nc.gridsystem.pc.trajectories[0].points[3].timestamp)
 
         assert nc.gridsystem.pc.trajectories[0].points[3].longitude == expected_point.longitude
         assert nc.gridsystem.pc.trajectories[0].points[3].latitude == expected_point.latitude
@@ -115,7 +115,7 @@ class TestGridsystem():
         
         nc.noise_detection(nc.gridsystem.pc.trajectories[0])
         
-        expected_corrected_point = nc.gridsystem.convert_cell_to_point((7,7))
+        expected_corrected_point = nc.gridsystem.convert_cell_to_point((5,5))
 
         assert nc.gridsystem.pc.trajectories[0] != trajectory_before_correction 
         assert nc.gridsystem.pc.trajectories[0].points[3].longitude == expected_corrected_point.longitude
