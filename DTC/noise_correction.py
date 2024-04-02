@@ -28,7 +28,7 @@ class NoiseCorrection:
             trajectory.points[point_id] = self.gridsystem.convert_cell_to_point(nearest_anchor, trajectory.points[point_id].timestamp)
 
     @staticmethod
-    def calculate_average_point(p: trajectory.Point, p_prev: trajectory.Point, p_next: trajectory.Point):
+    def calculate_average_point(p: Point, p_prev: Point, p_next: Point):
         p.longitude = (p_prev.longitude + p_next.longitude) / 2
         p.latitude = (p_prev.latitude + p_next.latitude) / 2
 
