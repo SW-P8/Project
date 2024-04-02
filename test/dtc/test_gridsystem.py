@@ -139,6 +139,7 @@ class TestGridsystem():
 
         assert two_point_grid.main_route == {(3, 3), (7, 7)}
 
+        two_point_grid.main_route = set()
         # Should return an empty set with default d
         two_point_grid.extract_main_route()
         assert two_point_grid.main_route == set()

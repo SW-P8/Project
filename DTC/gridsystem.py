@@ -9,18 +9,14 @@ class GridSystem:
         self.initialization_point = pc.get_shifted_min()
         self.cell_size = pc.cell_size
         self.neighborhood_size = pc.neighborhood_size
-        self.grid: list(list) = None
-        self.populated_cells: set = None
-        self.main_route: set = None
-        self.route_skeleton: set = None
+        self.grid = dict()
+        self.populated_cells = set()
+        self.main_route = set()
+        self.route_skeleton = set()
         self.safe_areas = dict()
 
 
     def create_grid_system(self):
-        # Initialize a dict to act as grid - assumes sparse population of grid
-        self.grid = dict()
-        self.populated_cells = set()
-        
         # Fill grid with points
         for trajectory in self.pc.trajectories:
             for point in trajectory.points:
@@ -43,8 +39,6 @@ class GridSystem:
         return (x_coordinate, y_coordinate)
     
     def extract_main_route(self, distance_scale: float = 0.2):
-        self.main_route = set()
-
         if distance_scale >= 0.5:
             raise ValueError("distance scale must be less than neighborhood size divided by 2")
         distance_threshold = distance_scale * self.neighborhood_size
