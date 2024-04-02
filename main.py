@@ -1,6 +1,7 @@
 """ Program entrypoint """
 import sys
 from DTC.dtc_executor import DTCExecutor
+from DTC.visualizer import Visualizer
 
 INIT_DB = False
 for arg in sys.argv:
@@ -8,6 +9,7 @@ for arg in sys.argv:
         INIT_DB = True
 
 dtc_executor = DTCExecutor(INIT_DB)
-dtc_executor.execute_dtc_with_n_points(20000)
+gs = dtc_executor.execute_dtc_with_n_points(20000)
 
-#TODO: Add visualizer here
+visualizer = Visualizer(gs)
+visualizer.visualize()

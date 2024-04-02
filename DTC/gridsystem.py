@@ -9,12 +9,14 @@ class GridSystem:
         self.initialization_point = pc.get_shifted_min()
         self.cell_size = pc.cell_size
         self.neighborhood_size = pc.neighborhood_size
-
-    def create_grid_system(self):
-        # Initialize a dict to act as grid - assumes sparse population of grid
         self.grid = dict()
         self.populated_cells = set()
-        
+        self.main_route = set()
+        self.route_skeleton = set()
+        self.safe_areas = dict()
+
+
+    def create_grid_system(self):
         # Fill grid with points
         for trajectory in self.pc.trajectories:
             for point in trajectory.points:
@@ -37,8 +39,6 @@ class GridSystem:
         return (x_coordinate, y_coordinate)
     
     def extract_main_route(self, distance_scale: float = 0.2):
-        self.main_route = set()
-
         if distance_scale >= 0.5:
             raise ValueError("distance scale must be less than neighborhood size divided by 2")
         distance_threshold = distance_scale * self.neighborhood_size
@@ -71,10 +71,10 @@ class GridSystem:
 
         return (x_sum, y_sum)
     
-    def extract_route_skeleton(self):
-        smr = self.smooth_main_route()
-        cmr = self.filter_outliers_in_main_route(smr)
-        self.route_skeleton = self.sample_main_route(cmr)
+    def extract_route_skeleton(self, smooth_radius: int = 25, filtering_list_radius: int = 20, distance_interval: int = 20):
+        smr = self.smooth_main_route(smooth_radius)
+        cmr = self.filter_outliers_in_main_route(smr, filtering_list_radius)
+        self.route_skeleton = self.sample_main_route(cmr, distance_interval)
         
     def smooth_main_route(self, radius: int = 25) -> set:
         smr = set()
@@ -87,7 +87,7 @@ class GridSystem:
                 x_sum /= len(ns)
 
             if y_sum != 0:
-                y_sum /= len(ns)            
+                y_sum /= len(ns)
             smr.add((x_sum, y_sum))
         return smr
     
@@ -110,7 +110,6 @@ class GridSystem:
     
     def construct_safe_areas(self, decrease_factor: float = 0.01):
         cs = self.create_cover_sets()
-        self.safe_areas = dict()
 
         for anchor in self.route_skeleton:
             #Initialize safe area radius
