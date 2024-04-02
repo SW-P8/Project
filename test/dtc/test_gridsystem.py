@@ -28,8 +28,8 @@ class TestGridsystem():
         t.add_point(1,0,datetime(2024, 1, 1, 1, 1, 1))
 
         # Shift second point 20 meters north and east (should result in the two points being 4 cells apart in both x and y)
-        shifted_point = distance.distance(meters=20).destination((t.points[0].latitude, t.points[0].longitude), 0)
-        shifted_point = distance.distance(meters=20).destination((shifted_point), 90)
+        shifted_point = distance.distance(meters=20).destination((t.points[0].latitude, t.points[0].longitude), NORTH)
+        shifted_point = distance.distance(meters=20).destination((shifted_point), EAST)
         
         t.add_point(shifted_point.longitude, shifted_point.latitude, datetime(2024, 1, 1, 1, 1, 2))
         pc.add_trajectory(t)
@@ -47,8 +47,8 @@ class TestGridsystem():
 
         for i in range(1, 5):
             # Shift points 5 meters north and east (should result in 5 points being 1 cell apart in both x and y)
-            shifted_point = distance.distance(meters=i * 5).destination((t.points[0].latitude, t.points[0].longitude), 0)
-            shifted_point = distance.distance(meters=i * 5).destination((shifted_point), 90)
+            shifted_point = distance.distance(meters=i * 5).destination((t.points[0].latitude, t.points[0].longitude), NORTH)
+            shifted_point = distance.distance(meters=i * 5).destination((shifted_point), EAST)
         
             t.add_point(shifted_point.longitude, shifted_point.latitude, datetime(2024, 1, 1, 1, 1, 1 + i))
         pc.add_trajectory(t)
@@ -114,8 +114,8 @@ class TestGridsystem():
             t.add_point(1,0,datetime(2024, 1, 1, 1, 1, i))
 
         # Shift second point 20 meters north and east (should result in the two points being 4 cells apart in both x and y)
-        shifted_point = distance.distance(meters=20).destination((t.points[0].latitude, t.points[0].longitude), 0)
-        shifted_point = distance.distance(meters=20).destination((shifted_point), 90)
+        shifted_point = distance.distance(meters=20).destination((t.points[0].latitude, t.points[0].longitude), NORTH)
+        shifted_point = distance.distance(meters=20).destination((shifted_point), EAST)
         t.add_point(shifted_point.longitude, shifted_point.latitude, datetime(2024, 1, 1, 1, 1, 11))
 
 
@@ -159,8 +159,8 @@ class TestGridsystem():
             t.add_point(1,0,datetime(2024, 1, 1, 1, 1, i))
 
         # Shift second point 20 meters north and east (should result in the two points being 4 cells apart in both x and y)
-        shifted_point = distance.distance(meters=20).destination((t.points[0].latitude, t.points[0].longitude), 0)
-        shifted_point = distance.distance(meters=20).destination((shifted_point), 90)
+        shifted_point = distance.distance(meters=20).destination((t.points[0].latitude, t.points[0].longitude), NORTH)
+        shifted_point = distance.distance(meters=20).destination((shifted_point), EAST)
         t.add_point(shifted_point.longitude, shifted_point.latitude, datetime(2024, 1, 1, 1, 1, 11))
 
 

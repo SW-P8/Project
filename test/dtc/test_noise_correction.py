@@ -2,6 +2,7 @@ import pytest
 from DTC import trajectory, gridsystem, noise_correction
 from datetime import datetime
 from geopy import distance
+from DTC.utils.constants import NORTH, EAST
 
 class TestGridsystem():    
     @pytest.fixture
@@ -14,8 +15,8 @@ class TestGridsystem():
 
         for i in range(1, 5):
             # Shift points 5 meters north and east (should result in 5 points being 1 cell apart in both x and y)
-            shifted_point = distance.distance(meters=i * 5).destination((t.points[0].latitude, t.points[0].longitude), 0)
-            shifted_point = distance.distance(meters=i * 5).destination((shifted_point), 90)
+            shifted_point = distance.distance(meters=i * 5).destination((t.points[0].latitude, t.points[0].longitude), NORTH)
+            shifted_point = distance.distance(meters=i * 5).destination((shifted_point), EAST)
         
             t.add_point(shifted_point.longitude, shifted_point.latitude, datetime(2024, 1, 1, 1, 1, 1 + i))
         pc.add_trajectory(t)
@@ -32,8 +33,8 @@ class TestGridsystem():
         t.add_point(1,0,datetime(2024, 1, 1, 1, 1, 1))
 
         # Shift second point 20 meters north and east (should result in the two points being 4 cells apart in both x and y)
-        shifted_point = distance.distance(meters=20).destination((t.points[0].latitude, t.points[0].longitude), 0)
-        shifted_point = distance.distance(meters=20).destination((shifted_point), 90)
+        shifted_point = distance.distance(meters=20).destination((t.points[0].latitude, t.points[0].longitude), NORTH)
+        shifted_point = distance.distance(meters=20).destination((shifted_point), EAST)
         
         t.add_point(shifted_point.longitude, shifted_point.latitude, datetime(2024, 1, 1, 1, 1, 2))
         pc.add_trajectory(t)
@@ -74,8 +75,8 @@ class TestGridsystem():
         nc.gridsystem.construct_safe_areas(0)
 
         # Changing point to make it an outlier.
-        shifted_point = distance.distance(meters=200).destination((nc.gridsystem.pc.trajectories[0].points[3].latitude, nc.gridsystem.pc.trajectories[0].points[3].longitude), 0)
-        shifted_point = distance.distance(meters=200).destination((shifted_point), 90)
+        shifted_point = distance.distance(meters=200).destination((nc.gridsystem.pc.trajectories[0].points[3].latitude, nc.gridsystem.pc.trajectories[0].points[3].longitude), NORTH)
+        shifted_point = distance.distance(meters=200).destination((shifted_point), EAST)
 
         nc.gridsystem.pc.trajectories[0].points[3].longitude = shifted_point[1]
         nc.gridsystem.pc.trajectories[0].points[3].latitude = shifted_point[0]
