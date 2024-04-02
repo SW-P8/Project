@@ -3,7 +3,7 @@ from DTC.trajectory import Trajectory, Point
 from geopy import distance
 
 class NoiseCorrection:
-    def __init__(self, gridsystem: GridSystem):
+    def __init__(self, gridsystem: Gridsystem):
         self.gridsystem = gridsystem
 
     # TODO decide how to handle if p-1 or p+1 is also noise, such that we do not correct noise with noise.
