@@ -3,6 +3,7 @@ from DTC import trajectory, gridsystem
 from geopy import distance
 from datetime import datetime
 from math import sqrt, floor
+from DTC.utils.constants import NORTH, EAST
 
 class TestGridsystem():
     @pytest.fixture
@@ -27,8 +28,8 @@ class TestGridsystem():
         t.add_point(1,0,datetime(2024, 1, 1, 1, 1, 1))
 
         # Shift second point 20 meters north and east (should result in the two points being 4 cells apart in both x and y)
-        shifted_point = distance.distance(meters=20).destination((t.points[0].latitude, t.points[0].longitude), 0)
-        shifted_point = distance.distance(meters=20).destination((shifted_point), 90)
+        shifted_point = distance.distance(meters=20).destination((t.points[0].latitude, t.points[0].longitude), NORTH)
+        shifted_point = distance.distance(meters=20).destination((shifted_point), EAST)
         
         t.add_point(shifted_point.longitude, shifted_point.latitude, datetime(2024, 1, 1, 1, 1, 2))
         pc.add_trajectory(t)
@@ -46,8 +47,8 @@ class TestGridsystem():
 
         for i in range(1, 5):
             # Shift points 5 meters north and east (should result in 5 points being 1 cell apart in both x and y)
-            shifted_point = distance.distance(meters=i * 5).destination((t.points[0].latitude, t.points[0].longitude), 0)
-            shifted_point = distance.distance(meters=i * 5).destination((shifted_point), 90)
+            shifted_point = distance.distance(meters=i * 5).destination((t.points[0].latitude, t.points[0].longitude), NORTH)
+            shifted_point = distance.distance(meters=i * 5).destination((shifted_point), EAST)
         
             t.add_point(shifted_point.longitude, shifted_point.latitude, datetime(2024, 1, 1, 1, 1, 1 + i))
         pc.add_trajectory(t)
@@ -107,8 +108,8 @@ class TestGridsystem():
             t.add_point(1,0,datetime(2024, 1, 1, 1, 1, i))
 
         # Shift second point 20 meters north and east (should result in the two points being 4 cells apart in both x and y)
-        shifted_point = distance.distance(meters=20).destination((t.points[0].latitude, t.points[0].longitude), 0)
-        shifted_point = distance.distance(meters=20).destination((shifted_point), 90)
+        shifted_point = distance.distance(meters=20).destination((t.points[0].latitude, t.points[0].longitude), NORTH)
+        shifted_point = distance.distance(meters=20).destination((shifted_point), EAST)
         t.add_point(shifted_point.longitude, shifted_point.latitude, datetime(2024, 1, 1, 1, 1, 11))
 
 
@@ -153,8 +154,8 @@ class TestGridsystem():
             t.add_point(1,0,datetime(2024, 1, 1, 1, 1, i))
 
         # Shift second point 20 meters north and east (should result in the two points being 4 cells apart in both x and y)
-        shifted_point = distance.distance(meters=20).destination((t.points[0].latitude, t.points[0].longitude), 0)
-        shifted_point = distance.distance(meters=20).destination((shifted_point), 90)
+        shifted_point = distance.distance(meters=20).destination((t.points[0].latitude, t.points[0].longitude), NORTH)
+        shifted_point = distance.distance(meters=20).destination((shifted_point), EAST)
         t.add_point(shifted_point.longitude, shifted_point.latitude, datetime(2024, 1, 1, 1, 1, 11))
 
 
@@ -451,3 +452,30 @@ class TestGridsystem():
         assert len(five_point_grid.safe_areas) == 2
         assert five_point_grid.safe_areas[(2, 2)] == expected_r1
         assert five_point_grid.safe_areas[(7, 7)] == expected_r2
+
+    def test_convert_cell_to_point_without_timestamp(self, single_point_grid):
+        cell = (10,10)
+
+        new_point = single_point_grid.convert_cell_to_point(cell)
+
+        expected_point = distance.distance(meters=single_point_grid.pc.cell_size * 10).destination((single_point_grid.initialization_point[1], single_point_grid.initialization_point[0]), NORTH)
+        expected_point = distance.distance(meters=single_point_grid.pc.cell_size * 10).destination(expected_point, EAST)
+
+        assert new_point.longitude == expected_point.longitude
+        assert new_point.latitude == expected_point.latitude
+        assert new_point.timestamp == None
+    
+    def test_convert_cell_to_point_with_timestamp(self, single_point_grid):
+        cell = (10,10)
+        
+        time = datetime.now()
+
+        new_point = single_point_grid.convert_cell_to_point(cell, time)
+
+        expected_point = distance.distance(meters=single_point_grid.pc.cell_size * 10).destination((single_point_grid.initialization_point[1], single_point_grid.initialization_point[0]), NORTH)
+        expected_point = distance.distance(meters=single_point_grid.pc.cell_size * 10).destination(expected_point, EAST)
+
+        assert new_point.longitude == expected_point.longitude
+        assert new_point.latitude == expected_point.latitude
+        assert new_point.timestamp == time
+

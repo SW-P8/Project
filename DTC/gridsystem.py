@@ -1,7 +1,10 @@
 from DTC import trajectory
+from DTC.utils.constants import NORTH, EAST, SOUTH, WEST
 from math import ceil, floor, sqrt
 from geopy import distance
 from operator import itemgetter
+from datetime import datetime
+from typing import Optional
 
 class GridSystem:
     def __init__(self, pc: trajectory.TrajectoryPointCloud) -> None:
@@ -113,7 +116,7 @@ class GridSystem:
 
         for anchor in self.route_skeleton:
             #Initialize safe area radius
-            radius = max(cs[anchor], key=itemgetter(1))[1]
+            radius = max(cs[anchor], key=itemgetter(1), default=(0,0))[1]
             removed_count = 0
             cs_size = len(cs[anchor])
             removal_threshold = decrease_factor * cs_size
@@ -169,8 +172,18 @@ class GridSystem:
                 min_dist =dist
         return (nearest_anchor, min_dist)
 
+    # Converts cell to point based on initialization_point
+    def convert_cell_to_point(self, cell, timestamp: Optional[datetime] = None) -> trajectory.Point:
+        new_point = (cell[1] * self.cell_size, cell[0] * self.cell_size)
+        
+        delta_lat_lon = distance.distance(meters=new_point[1]).destination((self.initialization_point[1], self.initialization_point[0]), NORTH)
+        delta_lat_lon = distance.distance(meters=new_point[0]).destination(delta_lat_lon, EAST)
+
+        return trajectory.Point(delta_lat_lon[1], delta_lat_lon[0], timestamp)
+
     @staticmethod
     def calculate_euclidian_distance_between_cells(cell1, cell2):
         (x_1, y_1) = cell1
         (x_2, y_2) = cell2
         return sqrt((x_2 - x_1)**2 + (y_2 - y_1)**2)
+
