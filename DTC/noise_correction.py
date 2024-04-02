@@ -1,4 +1,5 @@
-from DTC import gridsystem, trajectory
+from DTC.gridsystem import Gridsystem
+from DTC.trajectory import Trajectory, Point
 from geopy import distance
 
 class NoiseCorrection:
