@@ -2,6 +2,7 @@ from datetime import datetime
 import matplotlib.pyplot as plt
 from DTC.gridsystem import GridSystem
 from DTC.trajectory import TrajectoryPointCloud, Trajectory, Point
+from DTC.dtc_executor import DTCExecutor
 
 class Visualizer():
     def __init__(self, grid_system):
@@ -49,19 +50,7 @@ class Visualizer():
         self.ax.add_patch(rec)
 
 if __name__ == "__main__":
-    t = Trajectory()
-    time = datetime(2024, 1, 1, 1, 1, 1)
-    t.add_point(116.51172, 39.92123,time)
-    t.add_point(116.51135, 39.93883, time)
-    t.add_point(116.51627, 39.91034, time)
-    t.add_point(116.47186, 39.91248, time)
-    t.add_point(116.47217, 39.92498, time)
-    t.add_point(116.47179, 39.90718, time)
-    t.add_point(116.45617, 39.90531, time)
-    point_cloud = TrajectoryPointCloud()
-    point_cloud.add_trajectory(t)
-    grid_system = GridSystem(point_cloud)
-    grid_system.create_grid_system()
-    grid_system.extract_main_route()
-    visualizer = Visualizer(grid_system)
+    dtc_executor = DTCExecutor(True)
+    gs = dtc_executor.execute_dtc_with_n_points(2000)
+    visualizer = Visualizer(gs)
     visualizer.visualize()
