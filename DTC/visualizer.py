@@ -7,50 +7,73 @@ from DTC.dtc_executor import DTCExecutor
 class Visualizer():
     def __init__(self, grid_system):
         self.grid_system = grid_system
-        self.fig, self.ax = plt.subplots()
+        self.fig = plt.figure(figsize=(10, 5))
+
+        # Create axes for point cloud
+        self.pc_ax = self.fig.add_subplot(131)
+        self.pc_ax.set_title('Point Cloud')
+
+        # Create axes for main route
+        self.mr_ax = self.fig.add_subplot(132)
+        self.mr_ax.set_title('Main Route')
+
+        # Create axes for route skeleton
+        self.sk_ax = self.fig.add_subplot(133)
+        self.sk_ax.set_title('Route skeleton')
 
     def visualize(self):
+        self.draw_point_cloud()
         self.draw_main_route()
-        self.draw_populated_cells()
-        self.ax.legend(["point"])
+        self.draw_route_skeleton()
+        self.draw_safe_area()
+        plt.tight_layout()
         plt.show()
     
     def draw_point_cloud(self):
         for trajectory in self.grid_system.pc.trajectories:
             for point in trajectory.points:
-                self.draw_point(point)
+                self.draw_point(self.pc_ax, point)
 
     def draw_main_route(self):
         for point in self.grid_system.main_route:
-            self.draw_point(point)
+            self.draw_point(self.mr_ax, point)
 
-    def draw_point(self, point):
+    def draw_route_skeleton(self):
+        print(self.grid_system.route_skeleton)
+        for point in self.grid_system.route_skeleton:
+            self.draw_point(self.sk_ax, point)
+    
+    def draw_safe_area(self):
+        for anchor, radius in self.grid_system.safe_areas.items():
+            self.draw_circle(self.sk_ax, anchor, radius)
+
+    def draw_point(self, ax, point):
         if isinstance(point, Point):
             x, y = point.get_coordinates()
         else:
             x, y = point
-        self.ax.scatter(x, y, c='blue', s=1)
+        ax.scatter(x, y, c='blue', s=1)
 
-    def draw_safe_area(self, point, radius):
+    def draw_circle(self, ax, point, radius):
         if isinstance(point, Point):
             circle = plt.Circle(point.get_coordinates(), radius, color='blue', fill=False)
         else:
             circle = plt.Circle(point, radius, color='blue', fill=False)
-        self.ax.add_patch(circle)
+        ax.add_patch(circle)
 
     def draw_populated_cells(self):
         for cell in self.grid_system.populated_cells:
-            self.draw_populated_cell(cell, self.grid_system.cell_size, self.grid_system.cell_size)
+            self.draw_populated_cell(self.mr_ax, cell, self.grid_system.cell_size, self.grid_system.cell_size)
 
-    def draw_populated_cell(self, point, width, height):
+    def draw_populated_cell(self, ax, point, width, height):
         if isinstance(point, Point):
             rec = plt.Rectangle(point.get_coordinates(), width, height, color='green')
         else:
             rec = plt.Rectangle(point, width, height, color='green')
-        self.ax.add_patch(rec)
+        ax.add_patch(rec)
 
 if __name__ == "__main__":
-    dtc_executor = DTCExecutor(True)
-    gs = dtc_executor.execute_dtc_with_n_points(2000)
+    dtc_executor = DTCExecutor()
+    gs = dtc_executor.execute_dtc_with_n_points(1000)
     visualizer = Visualizer(gs)
     visualizer.visualize()

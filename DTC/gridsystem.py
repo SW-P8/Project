@@ -13,6 +13,8 @@ class GridSystem:
         self.populated_cells: set = None
         self.main_route: set = None
         self.route_skeleton: set = None
+        self.safe_areas = dict()
+
 
     def create_grid_system(self):
         # Initialize a dict to act as grid - assumes sparse population of grid
@@ -76,10 +78,10 @@ class GridSystem:
 
         return (x_sum, y_sum)
     
-    def extract_route_skeleton(self):
-        smr = self.smooth_main_route()
-        cmr = self.filter_outliers_in_main_route(smr)
-        self.route_skeleton = self.sample_main_route(cmr)
+    def extract_route_skeleton(self, smooth_radius: int = 25, filtering_list_radius: int = 20, distance_interval: int = 20):
+        smr = self.smooth_main_route(smooth_radius)
+        cmr = self.filter_outliers_in_main_route(smr, filtering_list_radius)
+        self.route_skeleton = self.sample_main_route(cmr, distance_interval)
         
     def smooth_main_route(self, radius: int = 25) -> set:
         smr = set()
@@ -115,7 +117,6 @@ class GridSystem:
     
     def construct_safe_areas(self, decrease_factor: float = 0.01):
         cs = self.create_cover_sets()
-        self.safe_areas = dict()
 
         for anchor in self.route_skeleton:
             #Initialize safe area radius
