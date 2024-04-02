@@ -10,4 +10,4 @@ class Analyzer:
             cell_cardinality = len(points)
             distribution[cell_cardinality] += 1
 
-        return distribution
+        return dict(sorted(distribution.items()))

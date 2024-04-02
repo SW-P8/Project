@@ -3,6 +3,7 @@ import matplotlib.pyplot as plt
 from DTC.gridsystem import GridSystem
 from DTC.trajectory import TrajectoryPointCloud, Trajectory, Point
 from DTC.dtc_executor import DTCExecutor
+from DTC.analyzer import Analyzer
 
 
 class Visualizer():
@@ -76,9 +77,16 @@ class Visualizer():
             rec = plt.Rectangle(point, width, height, color='green')
         ax.add_patch(rec)
 
+    @staticmethod
+    def visualize_distribution_of_cells(distribution: dict):
+        plt.bar(distribution.keys(), distribution.values(), color = "g")
+        plt.show()
 
 if __name__ == "__main__":
     dtc_executor = DTCExecutor()
-    gs = dtc_executor.execute_dtc_with_n_points(1000)
-    visualizer = Visualizer(gs)
-    visualizer.visualize()
+    pc = dtc_executor.create_point_cloud_with_n_points(1000000)
+    gs = GridSystem(pc)
+    gs.create_grid_system()
+    distribution = Analyzer.get_point_distribution_for_cells(gs.grid)
+    print(distribution)
+    Visualizer.visualize_distribution_of_cells(distribution)
