@@ -1,9 +1,16 @@
 import pytest
 
-from DTC import dtc_executor
+from DTC.gridsystem import GridSystem
+from DTC.trajectory import TrajectoryPointCloud
+from DTC.dtc_executor import DTCExecutor
 from database import db
 from database import load_data
 from database.taxi_data_handler import TaxiDataHandler
+
+class BenchmarkData:
+    def __init__(self):
+        self.point_cloud = None
+        self.grid_system = None
 
 def pytest_configure(config):
     config.addinivalue_line(
@@ -41,26 +48,22 @@ def start_up(request, connection_pool):
     taxiDataHandler = TaxiDataHandler(connection_pool)
     yield taxiDataHandler
     
+@pytest.fixture(scope="module")
+def bm_data():
+    data = BenchmarkData()
+    return data
 
 @pytest.fixture(scope="function")
-def small_points(start_up, request):
-    def _small_points():
-        return start_up.read_n_records(1000000)
-    yield _small_points
+def small_points(request):
+    return 1000000
 
 @pytest.fixture(scope="function")
-def medium_points(start_up, request):
-    def _medium_points():
-        print("Executing medium lazy fixture")
-        return start_up.read_n_records(5000000)
-    yield _medium_points
+def medium_points(request):
+    return 5000000
 
 @pytest.fixture(scope="function")
-def large_points(start_up, request):
-    def _large_points():
-        print("Executing large lazy fixture")
-        return start_up.read_n_records(0)
-    yield _large_points
+def large_points(request):
+    return "ALL"
 
 @pytest.mark.bm_mid
 def test_read_from_database_mid(medium_points, benchmark):
@@ -73,6 +76,29 @@ def test_read_from_database_large(large_points, benchmark):
     assert data != None
 
 @pytest.mark.bm_cheap
-def test_dtc(small_points, benchmark):
-    data = benchmark.pedantic(small_points, rounds=4, iterations=1, warmup_rounds=0)
-    pc = dtc_executor.TrajectoryPointCloud()
+def test_point_cloud(small_points, benchmark, bm_data):
+    runner = DTCExecutor()
+    point_cloud = benchmark.pedantic(runner.create_point_cloud_with_n_points, kwargs={'n':small_points},rounds=4, iterations=1, warmup_rounds=0)
+    bm_data.point_cloud = point_cloud
+    bm_data.grid_system = GridSystem(point_cloud)
+    assert point_cloud != None
+
+@pytest.mark.bm_cheap
+def test_build_grid_system(benchmark, bm_data):
+    benchmark.pedantic(bm_data.grid_system.create_grid_system, rounds=4, iterations=1, warmup_rounds=0)
+    assert bm_data.grid_system != None
+
+@pytest.mark.bm_cheap
+def test_extract_main_route(benchmark, bm_data):
+    benchmark.pedantic(bm_data.grid_system.extract_main_route, rounds=4, iteration=1, warmup_rounds=0)
+    assert bm_data.grid_system != None
+
+@pytest.mark.bm_cheap
+def test_extract_main_route(benchmark, bm_data):
+    benchmark.pedantic(bm_data.grid_system.extract_route_skeleton())
+    assert bm_data.grid_system != None
+
+@pytest.mark.bm_cheap
+def test_extract_main_route(benchmark, bm_data):
+    benchmark.pedantic(bm_data.grid_system.construct_safe_areas())
+    assert bm_data.grid_system != None
