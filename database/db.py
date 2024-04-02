@@ -13,7 +13,7 @@ SQL_SEED_DB = "sql/02-dev-seed.sql"
 PG_TDRIVE_DB = "tdrive_db"
 PG_TDRIVE_USER = "tdrive_user"
 PG_TDRIVE_PWD = "tdrivepass"
-PG_TDRIVE_MAX_CON = 5
+PG_TDRIVE_MAX_CON = 500
 
 def init_db() -> SimpleConnectionPool:
     """ Initializes database and creates a connection pool for use in the application """

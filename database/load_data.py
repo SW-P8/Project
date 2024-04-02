@@ -16,13 +16,14 @@ COPY_STATEMENT = """
     CSV HEADER
 """
 
-def load_data_from_csv(db: SimpleConnectionPool):
+def load_data_from_csv(db: SimpleConnectionPool, limit=0):
     """ Loads data from csv file into databases """
     conn = db.getconn()
     cursor = conn.cursor()
     
     trajectory_id = 1
     file_list = sorted(os.listdir(CSV_DIR), key=__get_numeric_part)
+    file_list = file_list[:limit] if limit > 0 else file_list
 
     for filename in tqdm(file_list, desc="Processing Files", unit="file"):
         file = CSV_DIR + filename
