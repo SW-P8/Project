@@ -3,7 +3,6 @@ import pytest
 from database import db, load_data, taxi_data_handler
 from DTC import dtc_executor, gridsystem
 
-@pytest.mark.skip(reason="Benchmarking should not run on normal test runs")
 class TestExpensiveBenchmark:
     @classmethod
     def setup_class(cls):
