@@ -37,14 +37,15 @@ class TestGridsystem():
         
         expected_point = nc.gridsystem.convert_cell_to_point((5,5))
 
-        assert nc.gridsystem.pc.trajectories[0].points[1].longitude == expected_point.longitude
-        assert nc.gridsystem.pc.trajectories[0].points[1].latitude == expected_point.latitude
+        assert nc.gridsystem.pc.trajectories[0].points[1].longitude == expected_point[0]
+        assert nc.gridsystem.pc.trajectories[0].points[1].latitude == expected_point[1]
 
     def test_correct_noisy_point_should_change_anchor_with_timestamp(self, five_point_grid):
         nc = NoiseCorrection(five_point_grid)
         
         nc.gridsystem.route_skeleton = {(0,0), (2.5,2.5), (5,5), (7,7), (10,10)}
         nc.gridsystem.construct_safe_areas(0)
+        original_timestamp = nc.gridsystem.pc.trajectories[0].points[3].timestamp
 
         # Changing point to make it an outlier.
         shifted_point = DistanceCalculator.shift_point_with_bearing(nc.gridsystem.pc.trajectories[0].points[0], 200, DistanceCalculator.NORTH)
@@ -55,11 +56,12 @@ class TestGridsystem():
 
         nc.correct_noisy_point(nc.gridsystem.pc.trajectories[0], 3)
         
-        expected_point = nc.gridsystem.convert_cell_to_point((5,5), nc.gridsystem.pc.trajectories[0].points[3].timestamp)
+        expected_point = nc.gridsystem.convert_cell_to_point((5,5))
 
-        assert nc.gridsystem.pc.trajectories[0].points[3].longitude == expected_point.longitude
-        assert nc.gridsystem.pc.trajectories[0].points[3].latitude == expected_point.latitude
-        assert nc.gridsystem.pc.trajectories[0].points[3].timestamp == expected_point.timestamp
+        assert nc.gridsystem.pc.trajectories[0].points[3].longitude == expected_point[0]
+        assert nc.gridsystem.pc.trajectories[0].points[3].latitude == expected_point[1]
+        assert nc.gridsystem.pc.trajectories[0].points[3].timestamp == original_timestamp
+
 
     def test_correct_noisy_point_with_timestamp_none(self, five_point_grid):
         nc = NoiseCorrection(five_point_grid)
@@ -107,6 +109,6 @@ class TestGridsystem():
         expected_corrected_point = nc.gridsystem.convert_cell_to_point((5,5))
 
         assert nc.gridsystem.pc.trajectories[0] != trajectory_before_correction 
-        assert nc.gridsystem.pc.trajectories[0].points[3].longitude == expected_corrected_point.longitude
-        assert nc.gridsystem.pc.trajectories[0].points[3].latitude == expected_corrected_point.latitude
+        assert nc.gridsystem.pc.trajectories[0].points[3].longitude == expected_corrected_point[0]
+        assert nc.gridsystem.pc.trajectories[0].points[3].latitude == expected_corrected_point[1]
 

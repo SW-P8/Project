@@ -437,7 +437,7 @@ class TestGridsystem():
         assert five_point_grid.safe_areas[(2, 2)] == expected_r1
         assert five_point_grid.safe_areas[(7, 7)] == expected_r2
 
-    def test_convert_cell_to_point_without_timestamp(self, single_point_grid):
+    def test_convert_cell_to_point(self, single_point_grid):
         cell = (10,10)
 
         new_point = single_point_grid.convert_cell_to_point(cell)
@@ -446,22 +446,5 @@ class TestGridsystem():
         expected_point = DistanceCalculator.shift_point_with_bearing(single_point_grid.initialization_point, shift_distance, DistanceCalculator.NORTH)
         expected_point = DistanceCalculator.shift_point_with_bearing(expected_point, shift_distance, DistanceCalculator.EAST)
 
-        assert new_point.longitude == expected_point[0]
-        assert new_point.latitude == expected_point[1]
-        assert new_point.timestamp == None
-    
-    def test_convert_cell_to_point_with_timestamp(self, single_point_grid):
-        cell = (10,10)
-        
-        time = datetime.now()
-
-        new_point = single_point_grid.convert_cell_to_point(cell, time)
-        shift_distance = single_point_grid.pc.cell_size * 10
-
-        expected_point = DistanceCalculator.shift_point_with_bearing(single_point_grid.initialization_point, shift_distance, DistanceCalculator.NORTH)
-        expected_point = DistanceCalculator.shift_point_with_bearing(expected_point, shift_distance, DistanceCalculator.EAST)
-
-        assert new_point.longitude == expected_point[0]
-        assert new_point.latitude == expected_point[1]
-        assert new_point.timestamp == time
-
+        assert new_point[0] == expected_point[0]
+        assert new_point[1] == expected_point[1]

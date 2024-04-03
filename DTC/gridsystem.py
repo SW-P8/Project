@@ -172,11 +172,11 @@ class GridSystem:
                 min_dist =dist
         return (nearest_anchor, min_dist)
 
-    # Converts cell to point based on initialization_point
-    def convert_cell_to_point(self, cell, timestamp: Optional[datetime] = None) -> Point:
-        new_point = (cell[0] * self.cell_size, cell[1] * self.cell_size)
+    # Converts cell coordinate to long lat based on initialization_point
+    def convert_cell_to_point(self, cell) -> Point:
+        offsets = (cell[0] * self.cell_size, cell[1] * self.cell_size)
         
-        delta_long_lat = DistanceCalculator.shift_point_with_bearing(self.initialization_point, new_point[0], DistanceCalculator.NORTH)
-        delta_long_lat = DistanceCalculator.shift_point_with_bearing(delta_long_lat, new_point[1], DistanceCalculator.EAST)
+        gps_coordinates = DistanceCalculator.shift_point_with_bearing(self.initialization_point, offsets[0], DistanceCalculator.NORTH)
+        gps_coordinates = DistanceCalculator.shift_point_with_bearing(gps_coordinates, offsets[1], DistanceCalculator.EAST)
 
-        return Point(delta_long_lat[0], delta_long_lat[1], timestamp)
+        return gps_coordinates
