@@ -1,21 +1,7 @@
 from datetime import datetime
-from geopy import distance
 from math import floor
-from typing import Optional
-from DTC.utils.constants import NORTH, EAST, SOUTH, WEST
-
-class Point:
-    def __init__(self, longitude: float, latitude: float, timestamp: Optional[datetime] = None) -> None:
-        self.longitude = longitude
-        self.latitude = latitude
-        self.timestamp = timestamp
-
-    def get_coordinates(self) -> tuple[float, float]:
-        return (self.longitude, self.latitude)
-
-    def set_coordinates(self, new_coordinates):
-        self.longitude = new_coordinates[0]
-        self.latitude = new_coordinates[1]
+from DTC.point import Point
+from DTC.distance_calculator import DistanceCalculator
 
 class Trajectory:
     def __init__(self) -> None:
@@ -78,19 +64,20 @@ class TrajectoryPointCloud:
         shift_distance = self.cell_size * floor(self.neighborhood_size / 2)
 
         # Shift min point south and west
-        shifted_min_point = distance.distance(meters=shift_distance).destination((self.min_latitude, self.min_longitude), WEST)
-        shifted_min_point = distance.distance(meters=shift_distance).destination((shifted_min_point), SOUTH)
+        shifted_point = DistanceCalculator.shift_point_with_bearing((self.min_longitude, self.min_latitude), shift_distance, DistanceCalculator.WEST)
+        shifted_point = DistanceCalculator.shift_point_with_bearing(shifted_point, shift_distance, DistanceCalculator.SOUTH)
 
-        return (shifted_min_point.longitude, shifted_min_point.latitude)
+        return shifted_point
     
     def get_shifted_max(self) -> tuple[float, float]:
         #Bearing: North (0), East (90)
         shift_distance = self.cell_size * floor(self.neighborhood_size / 2)
 
         # Shift max point north and east
-        shifted_max_point = distance.distance(meters=shift_distance).destination((self.max_latitude, self.max_longitude), NORTH)
-        shifted_max_point = distance.distance(meters=shift_distance).destination((shifted_max_point), EAST)
-        return (shifted_max_point.longitude, shifted_max_point.latitude)
+        shifted_point = DistanceCalculator.shift_point_with_bearing((self.max_longitude, self.max_latitude), shift_distance, DistanceCalculator.NORTH)
+        shifted_point = DistanceCalculator.shift_point_with_bearing(shifted_point, shift_distance, DistanceCalculator.EAST)
+
+        return shifted_point
 
     # Bounding rectangle is defined by the tuples (min_lon, min_lat) and (max_lon, max_lat) with some padding added
     def get_bounding_rectangle(self) -> tuple[tuple[float, float], tuple[float,float]]:
@@ -99,6 +86,7 @@ class TrajectoryPointCloud:
     # Geopy utilizes geodesic distance - shortest distance on the surface of an elipsoid earth model
     def calculate_bounding_rectangle_area(self):
         ((min_long, min_lat),(max_long, max_lat)) = self.get_bounding_rectangle()
-        width = distance.distance((min_lat, min_long), (min_lat, max_long)).meters
-        height = distance.distance((min_lat, min_long), (max_lat, min_long)).meters
+        width = DistanceCalculator.get_distance_between_points((min_long, min_lat), (max_long, min_lat))
+        height = DistanceCalculator.get_distance_between_points((min_long, min_lat), (min_long, max_lat))
+
         return (width, height)
