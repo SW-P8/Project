@@ -10,10 +10,16 @@ class TestExpensiveBenchmark:
         cls.point_cloud = None
         cls.limit = 0
         cls.n_points = 1000000000 #set as 1 billion, arbritrarily high
-        cls.conn = db.init_db()
-        load_data.load_data_from_csv(cls.conn, cls.limit)
-        cls.handler = taxi_data_handler.TaxiDataHandler(cls.conn)
-        cls.executor = dtc_executor.DTCExecutor()
+        cls.conn = None
+        cls.handler = None
+        cls.executor = None
+
+    @pytest.mark.bm_expensive
+    def test_db_setup(self):
+        self.__class__.conn = db.init_db()
+        load_data.load_data_from_csv(self.__class__.conn, self.limit)
+        self.__class__.handler = taxi_data_handler.TaxiDataHandler(self.__class__.conn)
+        self.__class__.executor = dtc_executor.DTCExecutor()
 
     @pytest.mark.bm_expensive
     def test_point_cloud(self, benchmark):

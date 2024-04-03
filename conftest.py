@@ -19,19 +19,19 @@ def pytest_configure(config):
 def pytest_collection_modifyitems(config, items):
     if config.getoption("--benchmark-cheap"):
         return
-    skip_bm_cheap = pytest.mark.bm_cheap(reason="Benchmarking limited to --benchmark.")
+    skip_bm_cheap = pytest.mark.skip(reason="Benchmarking limited to --benchmark-cheap.")
     for item in items:
         if "bm_cheap" in item.keywords:
             item.add_marker(skip_bm_cheap)
     if config.getoption("--benchmark-mid"):
         return
-    skip_bm_mid = pytest.mark.bm_mid(reason="Benchmarking limited to --benchmark")
+    skip_bm_mid = pytest.mark.skip(reason="Benchmarking limited to --benchmark-mid")
     for item in items:
         if "bm_mid" in item.keywords:
             item.add_marker(skip_bm_mid)
     if config.getoption("--benchmark"):
         return
-    skib_bm_expensive = pytest.mark.bm_expensive(reason="Benchmarking limited to --benchmark")
+    skib_bm_expensive = pytest.mark.skip(reason="Benchmarking limited to --benchmark")
     for item in items:
         if "bm_expensive" in item.keywords:
             item.add_marker(skib_bm_expensive)
