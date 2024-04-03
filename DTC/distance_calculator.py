@@ -1,20 +1,22 @@
 from math import sqrt
-from DTC.trajectory import Point
+from DTC.point import Point
 from geopy import distance
-from enum import Enum
 
-class DistanceCalculator(Enum):
+class DistanceCalculator():
     NORTH = 0
-    East = 90
+    EAST = 90
     SOUTH = 180
     WEST = 270
     
     @staticmethod
-    def shift_point_with_bearing(point, bearing):
+    def shift_point_with_bearing(point, shift_dist: float, bearing: float):
         if type(point) == Point:
             (longitude, latitude) = point.get_coordinates()
         else:
             (longitude, latitude) = point
+
+        shifted_point = distance.distance(meters=shift_dist).destination((latitude, longitude), bearing)
+        return (shifted_point.longitude, shifted_point.latitude)
 
     @staticmethod
     def get_distance_between_points(source, target):

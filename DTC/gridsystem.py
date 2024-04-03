@@ -1,7 +1,6 @@
 from DTC import trajectory
-from DTC.utils.constants import NORTH, EAST, SOUTH, WEST
-from math import ceil, floor, sqrt
-from geopy import distance
+from DTC.distance_calculator import DistanceCalculator
+from math import floor, sqrt
 from operator import itemgetter
 from datetime import datetime
 from typing import Optional
@@ -32,11 +31,11 @@ class GridSystem:
 
     def calculate_exact_index_for_point(self, point: trajectory.Point):
         # Calculate x index
-        x_offset = round(distance.distance((self.initialization_point[1], self.initialization_point[0]), (self.initialization_point[1], point.longitude)).meters, 2)
+        x_offset = DistanceCalculator.get_distance_between_points(self.initialization_point, (point.longitude, self.initialization_point[1]))
         x_coordinate = (x_offset / self.cell_size) - 1
 
         # Calculate y index
-        y_offset = round(distance.distance((self.initialization_point[1], self.initialization_point[0]), (point.latitude ,self.initialization_point[0])).meters, 2)
+        y_offset = DistanceCalculator.get_distance_between_points(self.initialization_point, (self.initialization_point[0], point.latitude))
         y_coordinate = (y_offset / self.cell_size) - 1
 
         return (x_coordinate, y_coordinate)
@@ -49,7 +48,7 @@ class GridSystem:
         for cell in self.populated_cells:
             density_center = self.calculate_density_center(cell)
 
-            if self.calculate_euclidian_distance_between_cells(cell, density_center) < distance_threshold:
+            if DistanceCalculator.calculate_euclidian_distance_between_cells(cell, density_center) < distance_threshold:
                 self.main_route.add(cell)
 
     def calculate_density_center(self, index):
@@ -82,7 +81,7 @@ class GridSystem:
     def smooth_main_route(self, radius: int = 25) -> set:
         smr = set()
         for (x1, y1) in self.main_route:
-            ns = {(x2, y2) for (x2, y2) in self.main_route if self.calculate_euclidian_distance_between_cells((x1 + 0.5, y1 + 0.5), (x2 + 0.5, y2 + 0.5)) <= radius}
+            ns = {(x2, y2) for (x2, y2) in self.main_route if DistanceCalculator.calculate_euclidian_distance_between_cells((x1 + 0.5, y1 + 0.5), (x2 + 0.5, y2 + 0.5)) <= radius}
             x_sum = sum(x for x, _ in ns) + len(ns) * 0.5
             y_sum = sum(y for _, y in ns) + len(ns) * 0.5
 
@@ -97,7 +96,7 @@ class GridSystem:
     def filter_outliers_in_main_route(self, smr: set, radius_prime: int = 20):
         cmr = set()
         for (x1, y1) in smr:
-            targets = {(x2, y2) for (x2, y2) in smr if self.calculate_euclidian_distance_between_cells((x1, y1), (x2, y2)) <= radius_prime}
+            targets = {(x2, y2) for (x2, y2) in smr if DistanceCalculator.calculate_euclidian_distance_between_cells((x1, y1), (x2, y2)) <= radius_prime}
             if len(targets) >= 0.01 * len(smr):
                 cmr.add((x1, y1))
         return cmr
@@ -105,7 +104,7 @@ class GridSystem:
     def sample_main_route(self, cmr: set, distance_interval: int = 20):
         rs = set()
         for c1 in cmr:
-            targets = {c2 for c2 in cmr if self.calculate_euclidian_distance_between_cells(c1, c2) <= distance_interval}
+            targets = {c2 for c2 in cmr if DistanceCalculator.calculate_euclidian_distance_between_cells(c1, c2) <= distance_interval}
             # targets should be greater than 1 to take self into account
             if len(targets) > 1:
                 rs.add(c1)
@@ -153,7 +152,7 @@ class GridSystem:
         candidates = set()
         distance_to_corner_of_cell = sqrt(0.5 ** 2 + 0.5 ** 2)
         for anchor in self.route_skeleton:
-            dist = self.calculate_euclidian_distance_between_cells(cell, anchor)
+            dist = DistanceCalculator.calculate_euclidian_distance_between_cells(cell, anchor)
             if dist <= min_dist + distance_to_corner_of_cell:
                 if dist < min_dist:
                     min_dist = dist
@@ -166,7 +165,7 @@ class GridSystem:
         nearest_anchor = None
         (x, y) = self.calculate_exact_index_for_point(point)
         for candidate in candidates:
-            dist = self.calculate_euclidian_distance_between_cells((x,y), candidate)
+            dist = DistanceCalculator.calculate_euclidian_distance_between_cells((x,y), candidate)
             if dist < min_dist:
                 nearest_anchor = candidate
                 min_dist =dist
@@ -174,16 +173,9 @@ class GridSystem:
 
     # Converts cell to point based on initialization_point
     def convert_cell_to_point(self, cell, timestamp: Optional[datetime] = None) -> trajectory.Point:
-        new_point = (cell[1] * self.cell_size, cell[0] * self.cell_size)
+        new_point = (cell[0] * self.cell_size, cell[1] * self.cell_size)
         
-        delta_lat_lon = distance.distance(meters=new_point[1]).destination((self.initialization_point[1], self.initialization_point[0]), NORTH)
-        delta_lat_lon = distance.distance(meters=new_point[0]).destination(delta_lat_lon, EAST)
+        delta_long_lat = DistanceCalculator.shift_point_with_bearing(self.initialization_point, new_point[0], DistanceCalculator.NORTH)
+        delta_long_lat = DistanceCalculator.shift_point_with_bearing(delta_long_lat, new_point[1], DistanceCalculator.EAST)
 
-        return trajectory.Point(delta_lat_lon[1], delta_lat_lon[0], timestamp)
-
-    @staticmethod
-    def calculate_euclidian_distance_between_cells(cell1, cell2):
-        (x_1, y_1) = cell1
-        (x_2, y_2) = cell2
-        return sqrt((x_2 - x_1)**2 + (y_2 - y_1)**2)
-
+        return trajectory.Point(delta_long_lat[0], delta_long_lat[1], timestamp)
