@@ -38,3 +38,12 @@ class DistanceCalculator():
         (x_1, y_1) = cell1
         (x_2, y_2) = cell2
         return sqrt((x_2 - x_1)**2 + (y_2 - y_1)**2)
+    
+    @staticmethod
+    def calculate_average_position(p1: Point, p2: Point):
+        (x1, y1) = p1.get_coordinates()
+        (x2, y2) = p2.get_coordinates()
+
+        x_avg = (x1 + x2) / 2
+        y_avg = (y1 + y2) / 2
+        return Point(x_avg, y_avg)

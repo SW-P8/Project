@@ -2,7 +2,6 @@ import pytest
 from DTC.trajectory import Trajectory, TrajectoryPointCloud
 from DTC.gridsystem import GridSystem
 from DTC.distance_calculator import DistanceCalculator
-from geopy import distance
 from datetime import datetime
 from math import floor
 

@@ -1,4 +1,5 @@
-from DTC import trajectory
+from DTC.trajectory import Trajectory, TrajectoryPointCloud
+from DTC.point import Point
 from DTC.distance_calculator import DistanceCalculator
 from math import floor, sqrt
 from operator import itemgetter
@@ -6,7 +7,7 @@ from datetime import datetime
 from typing import Optional
 
 class GridSystem:
-    def __init__(self, pc: trajectory.TrajectoryPointCloud) -> None:
+    def __init__(self, pc: TrajectoryPointCloud) -> None:
         self.pc = pc
         self.initialization_point = pc.get_shifted_min()
         self.cell_size = pc.cell_size
@@ -29,7 +30,7 @@ class GridSystem:
                     self.grid[floored_index] = list()
                 self.grid[floored_index].append(point)
 
-    def calculate_exact_index_for_point(self, point: trajectory.Point):
+    def calculate_exact_index_for_point(self, point: Point):
         # Calculate x index
         x_offset = DistanceCalculator.get_distance_between_points(self.initialization_point, (point.longitude, self.initialization_point[1]))
         x_coordinate = (x_offset / self.cell_size) - 1
@@ -172,10 +173,10 @@ class GridSystem:
         return (nearest_anchor, min_dist)
 
     # Converts cell to point based on initialization_point
-    def convert_cell_to_point(self, cell, timestamp: Optional[datetime] = None) -> trajectory.Point:
+    def convert_cell_to_point(self, cell, timestamp: Optional[datetime] = None) -> Point:
         new_point = (cell[0] * self.cell_size, cell[1] * self.cell_size)
         
         delta_long_lat = DistanceCalculator.shift_point_with_bearing(self.initialization_point, new_point[0], DistanceCalculator.NORTH)
         delta_long_lat = DistanceCalculator.shift_point_with_bearing(delta_long_lat, new_point[1], DistanceCalculator.EAST)
 
-        return trajectory.Point(delta_long_lat[0], delta_long_lat[1], timestamp)
+        return Point(delta_long_lat[0], delta_long_lat[1], timestamp)

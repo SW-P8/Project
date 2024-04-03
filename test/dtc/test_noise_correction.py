@@ -1,10 +1,9 @@
 import pytest
-from DTC.trajectory import Point, Trajectory, TrajectoryPointCloud
+from DTC.trajectory import Trajectory, TrajectoryPointCloud
 from DTC.gridsystem import GridSystem
 from DTC.noise_correction import NoiseCorrection
 from DTC.distance_calculator import DistanceCalculator
 from datetime import datetime
-from geopy import distance
 import copy
 
 class TestGridsystem():    
@@ -26,18 +25,6 @@ class TestGridsystem():
         gs = GridSystem(pc) 
         gs.create_grid_system()
         return gs
-        
-    def test_calculate_average_point(self):
-        p1 = Point(2, 2)
-        p2 = Point(20, -80)
-        p3 = Point(6, 6)
-        
-        expected_avg = Point(4, 4)
-
-        NoiseCorrection.calculate_average_point(p2, p1, p3)
-
-        assert expected_avg.latitude == p2.latitude
-        assert expected_avg.longitude == p2.longitude
    
     # Given that point[1] is shifted 5 meters it should be at anchor (5,5)
     def test_correct_noisy_point_should_not_change(self, five_point_grid):

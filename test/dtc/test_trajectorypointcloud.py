@@ -1,5 +1,4 @@
 from DTC.trajectory import Trajectory, TrajectoryPointCloud
-from geopy import distance
 from datetime import datetime
 from DTC.distance_calculator import DistanceCalculator
 
