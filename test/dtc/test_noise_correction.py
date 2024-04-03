@@ -6,7 +6,7 @@ from DTC.distance_calculator import DistanceCalculator
 from datetime import datetime
 import copy
 
-class TestGridsystem():    
+class TestNoiseCorrection():    
     @pytest.fixture
     def five_point_grid(self):
         pc = TrajectoryPointCloud()
