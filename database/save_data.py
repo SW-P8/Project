@@ -1,11 +1,8 @@
-import os
-import warnings
-import pandas as pd
 import psycopg2
 from psycopg2.pool import SimpleConnectionPool
 from DTC.gridsystem import GridSystem
 
-warnings.simplefilter(action='ignore', category=UserWarning)
+#warnings.simplefilter(action='ignore', category=UserWarning)
 
 def insert_safe_areas(model_id, safe_areas, cursor, conn):
     """
@@ -23,12 +20,12 @@ def insert_safe_areas(model_id, safe_areas, cursor, conn):
     INSERT INTO DTC_model_safe_areas (model_id, anchor_x, anchor_y, radius)
     VALUES (%s, %s, %s, %s);
     """
-    params = [(model_id, anchor_x, anchor_y, radius) for anchor_x, anchor_y, radius in safe_areas]
+    params = [(model_id, anchor_x, anchor_y, radius) for (anchor_x, anchor_y), radius in safe_areas.items()]
     try:
         cursor.executemany(sql, params)
         conn.commit()
     except (Exception, psycopg2.DatabaseError) as error:
-        print(error)
+        print("insert save_area errrors" ,error)
         
         
 def insert_long_lat(min_longitude, min_latitude, conn, cursor):
@@ -54,7 +51,7 @@ def insert_long_lat(min_longitude, min_latitude, conn, cursor):
         model_id = cursor.fetchone()[0]
         conn.commit()  
     except (Exception, psycopg2.DatabaseError) as error:
-        print(error)
+        print("insert_long_lat_error", error)
     return model_id
 
 
@@ -82,7 +79,7 @@ def save_data(gs: GridSystem, db: SimpleConnectionPool):
         id = insert_long_lat(min_long_lat[0], min_long_lat[1], conn, cursor)
         insert_safe_areas(id, safe_areas, cursor, conn)
     except (Exception, psycopg2.DatabaseError) as error:
-        print(error)
+        print("error in main",error)
     finally:
         if conn is not None:
             conn.close()
