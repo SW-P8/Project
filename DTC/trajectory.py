@@ -1,15 +1,21 @@
 from datetime import datetime
 from geopy import distance
 from math import floor
+from typing import Optional
+from DTC.utils.constants import NORTH, EAST, SOUTH, WEST
 
 class Point:
-    def __init__(self, longitude: float, latitude: float, timestamp: datetime) -> None:
+    def __init__(self, longitude: float, latitude: float, timestamp: Optional[datetime] = None) -> None:
         self.longitude = longitude
         self.latitude = latitude
         self.timestamp = timestamp
 
     def get_coordinates(self) -> tuple[float, float]:
         return (self.longitude, self.latitude)
+
+    def set_coordinates(self, new_coordinates):
+        self.longitude = new_coordinates[0]
+        self.latitude = new_coordinates[1]
 
 class Trajectory:
     def __init__(self) -> None:
@@ -72,8 +78,8 @@ class TrajectoryPointCloud:
         shift_distance = self.cell_size * floor(self.neighborhood_size / 2)
 
         # Shift min point south and west
-        shifted_min_point = distance.distance(meters=shift_distance).destination((self.min_latitude, self.min_longitude), 270)
-        shifted_min_point = distance.distance(meters=shift_distance).destination((shifted_min_point), 180)
+        shifted_min_point = distance.distance(meters=shift_distance).destination((self.min_latitude, self.min_longitude), WEST)
+        shifted_min_point = distance.distance(meters=shift_distance).destination((shifted_min_point), SOUTH)
 
         return (shifted_min_point.longitude, shifted_min_point.latitude)
     
@@ -82,8 +88,8 @@ class TrajectoryPointCloud:
         shift_distance = self.cell_size * floor(self.neighborhood_size / 2)
 
         # Shift max point north and east
-        shifted_max_point = distance.distance(meters=shift_distance).destination((self.max_latitude, self.max_longitude), 0)
-        shifted_max_point = distance.distance(meters=shift_distance).destination((shifted_max_point), 90)
+        shifted_max_point = distance.distance(meters=shift_distance).destination((self.max_latitude, self.max_longitude), NORTH)
+        shifted_max_point = distance.distance(meters=shift_distance).destination((shifted_max_point), EAST)
         return (shifted_max_point.longitude, shifted_max_point.latitude)
 
     # Bounding rectangle is defined by the tuples (min_lon, min_lat) and (max_lon, max_lat) with some padding added

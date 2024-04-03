@@ -1,7 +1,10 @@
 from DTC import trajectory
+from DTC.utils.constants import NORTH, EAST, SOUTH, WEST
 from math import ceil, floor, sqrt
 from geopy import distance
 from operator import itemgetter
+from datetime import datetime
+from typing import Optional
 
 class GridSystem:
     def __init__(self, pc: trajectory.TrajectoryPointCloud) -> None:
@@ -9,12 +12,14 @@ class GridSystem:
         self.initialization_point = pc.get_shifted_min()
         self.cell_size = pc.cell_size
         self.neighborhood_size = pc.neighborhood_size
-
-    def create_grid_system(self):
-        # Initialize a dict to act as grid - assumes sparse population of grid
         self.grid = dict()
         self.populated_cells = set()
-        
+        self.main_route = set()
+        self.route_skeleton = set()
+        self.safe_areas = dict()
+
+
+    def create_grid_system(self):
         # Fill grid with points
         for trajectory in self.pc.trajectories:
             for point in trajectory.points:
@@ -25,21 +30,18 @@ class GridSystem:
                     self.grid[floored_index] = list()
                 self.grid[floored_index].append(point)
 
-    # TODO: Determine if you want to round within some treshold (shifting may not result in precise distances)
     def calculate_exact_index_for_point(self, point: trajectory.Point):
         # Calculate x index
-        x_offset = distance.distance((self.initialization_point[1], self.initialization_point[0]), (self.initialization_point[1], point.longitude)).meters
+        x_offset = round(distance.distance((self.initialization_point[1], self.initialization_point[0]), (self.initialization_point[1], point.longitude)).meters, 2)
         x_coordinate = (x_offset / self.cell_size) - 1
 
         # Calculate y index
-        y_offset = distance.distance((self.initialization_point[1], self.initialization_point[0]), (point.latitude ,self.initialization_point[0])).meters
+        y_offset = round(distance.distance((self.initialization_point[1], self.initialization_point[0]), (point.latitude ,self.initialization_point[0])).meters, 2)
         y_coordinate = (y_offset / self.cell_size) - 1
 
         return (x_coordinate, y_coordinate)
     
     def extract_main_route(self, distance_scale: float = 0.2):
-        self.main_route = set()
-
         if distance_scale >= 0.5:
             raise ValueError("distance scale must be less than neighborhood size divided by 2")
         distance_threshold = distance_scale * self.neighborhood_size
@@ -72,10 +74,10 @@ class GridSystem:
 
         return (x_sum, y_sum)
     
-    def extract_route_skeleton(self):
-        smr = self.smooth_main_route()
-        cmr = self.filter_outliers_in_main_route(smr)
-        self.route_skeleton = self.sample_main_route(cmr)
+    def extract_route_skeleton(self, smooth_radius: int = 25, filtering_list_radius: int = 20, distance_interval: int = 20):
+        smr = self.smooth_main_route(smooth_radius)
+        cmr = self.filter_outliers_in_main_route(smr, filtering_list_radius)
+        self.route_skeleton = self.sample_main_route(cmr, distance_interval)
         
     def smooth_main_route(self, radius: int = 25) -> set:
         smr = set()
@@ -88,7 +90,7 @@ class GridSystem:
                 x_sum /= len(ns)
 
             if y_sum != 0:
-                y_sum /= len(ns)            
+                y_sum /= len(ns)
             smr.add((x_sum, y_sum))
         return smr
     
@@ -111,11 +113,10 @@ class GridSystem:
     
     def construct_safe_areas(self, decrease_factor: float = 0.01):
         cs = self.create_cover_sets()
-        self.safe_areas = dict()
 
         for anchor in self.route_skeleton:
             #Initialize safe area radius
-            radius = max(cs[anchor], key=itemgetter(1))[1]
+            radius = max(cs[anchor], key=itemgetter(1), default=(0,0))[1]
             removed_count = 0
             cs_size = len(cs[anchor])
             removal_threshold = decrease_factor * cs_size
@@ -171,8 +172,18 @@ class GridSystem:
                 min_dist =dist
         return (nearest_anchor, min_dist)
 
+    # Converts cell to point based on initialization_point
+    def convert_cell_to_point(self, cell, timestamp: Optional[datetime] = None) -> trajectory.Point:
+        new_point = (cell[1] * self.cell_size, cell[0] * self.cell_size)
+        
+        delta_lat_lon = distance.distance(meters=new_point[1]).destination((self.initialization_point[1], self.initialization_point[0]), NORTH)
+        delta_lat_lon = distance.distance(meters=new_point[0]).destination(delta_lat_lon, EAST)
+
+        return trajectory.Point(delta_lat_lon[1], delta_lat_lon[0], timestamp)
+
     @staticmethod
     def calculate_euclidian_distance_between_cells(cell1, cell2):
         (x_1, y_1) = cell1
         (x_2, y_2) = cell2
         return sqrt((x_2 - x_1)**2 + (y_2 - y_1)**2)
+
