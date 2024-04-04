@@ -17,21 +17,37 @@ def pytest_configure(config):
     config.addinivalue_line("markers", "bm_expensive: mark a test as expensive benchmark.")
 
 def pytest_collection_modifyitems(config, items):
-    if config.getoption("--benchmark-cheap"):
-        return
     skip_bm_cheap = pytest.mark.skip(reason="Benchmarking limited to --benchmark-cheap.")
+    skip_bm_mid = pytest.mark.skip(reason="Benchmarking limited to --benchmark-mid")
+    skip_bm_expensive = pytest.mark.skip(reason="Benchmarking limited to --benchmark")
+
+    if config.getoption("--benchmark-cheap"):
+        for item in items:
+            if "bm_mid" in item.keywords:
+                item.add_marker(skip_bm_mid)
+            if "bm_expensive" in item.keywords:
+                item.add_marker(skip_bm_expensive)
+        return
+    elif config.getoption("--benchmark-mid"):
+        for item in items:
+            if "bm_cheap" in item.keywords:
+                item.add_marker(skip_bm_cheap)
+            if "bm_expensive" in item.keywords:
+                item.add_marker(skip_bm_expensive)
+
+        return
+    elif config.getoption("--benchmark"):
+        for item in items:
+            if "bm_cheap" in item.keywords:
+                item.add_marker(skip_bm_cheap)
+            if "bm_mid" in item.keywords:
+                item.add_marker(skip_bm_mid)
+        return
+
     for item in items:
         if "bm_cheap" in item.keywords:
             item.add_marker(skip_bm_cheap)
-    if config.getoption("--benchmark-mid"):
-        return
-    skip_bm_mid = pytest.mark.skip(reason="Benchmarking limited to --benchmark-mid")
-    for item in items:
         if "bm_mid" in item.keywords:
             item.add_marker(skip_bm_mid)
-    if config.getoption("--benchmark"):
-        return
-    skip_bm_expensive = pytest.mark.skip(reason="Benchmarking limited to --benchmark")
-    for item in items:
         if "bm_expensive" in item.keywords:
             item.add_marker(skip_bm_expensive)
