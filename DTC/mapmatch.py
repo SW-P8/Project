@@ -9,7 +9,9 @@ import pandas as pd
 
 def run_mapmatch():
     dtc_executor = DTCExecutor()
-    pc = dtc_executor.create_point_cloud_with_n_points(25000)
+def run_mapmatch(n_points:int):
+    dtc_executor = DTCExecutor()
+    pc = dtc_executor.create_point_cloud_with_n_points(n_points)
     df = pd.DataFrame(columns=['longitude', 'latitude'])
     i = 0
     for trajectory in pc.trajectories:
