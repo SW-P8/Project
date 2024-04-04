@@ -117,7 +117,7 @@ class GridSystem:
         cs = self.create_cover_sets()
 
         for anchor in self.route_skeleton:
-            self.safe_areas.append(SafeArea(cs[anchor]))
+            self.safe_areas.append(SafeArea(cs[anchor], ))
 
     def create_cover_sets(self, find_candidate_algorithm = None):
         if find_candidate_algorithm is None:

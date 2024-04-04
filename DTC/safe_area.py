@@ -4,12 +4,13 @@ class SafeArea:
     def __init__(self, anchor) -> None:
         self.center = (0, 0)
         self.radius = 0
-        self.weigth = 0 # TODO add logic for deciding weights.
+        self.weigth = 0 
         self.construct(anchor)
 
     def construct(self, anchor):
         #Initialize safe area radius
         self.calculate_radius(anchor)
+        self.calculate_weight()
        
     def calculate_radius(self, anchor, decrease_factor: float = 0.01):
         radius = max(anchor, key=itemgetter(1), default=(0,0))[1]
@@ -25,4 +26,8 @@ class SafeArea:
             removed_count = cover_set_size - len(filtered_cover_set)
 
         self.radius = radius
+
+    # TODO add logic for deciding weights.
+    def calculate_weight(self):
+        self.weigth = 1
 
