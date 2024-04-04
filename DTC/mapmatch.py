@@ -1,4 +1,3 @@
-from mappymatch import package_root
 from mappymatch.constructs.geofence import Geofence
 from mappymatch.constructs.trace import Trace
 from mappymatch.maps.nx.nx_map import NxMap
