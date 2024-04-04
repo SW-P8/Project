@@ -10,3 +10,11 @@ INSERT INTO TaxiData (taxi_id, date_time, longitude, latitude, trajectory_id) VA
 INSERT INTO TaxiData (taxi_id, date_time, longitude, latitude, trajectory_id) VALUES
 (1, '2008-02-02 17:00:24', 116.47191, 39.90577, 2),
 (1, '2008-02-02 17:10:24', 116.50661, 39.9145, 2);
+
+INSERT INTO TaxiData (taxi_id, date_time, longitude, latitude, trajectory_id) VALUES
+(2, '2008-02-02 17:10:24', 114.42, 40, 3),
+(2, '2008-02-02 17:20:24', 118.42, 40, 3),
+(2, '2008-02-02 17:30:24', 116.42, 38, 3),
+(2, '2008-02-02 17:40:24', 116.42, 42, 3),
+(2, '2008-02-02 17:50:24', 116.42, 40, 3);
+

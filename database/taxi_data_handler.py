@@ -1,3 +1,4 @@
+from database.load_data import BBB_MAX_LAT, BBB_MAX_LONG, BBB_MIN_LAT, BBB_MIN_LONG
 """
 Module for handling CRUD operations on TaxiData table.
 """
@@ -79,6 +80,24 @@ class TaxiDataHandler:
             with conn.cursor() as cursor:
                 cursor.execute(sql, (n,))
                 return cursor.fetchall()
+            
+    def read_n_records_inside_bbb(self, n: int):
+        """
+        Retrieves n records from the TaxiData table which is contained inside the Beijing Bounding Box
+
+        Args:
+            n: Integer, amount of records to retrieve
+
+        Returns:
+            List of tuples containing n records
+        """
+
+        sql = "SELECT * FROM TaxiData WHERE latitude > %s AND latitude < %s AND longitude < %s AND longitude > %s LIMIT %s"
+        with self.__connection_pool.getconn() as conn:
+            with conn.cursor() as cursor:
+                cursor.execute(sql, (BBB_MIN_LAT, BBB_MAX_LAT, BBB_MAX_LONG, BBB_MIN_LONG, n))
+                return cursor.fetchall()
+
 
     def update_record(self, taxi_id, new_date_time, new_longitude, new_latitude, new_trajectory_id):
         """
