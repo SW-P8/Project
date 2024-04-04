@@ -31,7 +31,7 @@ def pytest_collection_modifyitems(config, items):
             item.add_marker(skip_bm_mid)
     if config.getoption("--benchmark"):
         return
-    skib_bm_expensive = pytest.mark.skip(reason="Benchmarking limited to --benchmark")
+    skip_bm_expensive = pytest.mark.skip(reason="Benchmarking limited to --benchmark")
     for item in items:
         if "bm_expensive" in item.keywords:
-            item.add_marker(skib_bm_expensive)
+            item.add_marker(skip_bm_expensive)
