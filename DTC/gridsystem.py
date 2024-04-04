@@ -1,6 +1,7 @@
 from DTC.trajectory import Trajectory, TrajectoryPointCloud
 from DTC.point import Point
 from DTC.distance_calculator import DistanceCalculator
+from DTC.safe_area import SafeArea
 from math import floor, sqrt
 from operator import itemgetter
 from datetime import datetime
@@ -16,7 +17,8 @@ class GridSystem:
         self.populated_cells = set()
         self.main_route = set()
         self.route_skeleton = set()
-        self.safe_areas = dict()
+        # self.safe_areas = dict()
+        self.safe_areas = []
 
 
     def create_grid_system(self):
@@ -110,26 +112,13 @@ class GridSystem:
             if len(targets) > 1:
                 rs.add(c1)
         return rs
-    
+
     def construct_safe_areas(self, decrease_factor: float = 0.01):
         cs = self.create_cover_sets()
 
         for anchor in self.route_skeleton:
-            #Initialize safe area radius
-            radius = max(cs[anchor], key=itemgetter(1), default=(0,0))[1]
-            removed_count = 0
-            cs_size = len(cs[anchor])
-            removal_threshold = decrease_factor * cs_size
-            filtered_cs = {(p, d) for (p, d) in cs[anchor]}
+            self.safe_areas.append(SafeArea(cs[anchor]))
 
-            #Refine radius of safe area radius
-            while removed_count < removal_threshold:
-                radius *= (1 - decrease_factor)
-                filtered_cs = {(p, d) for (p, d) in filtered_cs if d <= radius}
-                removed_count = cs_size - len(filtered_cs)
-
-            self.safe_areas[anchor] = radius
-    
     def create_cover_sets(self, find_candidate_algorithm = None):
         if find_candidate_algorithm is None:
             find_candidate_algorithm = self.find_candidate_nearest_neighbors
