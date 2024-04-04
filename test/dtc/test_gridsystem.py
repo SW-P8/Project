@@ -1,58 +1,59 @@
 import pytest
-from DTC import trajectory, gridsystem
-from geopy import distance
+from DTC.trajectory import Trajectory, TrajectoryPointCloud
+from DTC.gridsystem import GridSystem
+from DTC.distance_calculator import DistanceCalculator
 from datetime import datetime
-from math import sqrt, floor
-from DTC.utils.constants import NORTH, EAST
+from math import floor
 
 class TestGridsystem():
     @pytest.fixture
     def single_point_grid(self):
-        pc = trajectory.TrajectoryPointCloud()
-        t = trajectory.Trajectory()
+        pc = TrajectoryPointCloud()
+        t = Trajectory()
         
         # Add point to use initialization point
         t.add_point(1,0,datetime(2024, 1, 1, 1, 1, 1))
 
         pc.add_trajectory(t)
-        gs = gridsystem.GridSystem(pc)
+        gs = GridSystem(pc)
         gs.create_grid_system()
         return gs
 
     @pytest.fixture
     def two_point_grid(self):
-        pc = trajectory.TrajectoryPointCloud()
-        t = trajectory.Trajectory()
+        pc = TrajectoryPointCloud()
+        t = Trajectory()
         
         # Add point to use initialization point
         t.add_point(1,0,datetime(2024, 1, 1, 1, 1, 1))
 
         # Shift second point 20 meters north and east (should result in the two points being 4 cells apart in both x and y)
-        shifted_point = distance.distance(meters=20).destination((t.points[0].latitude, t.points[0].longitude), NORTH)
-        shifted_point = distance.distance(meters=20).destination((shifted_point), EAST)
+        DistanceCalculator.shift_point_with_bearing(t.points[0], 20, DistanceCalculator.NORTH)
+        shifted_point = DistanceCalculator.shift_point_with_bearing(t.points[0], 20, DistanceCalculator.NORTH)
+        shifted_point = DistanceCalculator.shift_point_with_bearing(shifted_point, 20, DistanceCalculator.EAST)
         
-        t.add_point(shifted_point.longitude, shifted_point.latitude, datetime(2024, 1, 1, 1, 1, 2))
+        t.add_point(shifted_point[0], shifted_point[1], datetime(2024, 1, 1, 1, 1, 2))
         pc.add_trajectory(t)
-        gs = gridsystem.GridSystem(pc)
+        gs = GridSystem(pc)
         gs.create_grid_system()
         return gs
     
     @pytest.fixture
     def five_point_grid(self):
-        pc = trajectory.TrajectoryPointCloud()
-        t = trajectory.Trajectory()
+        pc = TrajectoryPointCloud()
+        t = Trajectory()
         
         # Add point to use initialization point
         t.add_point(1,0,datetime(2024, 1, 1, 1, 1, 1))
 
         for i in range(1, 5):
             # Shift points 5 meters north and east (should result in 5 points being 1 cell apart in both x and y)
-            shifted_point = distance.distance(meters=i * 5).destination((t.points[0].latitude, t.points[0].longitude), NORTH)
-            shifted_point = distance.distance(meters=i * 5).destination((shifted_point), EAST)
+            shifted_point = DistanceCalculator.shift_point_with_bearing(t.points[0], i * 5, DistanceCalculator.NORTH)
+            shifted_point = DistanceCalculator.shift_point_with_bearing(shifted_point, i * 5, DistanceCalculator.EAST)
         
-            t.add_point(shifted_point.longitude, shifted_point.latitude, datetime(2024, 1, 1, 1, 1, 1 + i))
+            t.add_point(shifted_point[0], shifted_point[1], datetime(2024, 1, 1, 1, 1, 1 + i))
         pc.add_trajectory(t)
-        gs = gridsystem.GridSystem(pc)
+        gs = GridSystem(pc)
         gs.create_grid_system()
         return gs
 
@@ -69,23 +70,6 @@ class TestGridsystem():
         assert two_point_grid.pc.trajectories[0].points[0] == two_point_grid.grid[(3, 3)][0]
         assert two_point_grid.pc.trajectories[0].points[1] == two_point_grid.grid[(7, 7)][0]
 
-    def test_calculate_euclidian_distance_returns_correctly(self):
-        c1 = (0, 0)
-        c2 = (1, 0)
-        c3 = (0, 1)
-        c4 = (1, 1)
-
-        d_c1_c1 = gridsystem.GridSystem.calculate_euclidian_distance_between_cells(c1, c1)
-        d_c1_c2 = gridsystem.GridSystem.calculate_euclidian_distance_between_cells(c1, c2)
-        d_c1_c3 = gridsystem.GridSystem.calculate_euclidian_distance_between_cells(c1, c3)
-        d_c1_c4 = gridsystem.GridSystem.calculate_euclidian_distance_between_cells(c1, c4)
-
-
-        assert d_c1_c1 == 0
-        assert d_c1_c2 == 1
-        assert d_c1_c3 == 1
-        assert d_c1_c4 == sqrt(2)
-
     def test_calculate_density_center_returns_correctly_with_single_point(self, single_point_grid):
         density_center = single_point_grid.calculate_density_center((2, 3))
 
@@ -100,21 +84,21 @@ class TestGridsystem():
         assert density_center2 == (5, 5)
 
     def test_calculate_density_center_returns_correctly_with_many_points(self):
-        pc = trajectory.TrajectoryPointCloud()
-        t = trajectory.Trajectory()
+        pc = TrajectoryPointCloud()
+        t = Trajectory()
         
         # Add point to use initialization point
         for i in range(1, 11):
             t.add_point(1,0,datetime(2024, 1, 1, 1, 1, i))
 
         # Shift second point 20 meters north and east (should result in the two points being 4 cells apart in both x and y)
-        shifted_point = distance.distance(meters=20).destination((t.points[0].latitude, t.points[0].longitude), NORTH)
-        shifted_point = distance.distance(meters=20).destination((shifted_point), EAST)
-        t.add_point(shifted_point.longitude, shifted_point.latitude, datetime(2024, 1, 1, 1, 1, 11))
+        shifted_point = DistanceCalculator.shift_point_with_bearing(t.points[0], 20, DistanceCalculator.NORTH)
+        shifted_point = DistanceCalculator.shift_point_with_bearing(shifted_point, 20, DistanceCalculator.EAST)
+        t.add_point(shifted_point[0], shifted_point[1], datetime(2024, 1, 1, 1, 1, 11))
 
 
         pc.add_trajectory(t)
-        gs = gridsystem.GridSystem(pc)
+        gs = GridSystem(pc)
         gs.create_grid_system()
 
         density_center1 = gs.calculate_density_center((3, 3))
@@ -146,21 +130,21 @@ class TestGridsystem():
         assert two_point_grid.main_route == set()
 
     def test_extract_main_route_returns_correctly_with_many_points(self):
-        pc = trajectory.TrajectoryPointCloud()
-        t = trajectory.Trajectory()
+        pc = TrajectoryPointCloud()
+        t = Trajectory()
         
         # Add point to use initialization point
         for i in range(1, 11):
             t.add_point(1,0,datetime(2024, 1, 1, 1, 1, i))
 
         # Shift second point 20 meters north and east (should result in the two points being 4 cells apart in both x and y)
-        shifted_point = distance.distance(meters=20).destination((t.points[0].latitude, t.points[0].longitude), NORTH)
-        shifted_point = distance.distance(meters=20).destination((shifted_point), EAST)
-        t.add_point(shifted_point.longitude, shifted_point.latitude, datetime(2024, 1, 1, 1, 1, 11))
+        shifted_point = DistanceCalculator.shift_point_with_bearing(t.points[0], 20, DistanceCalculator.NORTH)
+        shifted_point = DistanceCalculator.shift_point_with_bearing(shifted_point, 20, DistanceCalculator.EAST)
+        t.add_point(shifted_point[0], shifted_point[1], datetime(2024, 1, 1, 1, 1, 11))
 
 
         pc.add_trajectory(t)
-        gs = gridsystem.GridSystem(pc)
+        gs = GridSystem(pc)
         gs.create_grid_system()
         gs.extract_main_route()
 
@@ -326,8 +310,8 @@ class TestGridsystem():
         # Point 2 has exact index (7, 7)
         (nn2, d2) = two_point_grid.find_nearest_neighbor_from_candidates(two_point_grid.pc.trajectories[0].points[1], candidates)
 
-        expected_d1 = two_point_grid.calculate_euclidian_distance_between_cells((3, 3), (2.5, 2.5))
-        expected_d2 = two_point_grid.calculate_euclidian_distance_between_cells((7, 7), (2.5, 2.5))
+        expected_d1 = DistanceCalculator.calculate_euclidian_distance_between_cells((3, 3), (2.5, 2.5))
+        expected_d2 = DistanceCalculator.calculate_euclidian_distance_between_cells((7, 7), (2.5, 2.5))
 
         assert (nn1, d1) == ((2.5, 2.5), expected_d1)
         assert (nn2, d2) == ((2.5, 2.5), expected_d2)
@@ -339,8 +323,8 @@ class TestGridsystem():
         # Point 2 has exact index (7, 7)
         (nn2, d2) = two_point_grid.find_nearest_neighbor_from_candidates(two_point_grid.pc.trajectories[0].points[1], candidates)
 
-        expected_d1 = two_point_grid.calculate_euclidian_distance_between_cells((3, 3), (2.5, 2.5))
-        expected_d2 = two_point_grid.calculate_euclidian_distance_between_cells((7, 7), (5, 6))
+        expected_d1 = DistanceCalculator.calculate_euclidian_distance_between_cells((3, 3), (2.5, 2.5))
+        expected_d2 = DistanceCalculator.calculate_euclidian_distance_between_cells((7, 7), (5, 6))
 
         assert (nn1, d1) == ((2.5, 2.5), expected_d1)
         assert (nn2, d2) == ((5, 6), expected_d2)
@@ -352,8 +336,8 @@ class TestGridsystem():
         # Point 2 has exact index (7, 7)
         (nn2, d2) = two_point_grid.find_nearest_neighbor_from_candidates(two_point_grid.pc.trajectories[0].points[1], candidates)
 
-        expected_d1 = two_point_grid.calculate_euclidian_distance_between_cells((3, 3), (3, 3))
-        expected_d2 = two_point_grid.calculate_euclidian_distance_between_cells((7, 7), (7, 7))
+        expected_d1 = DistanceCalculator.calculate_euclidian_distance_between_cells((3, 3), (3, 3))
+        expected_d2 = DistanceCalculator.calculate_euclidian_distance_between_cells((7, 7), (7, 7))
 
         assert (nn1, d1) == ((3, 3), expected_d1)
         assert (nn2, d2) == ((7, 7), expected_d2)        
@@ -362,8 +346,8 @@ class TestGridsystem():
         two_point_grid.route_skeleton = {(3, 3)}
         cs = two_point_grid.create_cover_sets()
 
-        expected_d1 = two_point_grid.calculate_euclidian_distance_between_cells((3, 3), (3, 3))
-        expected_d2 = two_point_grid.calculate_euclidian_distance_between_cells((7, 7), (3, 3))
+        expected_d1 = DistanceCalculator.calculate_euclidian_distance_between_cells((3, 3), (3, 3))
+        expected_d2 = DistanceCalculator.calculate_euclidian_distance_between_cells((7, 7), (3, 3))
 
         assert len(cs) == 1
         assert cs[(3, 3)] == {(two_point_grid.pc.trajectories[0].points[0], expected_d1), (two_point_grid.pc.trajectories[0].points[1], expected_d2)}
@@ -372,8 +356,8 @@ class TestGridsystem():
         two_point_grid.route_skeleton = {(3, 3), (5, 6)}
         cs = two_point_grid.create_cover_sets()
 
-        expected_d1 = two_point_grid.calculate_euclidian_distance_between_cells((3, 3), (3, 3))
-        expected_d2 = two_point_grid.calculate_euclidian_distance_between_cells((7, 7), (5, 6))
+        expected_d1 = DistanceCalculator.calculate_euclidian_distance_between_cells((3, 3), (3, 3))
+        expected_d2 = DistanceCalculator.calculate_euclidian_distance_between_cells((7, 7), (5, 6))
 
         assert len(cs) == 2
         assert cs[(3, 3)] == {(two_point_grid.pc.trajectories[0].points[0], expected_d1)}
@@ -384,8 +368,8 @@ class TestGridsystem():
         two_point_grid.route_skeleton = {(2, 3), (3, 3), (5, 6), (7, 7)}
         cs = two_point_grid.create_cover_sets()
 
-        expected_d1 = two_point_grid.calculate_euclidian_distance_between_cells((3, 3), (3, 3))
-        expected_d2 = two_point_grid.calculate_euclidian_distance_between_cells((7, 7), (7, 7))
+        expected_d1 = DistanceCalculator.calculate_euclidian_distance_between_cells((3, 3), (3, 3))
+        expected_d2 = DistanceCalculator.calculate_euclidian_distance_between_cells((7, 7), (7, 7))
 
         assert len(cs) == 4
         assert cs[(3, 3)] == {(two_point_grid.pc.trajectories[0].points[0], expected_d1)}
@@ -398,7 +382,7 @@ class TestGridsystem():
         two_point_grid.route_skeleton = {(3, 3)}
         two_point_grid.construct_safe_areas(0)
         
-        expected_r = two_point_grid.calculate_euclidian_distance_between_cells((7, 7), (3, 3))
+        expected_r = DistanceCalculator.calculate_euclidian_distance_between_cells((7, 7), (3, 3))
 
         assert len(two_point_grid.safe_areas) == 1
         assert two_point_grid.safe_areas[(3, 3)] == expected_r
@@ -407,7 +391,7 @@ class TestGridsystem():
         two_point_grid.route_skeleton = {(3, 3)}
         two_point_grid.construct_safe_areas()
         
-        expected_r = two_point_grid.calculate_euclidian_distance_between_cells((7, 7), (3, 3)) * 0.99
+        expected_r = DistanceCalculator.calculate_euclidian_distance_between_cells((7, 7), (3, 3)) * 0.99
 
         assert len(two_point_grid.safe_areas) == 1
         assert two_point_grid.safe_areas[(3, 3)] == expected_r
@@ -416,7 +400,7 @@ class TestGridsystem():
         five_point_grid.route_skeleton = {(3, 3)}
         five_point_grid.construct_safe_areas()
         
-        expected_r = five_point_grid.calculate_euclidian_distance_between_cells((7, 7), (3, 3)) * 0.99
+        expected_r = DistanceCalculator.calculate_euclidian_distance_between_cells((7, 7), (3, 3)) * 0.99
 
         assert len(five_point_grid.safe_areas) == 1
         assert five_point_grid.safe_areas[(3, 3)] == expected_r
@@ -425,10 +409,10 @@ class TestGridsystem():
         five_point_grid.construct_safe_areas(0.4)
         
         p3 = five_point_grid.calculate_exact_index_for_point(five_point_grid.pc.trajectories[0].points[2])
-        distance_to_p3 = five_point_grid.calculate_euclidian_distance_between_cells(p3, (3, 3)) 
+        distance_to_p3 = DistanceCalculator.calculate_euclidian_distance_between_cells(p3, (3, 3)) 
 
         p4 = five_point_grid.calculate_exact_index_for_point(five_point_grid.pc.trajectories[0].points[3])
-        distance_to_p4 = five_point_grid.calculate_euclidian_distance_between_cells(p4, (3, 3)) 
+        distance_to_p4 = DistanceCalculator.calculate_euclidian_distance_between_cells(p4, (3, 3)) 
 
         assert len(five_point_grid.safe_areas) == 1
         # As the points are far enough apart, it should result in the 4th point being removed while the 3rd point remains
@@ -444,38 +428,23 @@ class TestGridsystem():
         # As mentioned above, the refining radius of safe areas with these splits, will mean that p2 and p3 are removed respectively
         # Thereby yielding radius values just shy of their distance to the anchor points
         p2 = five_point_grid.calculate_exact_index_for_point(five_point_grid.pc.trajectories[0].points[1])
-        expected_r1 = five_point_grid.calculate_euclidian_distance_between_cells(p2, (2, 2)) * 0.99
+        expected_r1 = DistanceCalculator.calculate_euclidian_distance_between_cells(p2, (2, 2)) * 0.99
 
         p3 = five_point_grid.calculate_exact_index_for_point(five_point_grid.pc.trajectories[0].points[2])
-        expected_r2 = five_point_grid.calculate_euclidian_distance_between_cells(p3, (7, 7)) * 0.99
+        expected_r2 = DistanceCalculator.calculate_euclidian_distance_between_cells(p3, (7, 7)) * 0.99
 
         assert len(five_point_grid.safe_areas) == 2
         assert five_point_grid.safe_areas[(2, 2)] == expected_r1
         assert five_point_grid.safe_areas[(7, 7)] == expected_r2
 
-    def test_convert_cell_to_point_without_timestamp(self, single_point_grid):
+    def test_convert_cell_to_point(self, single_point_grid):
         cell = (10,10)
 
         new_point = single_point_grid.convert_cell_to_point(cell)
+        shift_distance = single_point_grid.pc.cell_size * 10
 
-        expected_point = distance.distance(meters=single_point_grid.pc.cell_size * 10).destination((single_point_grid.initialization_point[1], single_point_grid.initialization_point[0]), NORTH)
-        expected_point = distance.distance(meters=single_point_grid.pc.cell_size * 10).destination(expected_point, EAST)
+        expected_point = DistanceCalculator.shift_point_with_bearing(single_point_grid.initialization_point, shift_distance, DistanceCalculator.NORTH)
+        expected_point = DistanceCalculator.shift_point_with_bearing(expected_point, shift_distance, DistanceCalculator.EAST)
 
-        assert new_point.longitude == expected_point.longitude
-        assert new_point.latitude == expected_point.latitude
-        assert new_point.timestamp == None
-    
-    def test_convert_cell_to_point_with_timestamp(self, single_point_grid):
-        cell = (10,10)
-        
-        time = datetime.now()
-
-        new_point = single_point_grid.convert_cell_to_point(cell, time)
-
-        expected_point = distance.distance(meters=single_point_grid.pc.cell_size * 10).destination((single_point_grid.initialization_point[1], single_point_grid.initialization_point[0]), NORTH)
-        expected_point = distance.distance(meters=single_point_grid.pc.cell_size * 10).destination(expected_point, EAST)
-
-        assert new_point.longitude == expected_point.longitude
-        assert new_point.latitude == expected_point.latitude
-        assert new_point.timestamp == time
-
+        assert new_point[0] == expected_point[0]
+        assert new_point[1] == expected_point[1]
