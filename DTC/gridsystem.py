@@ -173,7 +173,7 @@ class GridSystem:
         return (nearest_anchor, min_dist)
 
     # Converts cell coordinate to long lat based on initialization_point
-    def convert_cell_to_point(self, cell) -> Point:
+    def convert_cell_to_point(self, cell) -> tuple[float, float]:
         offsets = (cell[0] * self.cell_size, cell[1] * self.cell_size)
         
         gps_coordinates = DistanceCalculator.shift_point_with_bearing(self.initialization_point, offsets[0], DistanceCalculator.NORTH)
