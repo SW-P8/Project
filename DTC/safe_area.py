@@ -1,14 +1,15 @@
 from operator import itemgetter
+from datetime import datetime
 
 class SafeArea:
-    def __init__(self, anchor) -> None:
-        self.center = (0, 0)
+    def __init__(self, anchor_cover_set, anchor: tuple[float, float]) -> None:
+        self.center = anchor
         self.radius = 0
         self.weigth = 0 
-        self.construct(anchor)
+        self.timestamp = datetime.now() # Could be used to indicate creation or update time if we use time for weights, change value.
+        self.construct(anchor_cover_set)
 
     def construct(self, anchor):
-        #Initialize safe area radius
         self.calculate_radius(anchor)
         self.calculate_weight()
        
