@@ -13,6 +13,7 @@ class RTreeSkeletonExtractor:
     @staticmethod
     def smooth_main_route(main_route: Index, radius: int = 25) -> Index:
         smr = Index()
+        already_inserted = set()
         for item in main_route.intersection((float('-inf'), float('-inf'), float('inf'), float('inf')), objects=True):
             print(item.id)
             x, y, _ , _ = item.bbox
@@ -28,7 +29,9 @@ class RTreeSkeletonExtractor:
                     point_count += 1
             x_avg = x_acc / point_count
             y_avg = y_acc / point_count
-            smr.insert(item.id, (x_avg, y_avg, x_avg, y_avg))
+            if (x_avg, y_avg) not in already_inserted:
+                smr.insert(item.id, (x_avg, y_avg, x_avg, y_avg))
+                already_inserted.add((x_avg, y_avg))
         return smr
 
     def filter_outliers_in_main_route(self, smr: set, radius_prime: int = 20):
