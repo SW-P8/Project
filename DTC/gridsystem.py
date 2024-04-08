@@ -84,7 +84,7 @@ class GridSystem:
         rsw = RouteSkeleton(self.main_route)
         smr = rsw.smooth_main_route(smooth_radius)
         cmr = rsw.filter_outliers_in_main_route(smr, filtering_list_radius)
-        self.route_skeleton = self.sample_main_route(cmr, distance_interval)
+        self.route_skeleton = rsw.sample_main_route(cmr, distance_interval)
         
     
     def construct_safe_areas(self, decrease_factor: float = 0.01):
