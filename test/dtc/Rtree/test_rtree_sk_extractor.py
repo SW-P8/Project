@@ -122,3 +122,68 @@ class TestRTreeSKExtractor:
         assert [23, 3.5, 23, 3.5] in points_bbox
         assert [23.1, 3.5, 23.1, 3.5] in points_bbox
         assert len(points) == 102
+
+    def test_sample_main_route_returns_correctly_with_single_cell(self):
+        cmr = Index()
+        cmr.insert(1, [2, 3, 2, 3])
+        rs = RTreeSkeletonExtractor.sample_main_route(cmr)
+        assert rs == set()
+
+    def test_sample_main_route_returns_correctly_with_two_cells(self):
+        cmr = Index()
+        cmr.insert(1, [2, 3, 2, 3])
+        cmr.insert(2, [22, 3, 22, 3])
+        rs1 = RTreeSkeletonExtractor.sample_main_route(cmr)
+        assert rs1 == {(2, 3), (22, 3)}
+
+        rs2 = RTreeSkeletonExtractor.sample_main_route(cmr, 19)
+        assert rs2 == set()
+
+    def test_sample_main_route_returns_correctly(self):
+        cmr = Index()
+        expected_rs = set()
+        for i in range(1, 101):
+            cmr.insert(i, [1 + 0.01 * i, 3.5, 1 + 0.01 * i, 3.5])
+            expected_rs.add((1 + 0.01 * i, 3.5))
+        
+        # Add cell a large distance from others
+        cmr.insert(101, [23, 3.5, 23, 3.5])
+        actual_rs = RTreeSkeletonExtractor.sample_main_route(cmr)
+
+        # Check that outlier cell is correctly removed
+        assert (23, 3.5) not in actual_rs
+        assert actual_rs == expected_rs
+
+    def test_extract_route_skeleton_returns_correctly_with_single_cell(self):
+        main_route = Index()
+        main_route.insert(1, [2, 3, 2, 3])
+        rs = RTreeSkeletonExtractor.extract_route_skeleton(main_route)
+        assert rs == set()
+
+    def test_extract_route_skeleton_returns_correctly_with_two_cells(self):
+        main_route = Index()
+        main_route.insert(1, [2, 3, 2, 3])
+        main_route.insert(2, [12, 3, 12 ,3])
+        rs = RTreeSkeletonExtractor.extract_route_skeleton(main_route)
+        assert rs == set()
+
+    def test_extract_route_skeleton_returns_correctly_with_three_cells(self):
+        main_route = Index()
+        main_route.insert(1, [2, 3, 2, 3])
+        main_route.insert(2, [27, 3, 27 ,3])
+        main_route.insert(3, [32, 3, 32, 3])
+        rs = RTreeSkeletonExtractor.extract_route_skeleton(main_route)
+        assert rs == {(15, 3.5), ((2.5 + 27.5 + 32.5)/3, 3.5), (30, 3.5)}
+
+    def test_extract_route_skeleton_returns_correctly_with_many_cells(self):
+        main_route = Index()
+        for i in range(0, 27):
+            main_route.insert(i, [-24 + 1 * i, 3, -24 + 1 * i, 3])
+
+        # Add cell more than radius distance from others to not have it be smoothed and therefore later filtered out
+        main_route.insert(27, [28, 3, 28, 3])
+
+        rs = RTreeSkeletonExtractor.extract_route_skeleton(main_route)
+
+        assert (28.5, 3.5) not in rs
+        assert rs != set()

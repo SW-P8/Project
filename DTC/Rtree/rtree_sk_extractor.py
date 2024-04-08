@@ -53,16 +53,20 @@ class RTreeSkeletonExtractor:
 
         return cmr        
 
-
-    def sample_main_route(self, cmr: Index, distance_interval: int = 20) -> Index:
-        tree = Index()
-        
-        for i, (x, y) in enumerate(cmr):
-            tree.insert(i, (x, y, x, y))  # Adding points to the R-tree
-        
+    @staticmethod
+    def sample_main_route(cmr: Index, distance_interval: int = 20) -> Index:
         rs = set()
-        for x, y in cmr:
-            nearby_points = tree.intersection((x - distance_interval, y - distance_interval, x + distance_interval, y + distance_interval), objects=True)
-            if len(nearby_points) > 1:
+        for item in cmr.intersection((float('-inf'), float('-inf'), float('inf'), float('inf')), objects=True):
+            x, y, _ , _ = item.bbox
+            point_count = 0
+
+            for inner_item in cmr.intersection((x - distance_interval, y - distance_interval, x + distance_interval, y + distance_interval), objects=True):
+                x_n, y_n, _, _ = inner_item.bbox
+                if DistanceCalculator.calculate_euclidian_distance_between_cells((x, y), (x_n, y_n)) <= distance_interval:
+                    point_count += 1
+
+            # targets should be greater than 1 to take self into account
+            if point_count > 1:
                 rs.add((x, y))
+
         return rs
