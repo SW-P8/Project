@@ -15,6 +15,8 @@ class TestRTreeSKExtractor:
 
         # Should simply contain the center of the single cell
         assert actual_point == expected_point
+        assert len(points) == 1
+
 
     def test_smooth_main_route_returns_correctly_with_two_elements(self):
         mr = Index()
@@ -71,3 +73,52 @@ class TestRTreeSKExtractor:
         assert actual_point2 == expected_point2
         assert actual_point3 == expected_point3
         assert len(points) == 3
+
+    def test_filter_outliers_in_main_route_returns_correctly_with_single_element(self):
+        smr = Index()
+        smr.insert(1, [2.5, 3.5, 2.5, 3.5])
+
+        expected_point = [2.5, 3.5, 2.5, 3.5]
+
+        actual_cmr = RTreeSkeletonExtractor.filter_outliers_in_main_route(smr)
+        hits = list(actual_cmr.intersection((float('-inf'), float('-inf'), float('inf'), float('inf')), objects=True))
+        points = [(item.object, item.bbox) for item in hits]
+        _, actual_point = points[0]
+
+        # Should simply contain the center of the single cell
+        assert actual_point == expected_point
+        assert len(points) == 1
+
+    def test_filter_outliers_in_main_route_filters_outlier_correctly(self):
+        smr = Index()
+        for i in range(1, 101):
+            smr.insert(i, [1 + 0.01 * i, 3.5, 1 + 0.01 * i, 3.5])
+        
+        # Add cell more than radius prime distance from others
+        smr.insert(101, [23, 3.5, 23, 3.5])
+        actual_cmr = RTreeSkeletonExtractor.filter_outliers_in_main_route(smr)
+        hits = list(actual_cmr.intersection((float('-inf'), float('-inf'), float('inf'), float('inf')), objects=True))
+        points = [(item.object, item.bbox) for item in hits]
+        points_bbox = [bbox for _, bbox in points]
+
+        # Check that outlier cell is correctly removed
+        assert [23, 3.5, 23, 3.5] not in points_bbox
+        assert len(points) == 100
+
+    def test_filter_outliers_in_main_route_returns_correctly_with_multiple_elements(self):
+        smr = Index()
+        for i in range(1, 101):
+            smr.insert(i, [1 + 0.01 * i, 3.5, 1 + 0.01 * i, 3.5])
+        
+        # Add two cells more than radius prime distance from others
+        smr.insert(101, [23, 3.5, 23, 3.5])
+        smr.insert(102, [23.1, 3.5, 23.1, 3.5])
+        actual_cmr = RTreeSkeletonExtractor.filter_outliers_in_main_route(smr)
+        hits = list(actual_cmr.intersection((float('-inf'), float('-inf'), float('inf'), float('inf')), objects=True))
+        points = [(item.object, item.bbox) for item in hits]
+        points_bbox = [bbox for _, bbox in points]
+
+        # Check that outlier cell is correctly removed
+        assert [23, 3.5, 23, 3.5] in points_bbox
+        assert [23.1, 3.5, 23.1, 3.5] in points_bbox
+        assert len(points) == 102
