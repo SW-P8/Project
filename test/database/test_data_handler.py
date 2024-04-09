@@ -27,6 +27,15 @@ class TestDataHandler():
 
         assert len(res1) == 4
         assert len(res2) == 9
+    
+    def test_read_n_records_inside_bbb(self, dal: TaxiDataHandler):
+        res1 = dal.read_n_records_inside_bbb(12)
+        res2 = dal.read_n_records_inside_bbb(15)
+
+        assert len(res1) == 10
+        assert len(res2) == 10
+
+               
 
     def test_adding_record(self, dal: TaxiDataHandler):
         dal.create_record(420, datetime.datetime(2024, 3, 19, 14, 3, 0), 69, 67, 1337)

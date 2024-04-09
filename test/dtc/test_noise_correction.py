@@ -74,40 +74,40 @@ class TestNoiseCorrection():
 
         assert nc.gridsystem.pc.trajectories[0].points[3].timestamp == None
 
-    # test should not correct any points
-    # def test_noise_detection_no_noise(self, five_point_grid):
-    #     nc = NoiseCorrection(five_point_grid)
+    # Test should not correct any points
+    def test_noise_detection_no_noise(self, five_point_grid):
+        nc = NoiseCorrection(five_point_grid)
 
-    #     expected_trajectory = nc.gridsystem.pc.trajectories[0]
-    #     
-    #     nc.gridsystem.route_skeleton = {(0,0), (2.5,2.5), (5,5), (7,7), (10,10)}
-    #     nc.gridsystem.construct_safe_areas(0)
+        expected_trajectory = nc.gridsystem.pc.trajectories[0]
+        
+        nc.gridsystem.route_skeleton = {(0,0), (2.5,2.5), (5,5), (7,7), (10,10)}
+        nc.gridsystem.construct_safe_areas(0)
 
-    #     nc.noise_detection(nc.gridsystem.pc.trajectories[0])
+        nc.noise_detection(nc.gridsystem.pc.trajectories[0])
 
-    #     assert nc.gridsystem.pc.trajectories[0] == expected_trajectory
+        assert nc.gridsystem.pc.trajectories[0] == expected_trajectory
 
-    # def test_noise_detection_correct_noisy_point(self, five_point_grid):
-    #     nc = NoiseCorrection(five_point_grid)
+    def test_noise_detection_correct_noisy_point(self, five_point_grid):
+        nc = NoiseCorrection(five_point_grid)
 
-    #     trajectory_before_correction = copy.deepcopy(nc.gridsystem.pc.trajectories[0])
+        trajectory_before_correction = copy.deepcopy(nc.gridsystem.pc.trajectories[0])
 
-    #     nc.gridsystem.route_skeleton = {(0,0), (2.5,2.5), (5,5), (7,7), (10,10)}
-    #     nc.gridsystem.construct_safe_areas(0)
+        nc.gridsystem.route_skeleton = {(0,0), (2.5,2.5), (5,5), (7,7), (10,10)}
+        nc.gridsystem.construct_safe_areas(0)
 
-    #     # Changing point to make it an outlier.
-    #     shifted_point = DistanceCalculator.shift_point_with_bearing(nc.gridsystem.pc.trajectories[0].points[0], 200, DistanceCalculator.NORTH)
-    #     shifted_point = DistanceCalculator.shift_point_with_bearing(shifted_point, 200, DistanceCalculator.EAST)
+        # Changing point to make it an outlier.
+        shifted_point = DistanceCalculator.shift_point_with_bearing(nc.gridsystem.pc.trajectories[0].points[0], 200, DistanceCalculator.NORTH)
+        shifted_point = DistanceCalculator.shift_point_with_bearing(shifted_point, 200, DistanceCalculator.EAST)
 
-    #     nc.gridsystem.pc.trajectories[0].points[3].longitude = shifted_point[0]
-    #     nc.gridsystem.pc.trajectories[0].points[3].latitude = shifted_point[1]
+        nc.gridsystem.pc.trajectories[0].points[3].longitude = shifted_point[0]
+        nc.gridsystem.pc.trajectories[0].points[3].latitude = shifted_point[1]
 
-    #     
-    #     nc.noise_detection(nc.gridsystem.pc.trajectories[0])
-    #     
-    #     expected_corrected_point = DistanceCalculator.convert_cell_to_point(five_point_grid.initialization_point, (5,5), five_point_grid.cell_size)
+        
+        nc.noise_detection(nc.gridsystem.pc.trajectories[0])
+        
+        expected_corrected_point = DistanceCalculator.convert_cell_to_point(five_point_grid.initialization_point, (5,5), five_point_grid.cell_size)
 
-    #     assert nc.gridsystem.pc.trajectories[0] != trajectory_before_correction 
-    #     assert nc.gridsystem.pc.trajectories[0].points[3].longitude == expected_corrected_point[0]
-    #     assert nc.gridsystem.pc.trajectories[0].points[3].latitude == expected_corrected_point[1]
+        assert nc.gridsystem.pc.trajectories[0] != trajectory_before_correction 
+        assert nc.gridsystem.pc.trajectories[0].points[3].longitude == expected_corrected_point[0]
+        assert nc.gridsystem.pc.trajectories[0].points[3].latitude == expected_corrected_point[1]
 

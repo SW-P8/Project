@@ -2,6 +2,7 @@ import pytest
 from DTC.trajectory import Trajectory, TrajectoryPointCloud
 from DTC.gridsystem import GridSystem
 from DTC.distance_calculator import DistanceCalculator
+from DTC.route_skeleton import RouteSkeleton
 from datetime import datetime
 from math import floor
 
@@ -151,100 +152,6 @@ class TestGridsystem():
         # Density center is skewed towards (3, 3) enough that (6, 6) is not included in main route
         assert gs.main_route == {(3, 3)}
 
-    # Points in grid are not used here as operations are made only on main route
-    def test_smooth_main_route_returns_correctly_with_single_element(self, single_point_grid):
-        single_point_grid.main_route = {(3, 3)}
-        smr = single_point_grid.smooth_main_route()
-
-        # Should simply contain the center of the single cell
-        assert smr == {(3.5, 3.5)}
-
-    # Points in grid are not used here as operations are made only on main route
-    def test_smooth_main_route_returns_correctly_with_two_elements(self, single_point_grid):
-        single_point_grid.main_route = {(3, 3), (27, 3)}
-        smr1 = single_point_grid.smooth_main_route()
-
-        # Should only contain the avg position of the two cells centers
-        assert smr1 == {(15.5, 3.5)}
-
-        smr2 = single_point_grid.smooth_main_route(20)
-
-        # Should contain the centers of the two cells as they are too far apart
-        assert smr2 == {(3.5, 3.5), (27.5, 3.5)}
-
-    # Points in grid are not used here as operations are made only on main route
-    def test_smooth_main_route_returns_correctly_with_multiple_elements(self, single_point_grid):
-        single_point_grid.main_route = {(2, 3), (27, 3), (32, 3)}
-        smr = single_point_grid.smooth_main_route()
-
-        # Should only contain 3 positions        
-        assert smr == {(15, 3.5), ((2.5 + 27.5 + 32.5)/3, 3.5), (30, 3.5)}
-
-    # Points in grid are not used here as operations are made only on main route
-    def test_filter_outliers_in_main_route_returns_correctly_with_single_element(self, single_point_grid):
-        smr = {(2.5, 3.5)}
-        cmr = single_point_grid.filter_outliers_in_main_route(smr)
-        assert cmr == {(2.5, 3.5)}
-
-    # Points in grid are not used here as operations are made only on main route
-    def test_filter_outliers_in_main_route_filters_outlier_correctly(self, single_point_grid):
-        smr = set()
-        for i in range(1, 101):
-            smr.add((1 + 0.01 * i, 3.5))
-        
-        # Add cell more than radius prime distance from others
-        smr.add((23, 3.5))
-        cmr = single_point_grid.filter_outliers_in_main_route(smr)
-
-        # Check that outlier cell is correctly removed
-        assert (23, 3.5) not in cmr
-        assert smr - cmr == {(23, 3.5)}
-
-    # Points in grid are not used here as operations are made only on main route
-    def test_filter_outliers_in_main_route_returns_correctly_with_multiple_elements(self, single_point_grid):
-        smr = set()
-        for i in range(1, 101):
-            smr.add((1 + 0.01 * i, 3.5))
-        
-        # Add two cell more than radius prime distance from others (should be enough to not be filtered out)
-        smr.add((23, 3.5))
-        smr.add((23.1, 3.5))
-        cmr = single_point_grid.filter_outliers_in_main_route(smr)
-
-        # Check that the two far cells are not removed
-        assert (23, 3.5) in cmr
-        assert (23.1, 3.5) in cmr
-        assert smr - cmr == set()
-
-    # Points in grid are not used here as operations are made only on main route
-    def test_sample_main_route_returns_correctly_with_single_cell(self, single_point_grid):
-        cmr = {(2, 3)}
-        rs = single_point_grid.sample_main_route(cmr)
-        assert rs == set()
-
-    # Points in grid are not used here as operations are made only on main route
-    def test_sample_main_route_returns_correctly_with_two_cells(self, single_point_grid):
-        cmr = {(2, 3), (22, 3)}
-        rs1 = single_point_grid.sample_main_route(cmr)
-        assert rs1 == {(2, 3), (22, 3)}
-
-        rs2 = single_point_grid.sample_main_route(cmr, 19)
-        assert rs2 == set()
-
-    # Points in grid are not used here as operations are made only on main route
-    def test_sample_main_route_returns_correctly(self, single_point_grid):
-        cmr = set()
-        for i in range(1, 101):
-            cmr.add((1 + 0.01 * i, 3.5))
-        
-        # Add cell a large distance from others
-        cmr.add((23, 3.5))
-        rs = single_point_grid.sample_main_route(cmr)
-
-        # Check that outlier cell is correctly removed
-        assert (23, 3.5) not in rs
-        assert cmr - rs == {(23, 3.5)}
-
     def test_extract_route_skeleton_returns_correctly_with_single_cell(self, single_point_grid):
         single_point_grid.main_route = {(2, 3)}
         single_point_grid.extract_route_skeleton()
@@ -282,7 +189,7 @@ class TestGridsystem():
         expected_r = DistanceCalculator.calculate_euclidian_distance_between_cells((7, 7), (3, 3))
         
         assert len(two_point_grid.safe_areas) == 1
-        assert two_point_grid.safe_areas[0].radius == expected_r
+        assert two_point_grid.safe_areas[(3, 3)].radius == expected_r
 
     def test_construct_safe_areas_returns_correctly_with_two_points_and_single_anchor(self, two_point_grid):
         two_point_grid.route_skeleton = {(3, 3)}
@@ -291,7 +198,7 @@ class TestGridsystem():
         expected_r = DistanceCalculator.calculate_euclidian_distance_between_cells((7, 7), (3, 3)) * 0.99
 
         assert len(two_point_grid.safe_areas) == 1
-        assert two_point_grid.safe_areas[0].radius == expected_r
+        assert two_point_grid.safe_areas[(3, 3)].radius == expected_r
 
     def test_construct_safe_areas_returns_correctly_with_five_points_and_single_anchor(self, five_point_grid):
         five_point_grid.route_skeleton = {(3, 3)}
@@ -300,7 +207,7 @@ class TestGridsystem():
         expected_r = DistanceCalculator.calculate_euclidian_distance_between_cells((7, 7), (3, 3)) * 0.99
 
         assert len(five_point_grid.safe_areas) == 1
-        assert five_point_grid.safe_areas[0].radius == expected_r
+        assert five_point_grid.safe_areas[(3, 3)].radius == expected_r
 
         # Now expect 2 points to be removed as noise
         five_point_grid.construct_safe_areas(0.4)
@@ -314,9 +221,9 @@ class TestGridsystem():
         assert len(five_point_grid.safe_areas) == 1
         # As the points are far enough apart, it should result in the 4th point being removed while the 3rd point remains
         # Hence the radius should be smaller than distance to p4 and greater than distance to p3
-        assert five_point_grid.safe_areas[0].radius < distance_to_p4
-        assert five_point_grid.safe_areas[0].radius > distance_to_p3
-
+        assert five_point_grid.safe_areas[(3, 3)].radius < distance_to_p4
+        assert five_point_grid.safe_areas[(3, 3)].radius > distance_to_p3
+    
     def test_construct_safe_areas_returns_correctly_with_five_points_and_two_anchors(self, five_point_grid):
         # With this split, p1 and p2 belongs to first anchor and p3, p4 and p5 belongs to 2nd anchor
         five_point_grid.route_skeleton = {(2, 2), (7, 7)}
@@ -331,6 +238,6 @@ class TestGridsystem():
         expected_r2 = DistanceCalculator.calculate_euclidian_distance_between_cells(p3, (7, 7)) * 0.99
 
         assert len(five_point_grid.safe_areas) == 2
-        assert five_point_grid.safe_areas[0].radius == expected_r1
-        assert five_point_grid.safe_areas[1].radius == expected_r2
+        assert five_point_grid.safe_areas[(2, 2)].radius == expected_r1
+        assert five_point_grid.safe_areas[(7, 7)].radius == expected_r2
  
