@@ -1,13 +1,12 @@
 from DTC.trajectory import Trajectory, TrajectoryPointCloud
 from DTC.point import Point
 from DTC.distance_calculator import DistanceCalculator
-# from DTC.safe_area import SafeArea
 from DTC.construct_safe_area import ConstructSafeArea
+from DTC.route_skeleton import RouteSkeleton
 from math import floor, sqrt
 from operator import itemgetter
 from datetime import datetime
 from typing import Optional
-from DTC.route_skeleton import RouteSkeletonWrapper
 
 class GridSystem:
     def __init__(self, pc: TrajectoryPointCloud) -> None:
@@ -66,9 +65,7 @@ class GridSystem:
         return (x_sum, y_sum)
     
     def extract_route_skeleton(self, smooth_radius: int = 25, filtering_list_radius: int = 20, distance_interval: int = 20):
-        rsw = RouteSkeletonWrapper(self.main_route)
-        rsw.extract_route_skeleton()
-        self.route_skeleton = rsw.route_skeleton.route_skeleton
+        self.route_skeleton = RouteSkeleton.extract_route_skeleton(self.main_route, smooth_radius, filtering_list_radius, distance_interval)
 
     def construct_safe_areas(self, decrease_factor: float = 0.01):
         self.safe_areas = ConstructSafeArea.construct_safe_areas(self.route_skeleton, self.grid, self.populated_cells, decrease_factor, self.initialization_point, self.cell_size)
