@@ -22,6 +22,7 @@ class TestConstructSafeArea():
         pc.add_trajectory(t)
         gs = GridSystem(pc)
         gs.create_grid_system()
+
         return gs
 
     def test_create_cover_sets_returns_correctly_with_single_anchor(self, two_point_grid):

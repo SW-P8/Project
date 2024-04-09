@@ -3,7 +3,7 @@ from DTC.distance_calculator import DistanceCalculator
 from DTC.point import Point
 from DTC.trajectory import Trajectory, TrajectoryPointCloud
 from DTC.gridsystem import GridSystem
-from math import sqrt
+from math import sqrt, floor
 
 class TestDistanceCalculator:
     @pytest.fixture
@@ -24,6 +24,13 @@ class TestDistanceCalculator:
         gs = GridSystem(pc)
         gs.create_grid_system()
         return gs
+
+    def test_calculate_index_for_point_is_correct(self, two_point_grid):
+        (x1, y1) = DistanceCalculator.calculate_exact_index_for_point(two_point_grid.pc.trajectories[0].points[0], two_point_grid.initialization_point, two_point_grid.cell_size)
+        assert (3, 3) == (floor(x1), floor(y1))
+
+        (x2, y2) = DistanceCalculator.calculate_exact_index_for_point(two_point_grid.pc.trajectories[0].points[1], two_point_grid.initialization_point, two_point_grid.cell_size)
+        assert (7, 7) == (floor(x2), floor(y2))
 
     def test_convert_cell_to_point(self):
         cell = (10,10)
@@ -103,3 +110,4 @@ class TestDistanceCalculator:
         actual_avg_point = DistanceCalculator.calculate_average_position(p1, p2)
 
         assert expected_avg_point.get_coordinates() == actual_avg_point.get_coordinates()
+

@@ -4,7 +4,6 @@ from DTC.gridsystem import GridSystem
 from DTC.distance_calculator import DistanceCalculator
 from DTC.route_skeleton import RouteSkeleton
 from datetime import datetime
-from math import floor
 
 class TestGridsystem():
     @pytest.fixture
@@ -57,14 +56,7 @@ class TestGridsystem():
         gs = GridSystem(pc)
         gs.create_grid_system()
         return gs
-
-    def test_calculate_index_for_point_is_correct(self, two_point_grid):
-        (x1, y1) = DistanceCalculator.calculate_exact_index_for_point(two_point_grid.pc.trajectories[0].points[0], two_point_grid.initialization_point, two_point_grid.cell_size)
-        assert (3, 3) == (floor(x1), floor(y1))
-
-        (x2, y2) = DistanceCalculator.calculate_exact_index_for_point(two_point_grid.pc.trajectories[0].points[1], two_point_grid.initialization_point, two_point_grid.cell_size)
-        assert (7, 7) == (floor(x2), floor(y2))
-
+ 
     def test_grid_is_build_correctly(self, two_point_grid):
         assert two_point_grid.populated_cells == {(3, 3), (7, 7)}
 
@@ -104,7 +96,6 @@ class TestGridsystem():
         shifted_point = DistanceCalculator.shift_point_with_bearing(t.points[0], 20, DistanceCalculator.NORTH)
         shifted_point = DistanceCalculator.shift_point_with_bearing(shifted_point, 20, DistanceCalculator.EAST)
         t.add_point(shifted_point[0], shifted_point[1], datetime(2024, 1, 1, 1, 1, 11))
-
 
         pc.add_trajectory(t)
         gs = GridSystem(pc)

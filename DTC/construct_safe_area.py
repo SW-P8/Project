@@ -4,7 +4,7 @@ from DTC.distance_calculator import DistanceCalculator
 
 class ConstructSafeArea:
     @staticmethod
-    def construct_safe_areas(route_skeleton, grid, populated_cells, decrease_factor, initialization_point, cell_size):
+    def construct_safe_areas(route_skeleton: set, grid: dict, populated_cells: set, decrease_factor: float, initialization_point, cell_size: int) -> dict:
         cs = ConstructSafeArea._create_cover_sets(route_skeleton, grid, populated_cells, initialization_point, cell_size)
 
         safe_areas = dict()
@@ -16,7 +16,7 @@ class ConstructSafeArea:
         return safe_areas
 
     @staticmethod
-    def _create_cover_sets(route_skeleton, grid, populated_cells, initialization_point, cell_size, find_candidate_algorithm = None):
+    def _create_cover_sets(route_skeleton: set, grid: dict, populated_cells: set, initialization_point, cell_size: int, find_candidate_algorithm = None) -> dict:
         if find_candidate_algorithm is None:
             find_candidate_algorithm = ConstructSafeArea._find_candidate_nearest_neighbors
         cs = dict()
@@ -34,7 +34,7 @@ class ConstructSafeArea:
         return cs
 
     @staticmethod
-    def _find_candidate_nearest_neighbors(route_skeleton, cell):
+    def _find_candidate_nearest_neighbors(route_skeleton: set, cell: tuple) -> dict:
         min_dist = float("inf")
         candidates = set()
         distance_to_corner_of_cell = sqrt(0.5 ** 2 + 0.5 ** 2)

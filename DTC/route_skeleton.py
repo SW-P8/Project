@@ -2,14 +2,13 @@ from DTC.distance_calculator import DistanceCalculator
 
 class RouteSkeleton:
     @staticmethod
-    # TODO add main_type annotation to all functions
-    def extract_route_skeleton(main_route, smooth_radius: int, filtering_list_radius: int, distance_interval: int):
+    def extract_route_skeleton(main_route: set, smooth_radius: int, filtering_list_radius: int, distance_interval: int):
         smr = RouteSkeleton.smooth_main_route(main_route, smooth_radius)
         cmr = RouteSkeleton.filter_outliers_in_main_route(smr, filtering_list_radius)
         return RouteSkeleton.sample_main_route(cmr, distance_interval)
 
     @staticmethod
-    def smooth_main_route(main_route, radius: int) -> set:
+    def smooth_main_route(main_route: set, radius: int) -> set:
         smr = set()
         
         for (x1, y1) in main_route:
@@ -28,7 +27,7 @@ class RouteSkeleton:
         return smr
 
     @staticmethod
-    def filter_outliers_in_main_route(smr: set, radius_prime):
+    def filter_outliers_in_main_route(smr: set, radius_prime: int) -> set:
         cmr = set()
         
         for (x1, y1) in smr:
@@ -39,7 +38,7 @@ class RouteSkeleton:
         return cmr
     
     @staticmethod
-    def sample_main_route(cmr: set, distance_interval):
+    def sample_main_route(cmr: set, distance_interval: int) -> set:
         rs = set()
         
         for c1 in cmr:

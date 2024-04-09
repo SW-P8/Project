@@ -2,7 +2,7 @@ from DTC.distance_calculator import DistanceCalculator
 
 class ConstructMainRoute:
     @staticmethod
-    def extract_main_route(populated_cells, neighborhood_size, grid, distance_scale: float = 0.2):
+    def extract_main_route(populated_cells, neighborhood_size: int, grid, distance_scale: float = 0.2) -> set:
         main_route = set()
         if distance_scale >= 0.5:
             raise ValueError("distance scale must be less than neighborhood size divided by 2")
@@ -16,7 +16,7 @@ class ConstructMainRoute:
         return main_route
 
     @staticmethod
-    def calculate_density_center(index, neighborhood_size, populated_cells, grid):
+    def calculate_density_center(index, neighborhood_size: int, populated_cells, grid) -> tuple[float, float]:
         (x, y) = index
         l = neighborhood_size // 2
         point_count = 0

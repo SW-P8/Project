@@ -63,7 +63,6 @@ class test_construct_main_route:
         shifted_point = DistanceCalculator.shift_point_with_bearing(shifted_point, 20, DistanceCalculator.EAST)
         t.add_point(shifted_point[0], shifted_point[1])
 
-
         pc.add_trajectory(t)
         gs = GridSystem(pc)
         gs.create_grid_system()
