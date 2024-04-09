@@ -4,6 +4,7 @@ from DTC.point import Point
 from DTC.trajectory import Trajectory, TrajectoryPointCloud
 from DTC.gridsystem import GridSystem
 from math import sqrt, floor
+from geopy import distance
 
 class TestDistanceCalculator:
     @pytest.fixture
@@ -109,4 +110,24 @@ class TestDistanceCalculator:
         actual_avg_point = DistanceCalculator.calculate_average_position(p1, p2)
 
         assert expected_avg_point.get_coordinates() == actual_avg_point.get_coordinates()
+
+    def test_get_distance_between_points_with_points(self):
+        p1 = Point(1, 1)
+        p2 = Point(2, 2)
+
+        expected_distance = round(distance.distance((p1.latitude, p1.longitude), (p2.latitude, p2.longitude)).meters, 2)
+
+        assert DistanceCalculator.get_distance_between_points(p1, p2) == expected_distance
+
+    def test_get_distance_between_points_with_mixed_points_and_tuples(self):
+        p1 = Point(1, 1)
+        p2 = Point(2, 2)
+
+        t1 = (1, 1)
+        t2 = (2, 2)
+
+        
+        expected_distance = round(distance.distance((p1.latitude, p1.longitude), (p2.latitude, p2.longitude)).meters, 2)
+
+        assert DistanceCalculator.get_distance_between_points(t1, t2) == expected_distance
 
