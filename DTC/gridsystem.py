@@ -5,6 +5,8 @@ from math import floor, sqrt
 from operator import itemgetter
 from datetime import datetime
 from typing import Optional
+from rtree import Index
+from DTC.Rtree.rtree_sk_extractor import RTreeSkeletonExtractor
 
 class GridSystem:
     def __init__(self, pc: TrajectoryPointCloud) -> None:
@@ -14,7 +16,7 @@ class GridSystem:
         self.neighborhood_size = pc.neighborhood_size
         self.grid = dict()
         self.populated_cells = set()
-        self.main_route = set()
+        self.main_route = Index()
         self.route_skeleton = set()
         self.safe_areas = dict()
 
@@ -45,12 +47,14 @@ class GridSystem:
         if distance_scale >= 0.5:
             raise ValueError("distance scale must be less than neighborhood size divided by 2")
         distance_threshold = distance_scale * self.neighborhood_size
-
+        i = 0
         for cell in self.populated_cells:
             density_center = self.calculate_density_center(cell)
 
             if DistanceCalculator.calculate_euclidian_distance_between_cells(cell, density_center) < distance_threshold:
-                self.main_route.add(cell)
+                x, y = cell
+                self.main_route.insert(i, [x, y, x, y])
+                i += 1
 
     def calculate_density_center(self, index):
         (x, y) = index
@@ -75,9 +79,10 @@ class GridSystem:
         return (x_sum, y_sum)
     
     def extract_route_skeleton(self, smooth_radius: int = 25, filtering_list_radius: int = 20, distance_interval: int = 20):
-        smr = self.smooth_main_route(smooth_radius)
-        cmr = self.filter_outliers_in_main_route(smr, filtering_list_radius)
-        self.route_skeleton = self.sample_main_route(cmr, distance_interval)
+        #smr = self.smooth_main_route(smooth_radius)
+        #cmr = self.filter_outliers_in_main_route(smr, filtering_list_radius)
+        #self.route_skeleton = self.sample_main_route(cmr, distance_interval)
+        self.route_skeleton = RTreeSkeletonExtractor.extract_route_skeleton(self.main_route)
         
     def smooth_main_route(self, radius: int = 25) -> set:
         smr = set()
