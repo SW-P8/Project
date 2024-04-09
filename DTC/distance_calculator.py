@@ -4,25 +4,30 @@ from geopy import distance
 from typing import Optional
 
 class DistanceCalculator():
+    # Direction constants
     NORTH = 0
     EAST = 90
     SOUTH = 180
     WEST = 270
 
+    # Metric constants
+    CELL_SIZE = 5 # Based on observation in DTC paper that minimal width of a road is 5m
+    NEIGHBORHOOD_SIZE = 9 # To be determined but DTC uses 9
+
     @staticmethod
-    def calculate_exact_index_for_point(point: Point, initialization_point: tuple, cell_size: float) -> tuple:
+    def calculate_exact_index_for_point(point: Point, initialization_point: tuple) -> tuple:
         # Calculate x index
         x_offset = DistanceCalculator.get_distance_between_points(initialization_point, (point.longitude, initialization_point[1]))
-        x_coordinate = (x_offset / cell_size) - 1
+        x_coordinate = (x_offset / DistanceCalculator.CELL_SIZE) - 1
 
         # Calculate y index
         y_offset = DistanceCalculator.get_distance_between_points(initialization_point, (initialization_point[0], point.latitude))
-        y_coordinate = (y_offset / cell_size) - 1
+        y_coordinate = (y_offset / DistanceCalculator.CELL_SIZE) - 1
 
         return (x_coordinate, y_coordinate)
    
     @staticmethod
-    def shift_point_with_bearing(point: Point, shift_dist: float, bearing: float) -> tuple:
+    def shift_point_with_bearing(point, shift_dist: float, bearing: float) -> tuple:
         if type(point) == Point:
             (longitude, latitude) = point.get_coordinates()
         else:
@@ -47,10 +52,11 @@ class DistanceCalculator():
         return round(distance.distance((latitude1, longitude1), (latitude2, longitude2)).meters, 2)
     
     @staticmethod
-    def find_nearest_neighbor_from_candidates(point: Point, candidates: set, initialization_point: tuple, cell_size: float) -> tuple[tuple[float, float], float]:
+    def find_nearest_neighbor_from_candidates(point: Point, candidates: set, initialization_point: tuple) -> tuple[tuple[float, float], float]:
         min_dist = float("inf")
         nearest_anchor: Optional[tuple[float, float]] = None
-        (x, y) = DistanceCalculator.calculate_exact_index_for_point(point, initialization_point, cell_size)
+        (x, y) = DistanceCalculator.calculate_exact_index_for_point(point, initialization_point)
+        
         for candidate in candidates:
             dist = DistanceCalculator.calculate_euclidian_distance_between_cells((x,y), candidate)
             if dist < min_dist:
@@ -61,8 +67,8 @@ class DistanceCalculator():
  
     # Converts cell coordinate to long lat based on initialization_point
     @staticmethod
-    def convert_cell_to_point(initialization_point: tuple, cell: tuple, cell_size: float) -> tuple:
-        offsets = (cell[0] * cell_size, cell[1] * cell_size)
+    def convert_cell_to_point(initialization_point: tuple, cell: tuple) -> tuple:
+        offsets = (cell[0] * DistanceCalculator.CELL_SIZE, cell[1] * DistanceCalculator.CELL_SIZE)
         
         gps_coordinates = DistanceCalculator.shift_point_with_bearing(initialization_point, offsets[0], DistanceCalculator.NORTH)
         gps_coordinates = DistanceCalculator.shift_point_with_bearing(gps_coordinates, offsets[1], DistanceCalculator.EAST)
@@ -82,5 +88,6 @@ class DistanceCalculator():
 
         x_avg = (x1 + x2) / 2
         y_avg = (y1 + y2) / 2
+
         return Point(x_avg, y_avg)
 

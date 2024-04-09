@@ -2,23 +2,25 @@ from DTC.distance_calculator import DistanceCalculator
 
 class ConstructMainRoute:
     @staticmethod
-    def extract_main_route(populated_cells, neighborhood_size: int, grid, distance_scale: float = 0.2) -> set:
+    def extract_main_route(populated_cells: set, grid: dict, distance_scale: float = 0.2) -> set:
         main_route = set()
+
         if distance_scale >= 0.5:
             raise ValueError("distance scale must be less than neighborhood size divided by 2")
-        distance_threshold = distance_scale * neighborhood_size
+        
+        distance_threshold = distance_scale * DistanceCalculator.NEIGHBORHOOD_SIZE
 
         for cell in populated_cells:
-            density_center = ConstructMainRoute.calculate_density_center(cell, neighborhood_size, populated_cells, grid)
-
+            density_center = ConstructMainRoute.calculate_density_center(cell, populated_cells, grid)
             if DistanceCalculator.calculate_euclidian_distance_between_cells(cell, density_center) < distance_threshold:
                 main_route.add(cell)
+        
         return main_route
 
     @staticmethod
-    def calculate_density_center(index, neighborhood_size: int, populated_cells, grid) -> tuple[float, float]:
+    def calculate_density_center(index, populated_cells: set, grid: dict) -> tuple[float, float]:
         (x, y) = index
-        l = neighborhood_size // 2
+        l = DistanceCalculator.NEIGHBORHOOD_SIZE // 2
         point_count = 0
         (x_sum, y_sum) = (0, 0)
  

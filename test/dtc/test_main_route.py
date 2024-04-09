@@ -38,13 +38,13 @@ class test_construct_main_route:
         return gs
 
     def test_calculate_density_center_returns_correctly_with_single_point(self, single_point_grid):
-        density_center = ConstructMainRoute.calculate_density_center((2, 3), single_point_grid.neighborhood_size, single_point_grid.populated_cells, single_point_grid.grid)
+        density_center = ConstructMainRoute.calculate_density_center((2, 3), single_point_grid.populated_cells, single_point_grid.grid)
 
         assert density_center == (3, 3)
 
     def test_calculate_density_center_returns_correctly_with_two_points(self, two_point_grid):
-        density_center1 = ConstructMainRoute.calculate_density_center((3, 3), two_point_grid.neighborhood_size, two_point_grid.populated_cells, two_point_grid.grid)
-        density_center2 = ConstructMainRoute.calculate_density_center((7, 7), two_point_grid.neighborhood_size, two_point_grid.populated_cells, two_point_grid.grid)
+        density_center1 = ConstructMainRoute.calculate_density_center((3, 3), two_point_grid.populated_cells, two_point_grid.grid)
+        density_center2 = ConstructMainRoute.calculate_density_center((7, 7), two_point_grid.populated_cells, two_point_grid.grid)
 
         # Density center should be the same as their neighborhoods intersect and they are the only points
         assert density_center1 == (5, 5)
@@ -67,8 +67,8 @@ class test_construct_main_route:
         gs = GridSystem(pc)
         gs.create_grid_system()
 
-        density_center1 = ConstructMainRoute.calculate_density_center((3, 3), gs.neighborhood_size, gs.populated_cells, gs.grid)
-        density_center2 = ConstructMainRoute.calculate_density_center((7, 7), gs.neighborhood_size, gs.populated_cells, gs.grid)
+        density_center1 = ConstructMainRoute.calculate_density_center((3, 3), gs.populated_cells, gs.grid)
+        density_center2 = ConstructMainRoute.calculate_density_center((7, 7), gs.populated_cells, gs.grid)
 
         # Density center should be skewed towards (3,3) as the quantity of points in this cell is higher
         assert density_center1 == (37 / 11, 37 / 11)

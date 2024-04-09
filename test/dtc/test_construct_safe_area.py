@@ -27,7 +27,7 @@ class TestConstructSafeArea():
 
     def test_create_cover_sets_returns_correctly_with_single_anchor(self, two_point_grid):
         two_point_grid.route_skeleton = {(3, 3)}
-        cs = ConstructSafeArea._create_cover_sets(two_point_grid.route_skeleton, two_point_grid.grid, two_point_grid.populated_cells, two_point_grid.initialization_point, two_point_grid.cell_size)
+        cs = ConstructSafeArea._create_cover_sets(two_point_grid.route_skeleton, two_point_grid.grid, two_point_grid.populated_cells, two_point_grid.initialization_point)
 
         expected_d1 = DistanceCalculator.calculate_euclidian_distance_between_cells((3, 3), (3, 3))
         expected_d2 = DistanceCalculator.calculate_euclidian_distance_between_cells((7, 7), (3, 3))
@@ -37,7 +37,7 @@ class TestConstructSafeArea():
 
     def test_create_cover_sets_returns_correctly_with_two_anchors(self, two_point_grid):
         two_point_grid.route_skeleton = {(3, 3), (5, 6)}
-        cs = ConstructSafeArea._create_cover_sets(two_point_grid.route_skeleton, two_point_grid.grid, two_point_grid.populated_cells, two_point_grid.initialization_point, two_point_grid.cell_size)
+        cs = ConstructSafeArea._create_cover_sets(two_point_grid.route_skeleton, two_point_grid.grid, two_point_grid.populated_cells, two_point_grid.initialization_point)
 
         expected_d1 = DistanceCalculator.calculate_euclidian_distance_between_cells((3, 3), (3, 3))
         expected_d2 = DistanceCalculator.calculate_euclidian_distance_between_cells((7, 7), (5, 6))
@@ -49,7 +49,7 @@ class TestConstructSafeArea():
 
     def test_create_cover_sets_returns_correctly_with_multiple_anchors(self, two_point_grid):
         two_point_grid.route_skeleton = {(2, 3), (3, 3), (5, 6), (7, 7)}
-        cs = ConstructSafeArea._create_cover_sets(two_point_grid.route_skeleton, two_point_grid.grid, two_point_grid.populated_cells, two_point_grid.initialization_point, two_point_grid.cell_size)
+        cs = ConstructSafeArea._create_cover_sets(two_point_grid.route_skeleton, two_point_grid.grid, two_point_grid.populated_cells, two_point_grid.initialization_point)
 
         expected_d1 = DistanceCalculator.calculate_euclidian_distance_between_cells((3, 3), (3, 3))
         expected_d2 = DistanceCalculator.calculate_euclidian_distance_between_cells((7, 7), (7, 7))

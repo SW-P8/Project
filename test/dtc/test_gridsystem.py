@@ -2,7 +2,6 @@ import pytest
 from DTC.trajectory import Trajectory, TrajectoryPointCloud
 from DTC.gridsystem import GridSystem
 from DTC.distance_calculator import DistanceCalculator
-from DTC.route_skeleton import RouteSkeleton
 from datetime import datetime
 
 class TestGridsystem():
@@ -165,10 +164,10 @@ class TestGridsystem():
         # Now expect 2 points to be removed as noise
         five_point_grid.construct_safe_areas(0.4)
         
-        p3 = DistanceCalculator.calculate_exact_index_for_point(five_point_grid.pc.trajectories[0].points[2], five_point_grid.initialization_point, five_point_grid.cell_size)
+        p3 = DistanceCalculator.calculate_exact_index_for_point(five_point_grid.pc.trajectories[0].points[2], five_point_grid.initialization_point)
         distance_to_p3 = DistanceCalculator.calculate_euclidian_distance_between_cells(p3, (3, 3)) 
 
-        p4 = DistanceCalculator.calculate_exact_index_for_point(five_point_grid.pc.trajectories[0].points[3], five_point_grid.initialization_point, five_point_grid.cell_size)
+        p4 = DistanceCalculator.calculate_exact_index_for_point(five_point_grid.pc.trajectories[0].points[3], five_point_grid.initialization_point)
         distance_to_p4 = DistanceCalculator.calculate_euclidian_distance_between_cells(p4, (3, 3)) 
 
         assert len(five_point_grid.safe_areas) == 1
@@ -184,10 +183,10 @@ class TestGridsystem():
         
         # As mentioned above, the refining radius of safe areas with these splits, will mean that p2 and p3 are removed respectively
         # Thereby yielding radius values just shy of their distance to the anchor points
-        p2 = DistanceCalculator.calculate_exact_index_for_point(five_point_grid.pc.trajectories[0].points[1], five_point_grid.initialization_point, five_point_grid.cell_size)
+        p2 = DistanceCalculator.calculate_exact_index_for_point(five_point_grid.pc.trajectories[0].points[1], five_point_grid.initialization_point)
         expected_r1 = DistanceCalculator.calculate_euclidian_distance_between_cells(p2, (2, 2)) * 0.99
 
-        p3 = DistanceCalculator.calculate_exact_index_for_point(five_point_grid.pc.trajectories[0].points[2], five_point_grid.initialization_point, five_point_grid.cell_size)
+        p3 = DistanceCalculator.calculate_exact_index_for_point(five_point_grid.pc.trajectories[0].points[2], five_point_grid.initialization_point)
         expected_r2 = DistanceCalculator.calculate_euclidian_distance_between_cells(p3, (7, 7)) * 0.99
 
         assert len(five_point_grid.safe_areas) == 2
