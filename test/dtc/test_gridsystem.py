@@ -4,6 +4,7 @@ from DTC.gridsystem import GridSystem
 from DTC.distance_calculator import DistanceCalculator
 from datetime import datetime
 from math import floor
+from collections import defaultdict
 
 class TestGridsystem():
     @pytest.fixture
@@ -65,7 +66,7 @@ class TestGridsystem():
         assert (7, 7) == (floor(x2), floor(y2))
 
     def test_grid_is_build_correctly(self, two_point_grid):
-        assert two_point_grid.populated_cells == {(3, 3), (7, 7)}
+        assert two_point_grid.grid.keys() == {(3, 3), (7, 7)}
 
         assert two_point_grid.pc.trajectories[0].points[0] == two_point_grid.grid[(3, 3)][0]
         assert two_point_grid.pc.trajectories[0].points[1] == two_point_grid.grid[(7, 7)][0]
@@ -154,7 +155,7 @@ class TestGridsystem():
     # Points in grid are not used here as operations are made only on main route
     def test_smooth_main_route_returns_correctly_with_single_element(self, single_point_grid):
         single_point_grid.main_route = {(3, 3)}
-        smr = single_point_grid.smooth_main_route()
+        smr, _ = single_point_grid.smooth_main_route()
 
         # Should simply contain the center of the single cell
         assert smr == {(3.5, 3.5)}
@@ -162,39 +163,49 @@ class TestGridsystem():
     # Points in grid are not used here as operations are made only on main route
     def test_smooth_main_route_returns_correctly_with_two_elements(self, single_point_grid):
         single_point_grid.main_route = {(3, 3), (27, 3)}
-        smr1 = single_point_grid.smooth_main_route()
+        single_point_grid.grid[(27, 3)].append("some filler val")
+        smr1, _ = single_point_grid.smooth_main_route()
 
         # Should only contain the avg position of the two cells centers
         assert smr1 == {(15.5, 3.5)}
 
-        smr2 = single_point_grid.smooth_main_route(20)
+        smr2, _ = single_point_grid.smooth_main_route(20)
 
         # Should contain the centers of the two cells as they are too far apart
         assert smr2 == {(3.5, 3.5), (27.5, 3.5)}
 
     # Points in grid are not used here as operations are made only on main route
     def test_smooth_main_route_returns_correctly_with_multiple_elements(self, single_point_grid):
-        single_point_grid.main_route = {(2, 3), (27, 3), (32, 3)}
-        smr = single_point_grid.smooth_main_route()
+        single_point_grid.main_route = {(3, 3), (28, 3), (33, 3)}
+        single_point_grid.grid[(27, 3)].append("some filler val")
+        single_point_grid.grid[(32, 3)].append("some filler val")
+
+
+        smr, _ = single_point_grid.smooth_main_route()
 
         # Should only contain 3 positions        
-        assert smr == {(15, 3.5), ((2.5 + 27.5 + 32.5)/3, 3.5), (30, 3.5)}
+        assert smr == {(15.5, 3.5), (21.17, 3.5), (30, 3.5)}
 
     # Points in grid are not used here as operations are made only on main route
     def test_filter_outliers_in_main_route_returns_correctly_with_single_element(self, single_point_grid):
         smr = {(2.5, 3.5)}
-        cmr = single_point_grid.filter_outliers_in_main_route(smr)
+        smr_dict = {(2,3): (2.5, 3.5)}
+        cmr = single_point_grid.filter_outliers_in_main_route(smr, smr_dict)
         assert cmr == {(2.5, 3.5)}
 
     # Points in grid are not used here as operations are made only on main route
     def test_filter_outliers_in_main_route_filters_outlier_correctly(self, single_point_grid):
         smr = set()
+        smr_dict = defaultdict(set)
         for i in range(1, 101):
             smr.add((1 + 0.01 * i, 3.5))
+            smr_dict[(int(1 + 0.01 * i), 3)].add((1 + 0.01 * i, 3.5))
         
         # Add cell more than radius prime distance from others
         smr.add((23, 3.5))
-        cmr = single_point_grid.filter_outliers_in_main_route(smr)
+        smr_dict[(23, 3)].add((23, 3.5))
+
+        cmr = single_point_grid.filter_outliers_in_main_route(smr, smr_dict)
 
         # Check that outlier cell is correctly removed
         assert (23, 3.5) not in cmr
@@ -203,13 +214,21 @@ class TestGridsystem():
     # Points in grid are not used here as operations are made only on main route
     def test_filter_outliers_in_main_route_returns_correctly_with_multiple_elements(self, single_point_grid):
         smr = set()
+        smr_dict = defaultdict(set)
+
         for i in range(1, 101):
             smr.add((1 + 0.01 * i, 3.5))
+            smr_dict[(int(1 + 0.01 * i), 3)].add((1 + 0.01 * i, 3.5))
+
         
         # Add two cell more than radius prime distance from others (should be enough to not be filtered out)
         smr.add((23, 3.5))
         smr.add((23.1, 3.5))
-        cmr = single_point_grid.filter_outliers_in_main_route(smr)
+
+        smr_dict[(23, 3)].add((23, 3.5))
+        smr_dict[(23, 3)].add((23.1, 3.5))
+
+        cmr = single_point_grid.filter_outliers_in_main_route(smr, smr_dict)
 
         # Check that the two far cells are not removed
         assert (23, 3.5) in cmr
@@ -258,7 +277,7 @@ class TestGridsystem():
     def test_extract_route_skeleton_returns_correctly_with_three_cells(self, single_point_grid):
         single_point_grid.main_route = {(2, 3), (27, 3), (32, 3)}
         single_point_grid.extract_route_skeleton()
-        assert single_point_grid.route_skeleton == {(15, 3.5), ((2.5 + 27.5 + 32.5)/3, 3.5), (30, 3.5)}
+        assert single_point_grid.route_skeleton == {(15, 3.5), (20.83, 3.5), (30, 3.5)}
 
     def test_extract_route_skeleton_returns_correctly_with_many_cells(self, single_point_grid):
         single_point_grid.main_route = set()
@@ -371,7 +390,8 @@ class TestGridsystem():
         expected_d1 = DistanceCalculator.calculate_euclidian_distance_between_cells((3, 3), (3, 3))
         expected_d2 = DistanceCalculator.calculate_euclidian_distance_between_cells((7, 7), (7, 7))
 
-        assert len(cs) == 4
+        # Length is only gonna be 2 as defaultdict is utilized and (3, 3), (7, 7) does not have any points added
+        assert len(cs) == 2
         assert cs[(3, 3)] == {(two_point_grid.pc.trajectories[0].points[0], expected_d1)}
         assert cs[(7, 7)] == {(two_point_grid.pc.trajectories[0].points[1], expected_d2)}
         assert cs[(2, 3)] == set()

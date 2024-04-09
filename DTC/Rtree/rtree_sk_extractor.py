@@ -38,7 +38,7 @@ class RTreeSkeletonExtractor:
     @staticmethod
     def filter_outliers_in_main_route(smr: Index, radius_prime: int = 20) -> Index:
         cmr = Index()
-        smr_size = len(list(smr.intersection((float('-inf'), float('-inf'), float('inf'), float('inf')), objects=True)))
+        smr_size = smr.count([float('-inf'), float('-inf'), float('inf'), float('inf')])
         for item in smr.intersection((float('-inf'), float('-inf'), float('inf'), float('inf')), objects=True):
             x, y, _ , _ = item.bbox
             point_count = 0

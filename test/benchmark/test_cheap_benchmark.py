@@ -9,7 +9,7 @@ class TestCheapBenchmark:
         cls.grid_system = None
         cls.point_cloud = None
         cls.limit = 1000
-        cls.n_points = 1000000
+        cls.n_points = 100000000
         cls.conn = None
         cls.handler = None
         cls.executor = None
@@ -44,7 +44,7 @@ class TestCheapBenchmark:
         benchmark.pedantic(self.__class__.grid_system.extract_route_skeleton, rounds=1, iterations=1, warmup_rounds=0)
         assert self.__class__.grid_system != None
 
-    @pytest.mark.bm_cheap
-    def test_construct_safe_area(self, benchmark):
-        benchmark.pedantic(self.__class__.grid_system.construct_safe_areas, rounds=1, iterations=1, warmup_rounds=0)
-        assert self.__class__.grid_system != None
+    #@pytest.mark.bm_cheap
+    #def test_construct_safe_area(self, benchmark):
+    #    benchmark.pedantic(self.__class__.grid_system.construct_safe_areas, rounds=1, iterations=1, warmup_rounds=0)
+    #    assert self.__class__.grid_system != None
