@@ -18,7 +18,6 @@ class GridSystem:
         self.populated_cells = set()
         self.main_route = set()
         self.route_skeleton = set()
-        # self.safe_areas = dict()
         self.safe_areas = dict()
 
     def create_grid_system(self):

@@ -7,10 +7,11 @@ class ConstructSafeArea:
     def construct_safe_areas(route_skeleton, grid, populated_cells, decrease_factor, initialization_point, cell_size):
         cs = ConstructSafeArea._create_cover_sets(route_skeleton, grid, populated_cells, initialization_point, cell_size)
 
-        safe_areas = []
+        safe_areas = dict()
 
         for anchor in route_skeleton:
-            safe_areas.append(SafeArea(cs[anchor], anchor, decrease_factor))
+            safe_areas[anchor] = SafeArea(cs[anchor], anchor, decrease_factor)
+             # safe_areas.append(SafeArea(cs[anchor], anchor, decrease_factor))
 
         return safe_areas
 

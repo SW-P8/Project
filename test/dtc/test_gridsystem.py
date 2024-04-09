@@ -282,7 +282,7 @@ class TestGridsystem():
         expected_r = DistanceCalculator.calculate_euclidian_distance_between_cells((7, 7), (3, 3))
         
         assert len(two_point_grid.safe_areas) == 1
-        assert two_point_grid.safe_areas[0].radius == expected_r
+        assert two_point_grid.safe_areas[(3, 3)].radius == expected_r
 
     def test_construct_safe_areas_returns_correctly_with_two_points_and_single_anchor(self, two_point_grid):
         two_point_grid.route_skeleton = {(3, 3)}
@@ -291,7 +291,7 @@ class TestGridsystem():
         expected_r = DistanceCalculator.calculate_euclidian_distance_between_cells((7, 7), (3, 3)) * 0.99
 
         assert len(two_point_grid.safe_areas) == 1
-        assert two_point_grid.safe_areas[0].radius == expected_r
+        assert two_point_grid.safe_areas[(3, 3)].radius == expected_r
 
     def test_construct_safe_areas_returns_correctly_with_five_points_and_single_anchor(self, five_point_grid):
         five_point_grid.route_skeleton = {(3, 3)}
@@ -300,7 +300,7 @@ class TestGridsystem():
         expected_r = DistanceCalculator.calculate_euclidian_distance_between_cells((7, 7), (3, 3)) * 0.99
 
         assert len(five_point_grid.safe_areas) == 1
-        assert five_point_grid.safe_areas[0].radius == expected_r
+        assert five_point_grid.safe_areas[(3, 3)].radius == expected_r
 
         # Now expect 2 points to be removed as noise
         five_point_grid.construct_safe_areas(0.4)
@@ -314,9 +314,9 @@ class TestGridsystem():
         assert len(five_point_grid.safe_areas) == 1
         # As the points are far enough apart, it should result in the 4th point being removed while the 3rd point remains
         # Hence the radius should be smaller than distance to p4 and greater than distance to p3
-        assert five_point_grid.safe_areas[0].radius < distance_to_p4
-        assert five_point_grid.safe_areas[0].radius > distance_to_p3
-
+        assert five_point_grid.safe_areas[(3, 3)].radius < distance_to_p4
+        assert five_point_grid.safe_areas[(3, 3)].radius > distance_to_p3
+    
     def test_construct_safe_areas_returns_correctly_with_five_points_and_two_anchors(self, five_point_grid):
         # With this split, p1 and p2 belongs to first anchor and p3, p4 and p5 belongs to 2nd anchor
         five_point_grid.route_skeleton = {(2, 2), (7, 7)}
@@ -331,6 +331,6 @@ class TestGridsystem():
         expected_r2 = DistanceCalculator.calculate_euclidian_distance_between_cells(p3, (7, 7)) * 0.99
 
         assert len(five_point_grid.safe_areas) == 2
-        assert five_point_grid.safe_areas[0].radius == expected_r1
-        assert five_point_grid.safe_areas[1].radius == expected_r2
+        assert five_point_grid.safe_areas[(2, 2)].radius == expected_r1
+        assert five_point_grid.safe_areas[(7, 7)].radius == expected_r2
  
