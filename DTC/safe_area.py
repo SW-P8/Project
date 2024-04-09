@@ -2,7 +2,7 @@ from operator import itemgetter
 from datetime import datetime
 
 class SafeArea:
-    def __init__(self, anchor_cover_set, anchor: tuple[float, float], decrease_factor) -> None:
+    def __init__(self, anchor_cover_set, anchor: tuple[float, float], decrease_factor: float) -> None:
         self.center = anchor
         self.radius = 0
         self.weigth = 0
