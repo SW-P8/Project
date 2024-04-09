@@ -1,6 +1,8 @@
 from DTC.trajectory import Trajectory, TrajectoryPointCloud
 from DTC.point import Point
 from DTC.distance_calculator import DistanceCalculator
+# from DTC.safe_area import SafeArea
+from DTC.construct_safe_area import ConstructSafeArea
 from math import floor, sqrt
 from operator import itemgetter
 from datetime import datetime
@@ -19,28 +21,16 @@ class GridSystem:
         self.route_skeleton = set()
         self.safe_areas = dict()
 
-
     def create_grid_system(self):
         # Fill grid with points
         for trajectory in self.pc.trajectories:
             for point in trajectory.points:
-                (x,y) = self.calculate_exact_index_for_point(point)
+                (x,y) = DistanceCalculator.calculate_exact_index_for_point(point, self.initialization_point, self.cell_size)
                 floored_index = (floor(x), floor(y))
                 if floored_index not in self.populated_cells:
                     self.populated_cells.add(floored_index)
                     self.grid[floored_index] = list()
                 self.grid[floored_index].append(point)
-
-    def calculate_exact_index_for_point(self, point: Point):
-        # Calculate x index
-        x_offset = DistanceCalculator.get_distance_between_points(self.initialization_point, (point.longitude, self.initialization_point[1]))
-        x_coordinate = (x_offset / self.cell_size) - 1
-
-        # Calculate y index
-        y_offset = DistanceCalculator.get_distance_between_points(self.initialization_point, (self.initialization_point[0], point.latitude))
-        y_coordinate = (y_offset / self.cell_size) - 1
-
-        return (x_coordinate, y_coordinate)
     
     def extract_main_route(self, distance_scale: float = 0.2):
         if distance_scale >= 0.5:
@@ -79,71 +69,7 @@ class GridSystem:
         rsw = RouteSkeletonWrapper(self.main_route)
         rsw.extract_route_skeleton()
         self.route_skeleton = rsw.route_skeleton.route_skeleton
-    
+
     def construct_safe_areas(self, decrease_factor: float = 0.01):
-        cs = self.create_cover_sets()
-        for anchor in self.route_skeleton:
-            #Initialize safe area radius
-            radius = max(cs[anchor], key=itemgetter(1), default=(0,0))[1]
-            removed_count = 0
-            cs_size = len(cs[anchor])
-            removal_threshold = decrease_factor * cs_size
-            filtered_cs = {(p, d) for (p, d) in cs[anchor]}
+        self.safe_areas = ConstructSafeArea.construct_safe_areas(self.route_skeleton, self.grid, self.populated_cells, decrease_factor, self.initialization_point, self.cell_size)
 
-            #Refine radius of safe area radius
-            while removed_count < removal_threshold:
-                radius *= (1 - decrease_factor)
-                filtered_cs = {(p, d) for (p, d) in filtered_cs if d <= radius}
-                removed_count = cs_size - len(filtered_cs)
-
-            self.safe_areas[anchor] = radius
-    
-    def create_cover_sets(self, find_candidate_algorithm = None):
-        if find_candidate_algorithm is None:
-            find_candidate_algorithm = self.find_candidate_nearest_neighbors
-        cs = dict()
-        # Initialize dictionary with a key for each anchor and an empty set for each
-        for anchor in self.route_skeleton:
-            cs[anchor] = set()
-
-        # Assign points to their nearest anchor
-        for (x, y) in self.populated_cells:
-            candidates = find_candidate_algorithm((x + 0.5, y + 0.5))
-            for point in self.grid[(x, y)]:
-                (anchor, dist) = self.find_nearest_neighbor_from_candidates(point, candidates)
-                cs[anchor].add((point, dist))
-        return cs
-
-
-    def find_candidate_nearest_neighbors(self, cell):
-        min_dist = float("inf")
-        candidates = set()
-        distance_to_corner_of_cell = sqrt(0.5 ** 2 + 0.5 ** 2)
-        for anchor in self.route_skeleton:
-            dist = DistanceCalculator.calculate_euclidian_distance_between_cells(cell, anchor)
-            if dist <= min_dist + distance_to_corner_of_cell:
-                if dist < min_dist:
-                    min_dist = dist
-                candidates.add((anchor, dist))
-
-        return {a for a, d in candidates if d <= min_dist + distance_to_corner_of_cell}
-
-    def find_nearest_neighbor_from_candidates(self, point, candidates):
-        min_dist = float("inf")
-        nearest_anchor = None
-        (x, y) = self.calculate_exact_index_for_point(point)
-        for candidate in candidates:
-            dist = DistanceCalculator.calculate_euclidian_distance_between_cells((x,y), candidate)
-            if dist < min_dist:
-                nearest_anchor = candidate
-                min_dist =dist
-        return (nearest_anchor, min_dist)
-
-    # Converts cell coordinate to long lat based on initialization_point
-    def convert_cell_to_point(self, cell) -> tuple[float, float]:
-        offsets = (cell[0] * self.cell_size, cell[1] * self.cell_size)
-        
-        gps_coordinates = DistanceCalculator.shift_point_with_bearing(self.initialization_point, offsets[0], DistanceCalculator.NORTH)
-        gps_coordinates = DistanceCalculator.shift_point_with_bearing(gps_coordinates, offsets[1], DistanceCalculator.EAST)
-
-        return gps_coordinates

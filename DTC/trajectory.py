@@ -1,5 +1,6 @@
 from datetime import datetime
 from math import floor
+from typing import Optional
 from DTC.point import Point
 from DTC.distance_calculator import DistanceCalculator
 
@@ -11,7 +12,7 @@ class Trajectory:
         self.min_latitude = float('inf')
         self.max_latitude = float('-inf')
 
-    def add_point(self,longitude: float, latitude: float, timestamp: datetime) -> None:
+    def add_point(self,longitude: float, latitude: float, timestamp: Optional[datetime] = None) -> None:
         self.points.append(Point(longitude, latitude, timestamp))
 
         # Check if added longitude is new max

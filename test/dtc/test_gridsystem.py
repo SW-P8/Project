@@ -59,10 +59,10 @@ class TestGridsystem():
         return gs
 
     def test_calculate_index_for_point_is_correct(self, two_point_grid):
-        (x1, y1) = two_point_grid.calculate_exact_index_for_point(two_point_grid.pc.trajectories[0].points[0])
+        (x1, y1) = DistanceCalculator.calculate_exact_index_for_point(two_point_grid.pc.trajectories[0].points[0], two_point_grid.initialization_point, two_point_grid.cell_size)
         assert (3, 3) == (floor(x1), floor(y1))
 
-        (x2, y2) = two_point_grid.calculate_exact_index_for_point(two_point_grid.pc.trajectories[0].points[1])
+        (x2, y2) = DistanceCalculator.calculate_exact_index_for_point(two_point_grid.pc.trajectories[0].points[1], two_point_grid.initialization_point, two_point_grid.cell_size)
         assert (7, 7) == (floor(x2), floor(y2))
 
     def test_grid_is_build_correctly(self, two_point_grid):
@@ -282,117 +282,14 @@ class TestGridsystem():
         assert (28.5, 3.5) not in single_point_grid.route_skeleton
         assert single_point_grid.route_skeleton != set()
 
-    def test_find_candidate_nearest_neighbors_returns_correctly_with_single_anchor(self, single_point_grid):
-        single_point_grid.route_skeleton = {(2, 2)}
-
-        c1 = (1.5, 1.5)
-        c2 = (2.5, 2.5)
-        c3 = (3.5, 3.5)
-        cnn1 = single_point_grid.find_candidate_nearest_neighbors(c1)
-        cnn2 = single_point_grid.find_candidate_nearest_neighbors(c2)
-        cnn3 = single_point_grid.find_candidate_nearest_neighbors(c3)
-
-        assert cnn1 == {(2, 2)}
-        assert cnn2 == {(2, 2)}
-        assert cnn3 == {(2, 2)}
-
-    def test_find_candidate_nearest_neighbors_returns_correctly_with_multiple_anchors(self, single_point_grid):
-        single_point_grid.route_skeleton = {(2, 2), (2.5, 2.5), (3, 3), (4, 4)}
-
-        c1 = (1.5, 1.5)
-        c2 = (2.5, 2.5)
-        c3 = (3.5, 3.5)
-        cnn1 = single_point_grid.find_candidate_nearest_neighbors(c1)
-        cnn2 = single_point_grid.find_candidate_nearest_neighbors(c2)
-        cnn3 = single_point_grid.find_candidate_nearest_neighbors(c3)
-
-        assert cnn1 == {(2, 2), (2.5, 2.5)}
-        assert cnn2 == {(2, 2), (2.5, 2.5), (3, 3)}
-        assert cnn3 == {(2.5, 2.5), (3, 3), (4, 4)}
-
-    def test_find_nearest_neighbor_from_candidates_returns_correctly_with_single_candidate(self, two_point_grid):
-        candidates = {(2.5, 2.5)}
-        # Point 1 has exact index (3, 3)
-        (nn1, d1) = two_point_grid.find_nearest_neighbor_from_candidates(two_point_grid.pc.trajectories[0].points[0], candidates)
-        # Point 2 has exact index (7, 7)
-        (nn2, d2) = two_point_grid.find_nearest_neighbor_from_candidates(two_point_grid.pc.trajectories[0].points[1], candidates)
-
-        expected_d1 = DistanceCalculator.calculate_euclidian_distance_between_cells((3, 3), (2.5, 2.5))
-        expected_d2 = DistanceCalculator.calculate_euclidian_distance_between_cells((7, 7), (2.5, 2.5))
-
-        assert (nn1, d1) == ((2.5, 2.5), expected_d1)
-        assert (nn2, d2) == ((2.5, 2.5), expected_d2)
-
-    def test_find_nearest_neighbor_from_candidates_returns_correctly_with_two_candidates(self, two_point_grid):
-        candidates = {(2.5, 2.5), (5, 6)}
-        # Point 1 has exact index (3, 3)
-        (nn1, d1) = two_point_grid.find_nearest_neighbor_from_candidates(two_point_grid.pc.trajectories[0].points[0], candidates)
-        # Point 2 has exact index (7, 7)
-        (nn2, d2) = two_point_grid.find_nearest_neighbor_from_candidates(two_point_grid.pc.trajectories[0].points[1], candidates)
-
-        expected_d1 = DistanceCalculator.calculate_euclidian_distance_between_cells((3, 3), (2.5, 2.5))
-        expected_d2 = DistanceCalculator.calculate_euclidian_distance_between_cells((7, 7), (5, 6))
-
-        assert (nn1, d1) == ((2.5, 2.5), expected_d1)
-        assert (nn2, d2) == ((5, 6), expected_d2)
-
-    def test_find_nearest_neighbor_from_candidates_returns_correctly_with_many_candidates(self, two_point_grid):
-        candidates = {(2, 3), (3, 3), (5, 6), (7, 7)}
-        # Point 1 has exact index (3, 3)
-        (nn1, d1) = two_point_grid.find_nearest_neighbor_from_candidates(two_point_grid.pc.trajectories[0].points[0], candidates)
-        # Point 2 has exact index (7, 7)
-        (nn2, d2) = two_point_grid.find_nearest_neighbor_from_candidates(two_point_grid.pc.trajectories[0].points[1], candidates)
-
-        expected_d1 = DistanceCalculator.calculate_euclidian_distance_between_cells((3, 3), (3, 3))
-        expected_d2 = DistanceCalculator.calculate_euclidian_distance_between_cells((7, 7), (7, 7))
-
-        assert (nn1, d1) == ((3, 3), expected_d1)
-        assert (nn2, d2) == ((7, 7), expected_d2)        
-
-    def test_create_cover_sets_returns_correctly_with_single_anchor(self, two_point_grid):
-        two_point_grid.route_skeleton = {(3, 3)}
-        cs = two_point_grid.create_cover_sets()
-
-        expected_d1 = DistanceCalculator.calculate_euclidian_distance_between_cells((3, 3), (3, 3))
-        expected_d2 = DistanceCalculator.calculate_euclidian_distance_between_cells((7, 7), (3, 3))
-
-        assert len(cs) == 1
-        assert cs[(3, 3)] == {(two_point_grid.pc.trajectories[0].points[0], expected_d1), (two_point_grid.pc.trajectories[0].points[1], expected_d2)}
-
-    def test_create_cover_sets_returns_correctly_with_two_anchors(self, two_point_grid):
-        two_point_grid.route_skeleton = {(3, 3), (5, 6)}
-        cs = two_point_grid.create_cover_sets()
-
-        expected_d1 = DistanceCalculator.calculate_euclidian_distance_between_cells((3, 3), (3, 3))
-        expected_d2 = DistanceCalculator.calculate_euclidian_distance_between_cells((7, 7), (5, 6))
-
-        assert len(cs) == 2
-        assert cs[(3, 3)] == {(two_point_grid.pc.trajectories[0].points[0], expected_d1)}
-        assert cs[(5, 6)] == {(two_point_grid.pc.trajectories[0].points[1], expected_d2)}
-        assert cs[(3, 3)].isdisjoint(cs[(5, 6)])
-
-    def test_create_cover_sets_returns_correctly_with_multiple_anchors(self, two_point_grid):
-        two_point_grid.route_skeleton = {(2, 3), (3, 3), (5, 6), (7, 7)}
-        cs = two_point_grid.create_cover_sets()
-
-        expected_d1 = DistanceCalculator.calculate_euclidian_distance_between_cells((3, 3), (3, 3))
-        expected_d2 = DistanceCalculator.calculate_euclidian_distance_between_cells((7, 7), (7, 7))
-
-        assert len(cs) == 4
-        assert cs[(3, 3)] == {(two_point_grid.pc.trajectories[0].points[0], expected_d1)}
-        assert cs[(7, 7)] == {(two_point_grid.pc.trajectories[0].points[1], expected_d2)}
-        assert cs[(2, 3)] == set()
-        assert cs[(5, 6)] == set()
-        assert cs[(3, 3)].isdisjoint(cs[(7, 7)])
-
     def test_construct_safe_areas_returns_correctly_with_two_points_and_single_anchor_and_no_refinement(self, two_point_grid):
         two_point_grid.route_skeleton = {(3, 3)}
         two_point_grid.construct_safe_areas(0)
         
         expected_r = DistanceCalculator.calculate_euclidian_distance_between_cells((7, 7), (3, 3))
-
+        
         assert len(two_point_grid.safe_areas) == 1
-        assert two_point_grid.safe_areas[(3, 3)] == expected_r
+        assert two_point_grid.safe_areas[(3, 3)].radius == expected_r
 
     def test_construct_safe_areas_returns_correctly_with_two_points_and_single_anchor(self, two_point_grid):
         two_point_grid.route_skeleton = {(3, 3)}
@@ -401,7 +298,7 @@ class TestGridsystem():
         expected_r = DistanceCalculator.calculate_euclidian_distance_between_cells((7, 7), (3, 3)) * 0.99
 
         assert len(two_point_grid.safe_areas) == 1
-        assert two_point_grid.safe_areas[(3, 3)] == expected_r
+        assert two_point_grid.safe_areas[(3, 3)].radius == expected_r
 
     def test_construct_safe_areas_returns_correctly_with_five_points_and_single_anchor(self, five_point_grid):
         five_point_grid.route_skeleton = {(3, 3)}
@@ -410,23 +307,23 @@ class TestGridsystem():
         expected_r = DistanceCalculator.calculate_euclidian_distance_between_cells((7, 7), (3, 3)) * 0.99
 
         assert len(five_point_grid.safe_areas) == 1
-        assert five_point_grid.safe_areas[(3, 3)] == expected_r
+        assert five_point_grid.safe_areas[(3, 3)].radius == expected_r
 
         # Now expect 2 points to be removed as noise
         five_point_grid.construct_safe_areas(0.4)
         
-        p3 = five_point_grid.calculate_exact_index_for_point(five_point_grid.pc.trajectories[0].points[2])
+        p3 = DistanceCalculator.calculate_exact_index_for_point(five_point_grid.pc.trajectories[0].points[2], five_point_grid.initialization_point, five_point_grid.cell_size)
         distance_to_p3 = DistanceCalculator.calculate_euclidian_distance_between_cells(p3, (3, 3)) 
 
-        p4 = five_point_grid.calculate_exact_index_for_point(five_point_grid.pc.trajectories[0].points[3])
+        p4 = DistanceCalculator.calculate_exact_index_for_point(five_point_grid.pc.trajectories[0].points[3], five_point_grid.initialization_point, five_point_grid.cell_size)
         distance_to_p4 = DistanceCalculator.calculate_euclidian_distance_between_cells(p4, (3, 3)) 
 
         assert len(five_point_grid.safe_areas) == 1
         # As the points are far enough apart, it should result in the 4th point being removed while the 3rd point remains
         # Hence the radius should be smaller than distance to p4 and greater than distance to p3
-        assert five_point_grid.safe_areas[(3, 3)] < distance_to_p4
-        assert five_point_grid.safe_areas[(3, 3)] > distance_to_p3
-
+        assert five_point_grid.safe_areas[(3, 3)].radius < distance_to_p4
+        assert five_point_grid.safe_areas[(3, 3)].radius > distance_to_p3
+    
     def test_construct_safe_areas_returns_correctly_with_five_points_and_two_anchors(self, five_point_grid):
         # With this split, p1 and p2 belongs to first anchor and p3, p4 and p5 belongs to 2nd anchor
         five_point_grid.route_skeleton = {(2, 2), (7, 7)}
@@ -434,24 +331,13 @@ class TestGridsystem():
         
         # As mentioned above, the refining radius of safe areas with these splits, will mean that p2 and p3 are removed respectively
         # Thereby yielding radius values just shy of their distance to the anchor points
-        p2 = five_point_grid.calculate_exact_index_for_point(five_point_grid.pc.trajectories[0].points[1])
+        p2 = DistanceCalculator.calculate_exact_index_for_point(five_point_grid.pc.trajectories[0].points[1], five_point_grid.initialization_point, five_point_grid.cell_size)
         expected_r1 = DistanceCalculator.calculate_euclidian_distance_between_cells(p2, (2, 2)) * 0.99
 
-        p3 = five_point_grid.calculate_exact_index_for_point(five_point_grid.pc.trajectories[0].points[2])
+        p3 = DistanceCalculator.calculate_exact_index_for_point(five_point_grid.pc.trajectories[0].points[2], five_point_grid.initialization_point, five_point_grid.cell_size)
         expected_r2 = DistanceCalculator.calculate_euclidian_distance_between_cells(p3, (7, 7)) * 0.99
 
         assert len(five_point_grid.safe_areas) == 2
-        assert five_point_grid.safe_areas[(2, 2)] == expected_r1
-        assert five_point_grid.safe_areas[(7, 7)] == expected_r2
-
-    def test_convert_cell_to_point(self, single_point_grid):
-        cell = (10,10)
-
-        new_point = single_point_grid.convert_cell_to_point(cell)
-        shift_distance = single_point_grid.pc.cell_size * 10
-
-        expected_point = DistanceCalculator.shift_point_with_bearing(single_point_grid.initialization_point, shift_distance, DistanceCalculator.NORTH)
-        expected_point = DistanceCalculator.shift_point_with_bearing(expected_point, shift_distance, DistanceCalculator.EAST)
-
-        assert new_point[0] == expected_point[0]
-        assert new_point[1] == expected_point[1]
+        assert five_point_grid.safe_areas[(2, 2)].radius == expected_r1
+        assert five_point_grid.safe_areas[(7, 7)].radius == expected_r2
+ 
