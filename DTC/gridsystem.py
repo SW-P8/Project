@@ -32,37 +32,10 @@ class GridSystem:
                 self.grid[floored_index].append(point)
     
     def extract_main_route(self, distance_scale: float = 0.2):
-        if distance_scale >= 0.5:
-            raise ValueError("distance scale must be less than neighborhood size divided by 2")
-        distance_threshold = distance_scale * self.neighborhood_size
-
-        for cell in self.populated_cells:
-            density_center = self.calculate_density_center(cell)
-
-            if DistanceCalculator.calculate_euclidian_distance_between_cells(cell, density_center) < distance_threshold:
-                self.main_route.add(cell)
-
+        self.main_route = ConstructMainRoute.extract_main_route(self.populated_cells, self.neighborhood_size, self.grid, distance_scale)
+    
     def calculate_density_center(self, index):
-        (x, y) = index
-        l = self.neighborhood_size // 2
-        point_count = 0
-        (x_sum, y_sum) = (0, 0)
- 
-        for i in range(x - l, x + l + 1):
-            for j in range(y - l, y + l + 1):
-                if (i, j) in self.populated_cells:
-                    cardinality = len(self.grid[(i, j)])
-                    x_sum += cardinality * i
-                    y_sum += cardinality * j
-                    point_count += cardinality
-
-        if x_sum != 0:
-            x_sum /= point_count
-
-        if y_sum != 0:
-            y_sum /= point_count
-
-        return (x_sum, y_sum)
+        return ConstructMainRoute.calculate_density_center(index, self.neighborhood_size, self.populated_cells, self.grid)
     
     def extract_route_skeleton(self, smooth_radius: int = 25, filtering_list_radius: int = 20, distance_interval: int = 20):
         self.route_skeleton = RouteSkeleton.extract_route_skeleton(self.main_route, smooth_radius, filtering_list_radius, distance_interval)
