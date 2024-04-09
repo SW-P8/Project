@@ -1,4 +1,5 @@
 from DTC.distance_calculator import DistanceCalculator
+
 class ConstructMainRoute:
     @staticmethod
     def extract_main_route(populated_cells, neighborhood_size, grid, distance_scale: float = 0.2):

@@ -35,9 +35,6 @@ class GridSystem:
     def extract_main_route(self, distance_scale: float = 0.2):
         self.main_route = ConstructMainRoute.extract_main_route(self.populated_cells, self.neighborhood_size, self.grid, distance_scale)
     
-    def calculate_density_center(self, index):
-        return ConstructMainRoute.calculate_density_center(index, self.neighborhood_size, self.populated_cells, self.grid)
-    
     def extract_route_skeleton(self, smooth_radius: int = 25, filtering_list_radius: int = 20, distance_interval: int = 20):
         self.route_skeleton = RouteSkeleton.extract_route_skeleton(self.main_route, smooth_radius, filtering_list_radius, distance_interval)
 
