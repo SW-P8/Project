@@ -78,9 +78,9 @@ class GridSystem:
         return (x_sum, y_sum)
     
     def extract_route_skeleton(self, smooth_radius: int = 25, filtering_list_radius: int = 20, distance_interval: int = 20):
-        smr = self.smooth_main_route(smooth_radius)
-        #cmr = self.filter_outliers_in_main_route(smr, filtering_list_radius)
-        #self.route_skeleton = self.sample_main_route(cmr, distance_interval)
+        smr, smr_dict = self.smooth_main_route(smooth_radius)
+        cmr, cmr_dict = self.filter_outliers_in_main_route(smr,smr_dict, filtering_list_radius)
+        self.route_skeleton = self.sample_main_route(cmr, cmr_dict, distance_interval)
         #self.route_skeleton = RTreeSkeletonExtractor.smooth_main_route(self.main_route)
         #cmr = RTreeSkeletonExtractor.filter_outliers_in_main_route(smr)
         #self.route_skeleton = RTreeSkeletonExtractor.sample_main_route(cmr)
@@ -94,7 +94,7 @@ class GridSystem:
             count = 0
             for i in range(x1 - radius, x1 + radius + 1):
                 for j in range(y1 - radius, y1 + radius + 1):
-                    if (i,j) in self.grid.keys() and DistanceCalculator.calculate_euclidian_distance_between_cells((x1 + 0.5, y1 + 0.5), (i + 0.5, j + 0.5)) <= radius:
+                    if (i,j) in self.grid.keys() and DistanceCalculator.calculate_euclidian_distance_between_cells((x1, y1), (i, j)) <= radius:
                         x_sum += i + 0.5
                         y_sum += j + 0.5
                         count += 1
@@ -114,26 +114,35 @@ class GridSystem:
     
     def filter_outliers_in_main_route(self, smr: set, containing_cells: dict, radius_prime: int = 20):
         cmr = set()
+        cmr_dict = defaultdict(set)
         for (x1, y1) in smr:
             targets = 0
             for i in range(int(x1) - radius_prime, int(x1) + radius_prime + 1):
                 for j in range(int(y1) - radius_prime, int(y1) + radius_prime + 1):
                     candidates = containing_cells.get((i, j))
                     if candidates is not None:
-                        for p in candidates:
-                            if DistanceCalculator.calculate_euclidian_distance_between_cells((x1 + 0.5, y1 + 0.5), (i + 0.5, j + 0.5)) <= radius_prime:
+                        for (x2, y2) in candidates:
+                            if DistanceCalculator.calculate_euclidian_distance_between_cells((x1, y1), (x2, y2)) <= radius_prime:
                                 targets += 1
             if targets >= 0.01 * len(smr):
                 cmr.add((x1, y1))
-        return cmr
+                cmr_dict[(int(x1), int(y1))].add((x1, y1))
+        return (cmr, cmr_dict)
     
-    def sample_main_route(self, cmr: set, distance_interval: int = 20):
+    def sample_main_route(self, cmr: set, containing_cells: dict, distance_interval: int = 20):
         rs = set()
-        for c1 in cmr:
-            targets = {c2 for c2 in cmr if DistanceCalculator.calculate_euclidian_distance_between_cells(c1, c2) <= distance_interval}
+        for (x1, y1) in cmr:
+            targets = 0
+            for i in range(int(x1) - distance_interval, int(x1) + distance_interval + 1):
+                for j in range(int(y1) - distance_interval, int(y1) + distance_interval + 1):
+                    candidates = containing_cells.get((i, j))
+                    if candidates is not None:
+                        for (x2, y2) in candidates:
+                            if DistanceCalculator.calculate_euclidian_distance_between_cells((x1, y1), (x2, y2)) <= distance_interval:
+                                targets += 1
             # targets should be greater than 1 to take self into account
-            if len(targets) > 1:
-                rs.add(c1)
+            if targets > 1:
+                rs.add((x1, y1))
         return rs
     
     def construct_safe_areas(self, decrease_factor: float = 0.01):

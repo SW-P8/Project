@@ -177,20 +177,20 @@ class TestGridsystem():
     # Points in grid are not used here as operations are made only on main route
     def test_smooth_main_route_returns_correctly_with_multiple_elements(self, single_point_grid):
         single_point_grid.main_route = {(3, 3), (28, 3), (33, 3)}
-        single_point_grid.grid[(27, 3)].append("some filler val")
-        single_point_grid.grid[(32, 3)].append("some filler val")
+        single_point_grid.grid[(28, 3)].append("some filler val")
+        single_point_grid.grid[(33, 3)].append("some filler val")
 
 
         smr, _ = single_point_grid.smooth_main_route()
 
         # Should only contain 3 positions        
-        assert smr == {(15.5, 3.5), (21.17, 3.5), (30, 3.5)}
+        assert smr == {(16, 3.5), (21.83, 3.5), (31, 3.5)}
 
     # Points in grid are not used here as operations are made only on main route
     def test_filter_outliers_in_main_route_returns_correctly_with_single_element(self, single_point_grid):
         smr = {(2.5, 3.5)}
-        smr_dict = {(2,3): (2.5, 3.5)}
-        cmr = single_point_grid.filter_outliers_in_main_route(smr, smr_dict)
+        smr_dict = {(2,3): {(2.5, 3.5)}}
+        cmr, _ = single_point_grid.filter_outliers_in_main_route(smr, smr_dict)
         assert cmr == {(2.5, 3.5)}
 
     # Points in grid are not used here as operations are made only on main route
@@ -205,7 +205,7 @@ class TestGridsystem():
         smr.add((23, 3.5))
         smr_dict[(23, 3)].add((23, 3.5))
 
-        cmr = single_point_grid.filter_outliers_in_main_route(smr, smr_dict)
+        cmr, _ = single_point_grid.filter_outliers_in_main_route(smr, smr_dict)
 
         # Check that outlier cell is correctly removed
         assert (23, 3.5) not in cmr
@@ -228,7 +228,7 @@ class TestGridsystem():
         smr_dict[(23, 3)].add((23, 3.5))
         smr_dict[(23, 3)].add((23.1, 3.5))
 
-        cmr = single_point_grid.filter_outliers_in_main_route(smr, smr_dict)
+        cmr, _ = single_point_grid.filter_outliers_in_main_route(smr, smr_dict)
 
         # Check that the two far cells are not removed
         assert (23, 3.5) in cmr
@@ -238,46 +238,56 @@ class TestGridsystem():
     # Points in grid are not used here as operations are made only on main route
     def test_sample_main_route_returns_correctly_with_single_cell(self, single_point_grid):
         cmr = {(2, 3)}
-        rs = single_point_grid.sample_main_route(cmr)
+        cmr_dict = {(2, 3): {(2, 3)}}
+        rs = single_point_grid.sample_main_route(cmr, cmr_dict)
         assert rs == set()
 
     # Points in grid are not used here as operations are made only on main route
     def test_sample_main_route_returns_correctly_with_two_cells(self, single_point_grid):
         cmr = {(2, 3), (22, 3)}
-        rs1 = single_point_grid.sample_main_route(cmr)
+        cmr_dict = defaultdict(set)
+        cmr_dict[(2, 3)].add((2,3))
+        cmr_dict[(22,3)].add((22, 3))
+        rs1 = single_point_grid.sample_main_route(cmr, cmr_dict)
         assert rs1 == {(2, 3), (22, 3)}
 
-        rs2 = single_point_grid.sample_main_route(cmr, 19)
+        rs2 = single_point_grid.sample_main_route(cmr, cmr_dict, 19)
         assert rs2 == set()
 
     # Points in grid are not used here as operations are made only on main route
     def test_sample_main_route_returns_correctly(self, single_point_grid):
         cmr = set()
+        cmr_dict = defaultdict(set)
         for i in range(1, 101):
             cmr.add((1 + 0.01 * i, 3.5))
+            cmr_dict[(int(1 + 0.01 * i), 3)].add((1 + 0.01 * i, 3.5))
         
         # Add cell a large distance from others
         cmr.add((23, 3.5))
-        rs = single_point_grid.sample_main_route(cmr)
+        cmr_dict[(23, 3)].add((23, 3.5))
+        rs = single_point_grid.sample_main_route(cmr, cmr_dict)
 
         # Check that outlier cell is correctly removed
         assert (23, 3.5) not in rs
         assert cmr - rs == {(23, 3.5)}
 
     def test_extract_route_skeleton_returns_correctly_with_single_cell(self, single_point_grid):
-        single_point_grid.main_route = {(2, 3)}
+        single_point_grid.main_route = {(3, 3)}
         single_point_grid.extract_route_skeleton()
         assert single_point_grid.route_skeleton == set()
 
     def test_extract_route_skeleton_returns_correctly_with_two_cells(self, single_point_grid):
-        single_point_grid.main_route = {(2, 3), (12, 3)}
+        single_point_grid.main_route = {(3, 3), (12, 3)}
+        single_point_grid.grid[(12, 3)].append("some random val")
         single_point_grid.extract_route_skeleton()
         assert single_point_grid.route_skeleton == set()
 
     def test_extract_route_skeleton_returns_correctly_with_three_cells(self, single_point_grid):
-        single_point_grid.main_route = {(2, 3), (27, 3), (32, 3)}
+        single_point_grid.main_route = {(3, 3), (28, 3), (33, 3)}
+        single_point_grid.grid[(28, 3)].append("some random val")
+        single_point_grid.grid[(33, 3)].append(("some random val"))
         single_point_grid.extract_route_skeleton()
-        assert single_point_grid.route_skeleton == {(15, 3.5), (20.83, 3.5), (30, 3.5)}
+        assert single_point_grid.route_skeleton == {(16, 3.5), (21.83, 3.5), (31, 3.5)}
 
     def test_extract_route_skeleton_returns_correctly_with_many_cells(self, single_point_grid):
         single_point_grid.main_route = set()
