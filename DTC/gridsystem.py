@@ -2,6 +2,7 @@ from DTC.trajectory import Trajectory, TrajectoryPointCloud
 from DTC.point import Point
 from DTC.distance_calculator import DistanceCalculator
 from DTC.construct_safe_area import ConstructSafeArea
+from DTC.construct_main_route import ConstructMainRoute
 from DTC.route_skeleton import RouteSkeleton
 from math import floor, sqrt
 from operator import itemgetter
