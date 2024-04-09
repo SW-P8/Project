@@ -11,7 +11,7 @@ class NoiseCorrection:
         for i, point in enumerate(trajectory.points):
             nearest_anchor, dist = DistanceCalculator.find_nearest_neighbor_from_candidates(point, self.gridsystem.route_skeleton, self.gridsystem.initialization_point, self.gridsystem.cell_size)
             
-            if dist >= self.gridsystem.safe_areas[nearest_anchor]:
+            if dist >= self.gridsystem.safe_areas[nearest_anchor].radius:
                 # Ensures that we do not try to clean first or last element. Should be improved!
                 if i != 0 and i != len(trajectory.points) - 1:
                     self.correct_noisy_point(trajectory, i)
