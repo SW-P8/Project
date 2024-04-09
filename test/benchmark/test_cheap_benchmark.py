@@ -9,7 +9,7 @@ class TestCheapBenchmark:
         cls.grid_system = None
         cls.point_cloud = None
         cls.limit = 1000
-        cls.n_points = 1000000
+        cls.n_points = 100000000
         cls.conn = None
         cls.handler = None
         cls.executor = None
