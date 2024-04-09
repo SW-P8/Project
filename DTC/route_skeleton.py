@@ -3,12 +3,20 @@ from distance_calculator import DistanceCalculator
 class RouteSkeleton:
     def __init__(self, main_route) -> None:
         self.main_route = main_route
+        self.route_skeleton = None
     
-    
-        
+class RouteSkeletonWrapper:
+    def __init__(self, main_route) -> None:
+        self.route_skeleton = RouteSkeleton(main_route)
+
+    def extract_route_skeleton(self, smooth_radius: int = 25, filtering_list_radius: int = 20, distance_interval: int = 20):
+        smr = self.smooth_main_route(smooth_radius)
+        cmr = self.filter_outliers_in_main_route(smr, filtering_list_radius)
+        self.route_skeleton.route_skeleton = self.sample_main_route(cmr, distance_interval)
+
     def smooth_main_route(self, radius: int = 25) -> set:
         smr = set()
-        for (x1, y1) in self.main_route:
+        for (x1, y1) in self.route_skeleton.main_route:
             ns = {(x2, y2) for (x2, y2) in self.main_route if DistanceCalculator.calculate_euclidian_distance_between_cells((x1 + 0.5, y1 + 0.5), (x2 + 0.5, y2 + 0.5)) <= radius}
             x_sum = sum(x for x, _ in ns) + len(ns) * 0.5
             y_sum = sum(y for _, y in ns) + len(ns) * 0.5
@@ -37,12 +45,4 @@ class RouteSkeleton:
             if len(targets) > 1:
                 rs.add(c1)
         return rs
-    
-
-
-class RouteSkeletonWrapper:
-    def __init__(self) -> None:
-        pass
-
-
 

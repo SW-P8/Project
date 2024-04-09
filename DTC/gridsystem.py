@@ -6,7 +6,7 @@ from operator import itemgetter
 from datetime import datetime
 from typing import Optional
 from progress.counter import Counter
-from route_skeleton import RouteSkeleton
+from route_skeleton import RouteSkeletonWrapper
 
 class GridSystem:
     def __init__(self, pc: TrajectoryPointCloud) -> None:
@@ -81,11 +81,8 @@ class GridSystem:
         return (x_sum, y_sum)
     
     def extract_route_skeleton(self, smooth_radius: int = 25, filtering_list_radius: int = 20, distance_interval: int = 20):
-        rsw = RouteSkeleton(self.main_route)
-        smr = rsw.smooth_main_route(smooth_radius)
-        cmr = rsw.filter_outliers_in_main_route(smr, filtering_list_radius)
-        self.route_skeleton = rsw.sample_main_route(cmr, distance_interval)
-        
+        rsw = RouteSkeletonWrapper(self.main_route)
+        rsw.extract_route_skeleton()
     
     def construct_safe_areas(self, decrease_factor: float = 0.01):
         cs = self.create_cover_sets()
