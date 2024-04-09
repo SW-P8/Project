@@ -1,4 +1,4 @@
-from distance_calculator import DistanceCalculator
+from DTC.distance_calculator import DistanceCalculator
 
 class RouteSkeleton:
     def __init__(self, main_route) -> None:
@@ -17,7 +17,7 @@ class RouteSkeletonWrapper:
     def smooth_main_route(self, radius: int = 25) -> set:
         smr = set()
         for (x1, y1) in self.route_skeleton.main_route:
-            ns = {(x2, y2) for (x2, y2) in self.main_route if DistanceCalculator.calculate_euclidian_distance_between_cells((x1 + 0.5, y1 + 0.5), (x2 + 0.5, y2 + 0.5)) <= radius}
+            ns = {(x2, y2) for (x2, y2) in self.route_skeleton.main_route if DistanceCalculator.calculate_euclidian_distance_between_cells((x1 + 0.5, y1 + 0.5), (x2 + 0.5, y2 + 0.5)) <= radius}
             x_sum = sum(x for x, _ in ns) + len(ns) * 0.5
             y_sum = sum(y for _, y in ns) + len(ns) * 0.5
 

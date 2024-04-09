@@ -5,8 +5,7 @@ from math import floor, sqrt
 from operator import itemgetter
 from datetime import datetime
 from typing import Optional
-from progress.counter import Counter
-from route_skeleton import RouteSkeletonWrapper
+from DTC.route_skeleton import RouteSkeletonWrapper
 
 class GridSystem:
     def __init__(self, pc: TrajectoryPointCloud) -> None:
@@ -23,17 +22,14 @@ class GridSystem:
 
     def create_grid_system(self):
         # Fill grid with points
-        count = Counter('Creating Grid System - Elapsed: %(elapsed)ds  Count: ')
         for trajectory in self.pc.trajectories:
             for point in trajectory.points:
-                count.next()
                 (x,y) = self.calculate_exact_index_for_point(point)
                 floored_index = (floor(x), floor(y))
                 if floored_index not in self.populated_cells:
                     self.populated_cells.add(floored_index)
                     self.grid[floored_index] = list()
                 self.grid[floored_index].append(point)
-        count.finish()
 
     def calculate_exact_index_for_point(self, point: Point):
         # Calculate x index
@@ -51,7 +47,6 @@ class GridSystem:
             raise ValueError("distance scale must be less than neighborhood size divided by 2")
         distance_threshold = distance_scale * self.neighborhood_size
 
-        count = Counter('Extracting main route - Elapsed: %(elapsed)ds  Count: ')
         for cell in self.populated_cells:
             density_center = self.calculate_density_center(cell)
 
@@ -83,12 +78,11 @@ class GridSystem:
     def extract_route_skeleton(self, smooth_radius: int = 25, filtering_list_radius: int = 20, distance_interval: int = 20):
         rsw = RouteSkeletonWrapper(self.main_route)
         rsw.extract_route_skeleton()
+        self.route_skeleton = rsw.route_skeleton.route_skeleton
     
     def construct_safe_areas(self, decrease_factor: float = 0.01):
         cs = self.create_cover_sets()
-        count = Counter('Constructing Safe Areas - Elapsed: %(elapsed)ds  Count: ')
         for anchor in self.route_skeleton:
-            count.next()
             #Initialize safe area radius
             radius = max(cs[anchor], key=itemgetter(1), default=(0,0))[1]
             removed_count = 0
@@ -103,26 +97,21 @@ class GridSystem:
                 removed_count = cs_size - len(filtered_cs)
 
             self.safe_areas[anchor] = radius
-        count.finish()
     
     def create_cover_sets(self, find_candidate_algorithm = None):
         if find_candidate_algorithm is None:
             find_candidate_algorithm = self.find_candidate_nearest_neighbors
         cs = dict()
-        count = Counter('Creating cover sets - Elapsed: %(elapsed)ds  Count: ')
         # Initialize dictionary with a key for each anchor and an empty set for each
         for anchor in self.route_skeleton:
-            count.next()
             cs[anchor] = set()
 
         # Assign points to their nearest anchor
         for (x, y) in self.populated_cells:
             candidates = find_candidate_algorithm((x + 0.5, y + 0.5))
             for point in self.grid[(x, y)]:
-                count.next()
                 (anchor, dist) = self.find_nearest_neighbor_from_candidates(point, candidates)
                 cs[anchor].add((point, dist))
-        count.finish()
         return cs
 
 
