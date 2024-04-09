@@ -1,3 +1,4 @@
+colorama==0.4.6
 contourpy==1.2.0
 cycler==0.12.1
 fonttools==4.50.0
@@ -12,10 +13,13 @@ pandas==2.2.1
 pillow==10.2.0
 pluggy==1.4.0
 psycopg2==2.9.9
+py-cpuinfo==9.0.0
 pyparsing==3.1.2
 pytest==8.1.1
+pytest-benchmark==4.0.0
 python-dateutil==2.9.0.post0
 pytz==2024.1
+setuptools==69.2.0
 six==1.16.0
 tqdm==4.66.2
 tzdata==2024.1
