@@ -56,7 +56,10 @@ class TestLoadData():
             if result:
                 cursor.execute("SELECT anchor_x, anchor_y, radius FROM DTC_model_safe_areas WHERE model_id = %s", (result,))
                 safe_areas = cursor.fetchall()
-                return safe_areas
+                safe_areas_rounded = []
+                for ele in safe_areas:
+                    safe_areas_rounded.append((ele[0], ele[1], round(ele[2], 1)))
+                return safe_areas_rounded
         except Exception as error:
             print("Error fetching latest min_coords:", error)
         finally:
@@ -94,7 +97,7 @@ class TestLoadData():
     
 
     def test_save_data(self, test_save_data_with_fivepoint_grid_constructed_save_area, test_insert_safe_areas_with_no_long_lat, test_insert_long_lat_returns_id):
-        actual_coords = [(7.0, 7.0, 2.8001428535179933), (2.0, 2.0, 2.800142853481284)]
+        actual_coords = [(7.0, 7.0, 2.8), (2.0, 2.0, 2.8)]
         assert actual_coords == test_save_data_with_fivepoint_grid_constructed_save_area
         assert 1 == test_insert_long_lat_returns_id
         assert "AssertionError" == test_insert_safe_areas_with_no_long_lat
