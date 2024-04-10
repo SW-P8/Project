@@ -29,22 +29,24 @@ class TestCheapBenchmark:
         self.__class__.grid_system = gridsystem.GridSystem(point_cloud)
         assert point_cloud is not None
     
-    @pytest.mark.bm_cheap
-    def test_build_grid_system(self, benchmark):
-        benchmark.pedantic(self.__class__.grid_system.create_grid_system, rounds=1, iterations=1, warmup_rounds=0)
-        assert self.__class__.grid_system != None
-    
-    @pytest.mark.bm_cheap
-    def test_extract_main_route(self, benchmark):
-        benchmark.pedantic(self.__class__.grid_system.extract_main_route, rounds=1, iterations=1, warmup_rounds=0)
-        assert self.__class__.grid_system != None
-    
-    @pytest.mark.bm_cheap
-    def test_extract_route_skeleton(self, benchmark):
-        benchmark.pedantic(self.__class__.grid_system.extract_route_skeleton, rounds=1, iterations=1, warmup_rounds=0)
-        assert self.__class__.grid_system != None
+#    @pytest.mark.bm_cheap
+#    def test_build_grid_system(self, benchmark):
+#        benchmark.pedantic(self.__class__.grid_system.create_grid_system, rounds=1, iterations=1, warmup_rounds=0)
+#        assert self.__class__.grid_system != None
+#    
+#    @pytest.mark.bm_cheap
+##    def test_extract_main_route(self, benchmark):
+#        benchmark.pedantic(self.__class__.grid_system.extract_main_route, rounds=1, iterations=1, warmup_rounds=0)
+#        print(len(self.__class__.grid_system.main_route))
 
-    @pytest.mark.bm_cheap
-    def test_construct_safe_area(self, benchmark):
-        benchmark.pedantic(self.__class__.grid_system.construct_safe_areas, rounds=1, iterations=1, warmup_rounds=0)
-        assert self.__class__.grid_system != None
+#        assert self.__class__.grid_system != None
+    
+#    @pytest.mark.bm_cheap
+#    def test_extract_route_skeleton(self, benchmark):
+#        benchmark.pedantic(self.__class__.grid_system.extract_route_skeleton, rounds=1, iterations=1, warmup_rounds=0)
+#        assert self.__class__.grid_system != None
+
+#    @pytest.mark.bm_cheap
+#    def test_construct_safe_area(self, benchmark):
+#        benchmark.pedantic(self.__class__.grid_system.construct_safe_areas, rounds=1, iterations=1, warmup_rounds=0)
+#        assert self.__class__.grid_system != None

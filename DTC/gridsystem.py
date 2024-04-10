@@ -3,11 +3,10 @@ from DTC.point import Point
 from DTC.distance_calculator import DistanceCalculator
 from math import floor, sqrt
 from operator import itemgetter
-from datetime import datetime
-from typing import Optional
-from rtree import Index
 from DTC.Rtree.rtree_sk_extractor import RTreeSkeletonExtractor
 from collections import defaultdict
+import multiprocessing as mp
+import numpy
 
 
 class GridSystem:
@@ -23,12 +22,37 @@ class GridSystem:
 
 
     def create_grid_system(self):
-        # Fill grid with points
-        for trajectory in self.pc.trajectories:
+        process_count = mp.cpu_count()
+        splits = self.chunks(self.pc.trajectories, process_count)
+        tasks = []
+        pipe_list = []
+
+        for split in splits:
+            recv_end, send_end = mp.Pipe(False)
+            j = mp.Process(target=self.create_sub_grid, args=(split, send_end))
+            tasks.append(j)
+            pipe_list.append(recv_end)
+            j.start()
+
+        for task in tasks:
+            task.join()
+
+        self.grid = [x.recv() for x in pipe_list][0]
+        #TODO: Create merge dictionaries
+
+    def chunks(self, l, n):
+        return [l[i:i+n] for i in range(0, len(l), n)]
+
+    def create_sub_grid(self, trajectories: list[Trajectory], send_end) -> dict:
+        sub_grid = defaultdict(list)
+        for trajectory in trajectories:
             for point in trajectory.points:
                 (x,y) = self.calculate_exact_index_for_point(point)
                 floored_index = (floor(x), floor(y))
-                self.grid[floored_index].append(point)
+                sub_grid[floored_index].append(point)
+
+        send_end.send(sub_grid)
+
 
     def calculate_exact_index_for_point(self, point: Point):
         # Calculate x index
@@ -178,7 +202,6 @@ class GridSystem:
                 cs[anchor].add((point, dist))
 
         return cs
-
 
     def find_candidate_nearest_neighbors(self, cell):
         min_dist = float("inf")
