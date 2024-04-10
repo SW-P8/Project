@@ -22,26 +22,43 @@ class GridSystem:
 
 
     def create_grid_system(self):
-        process_count = mp.cpu_count()
-        splits = self.chunks(self.pc.trajectories, process_count)
-        tasks = []
-        pipe_list = []
+        # Fill grid with points
+        if False:
+            for trajectory in self.pc.trajectories:
+                for point in trajectory.points:
+                    (x,y) = self.calculate_exact_index_for_point(point)
+                    floored_index = (floor(x), floor(y))
+                    self.grid[floored_index].append(point)
+        else:
+            process_count = mp.cpu_count()
+            splits = self.split(self.pc.trajectories, process_count)
+            tasks = []
+            pipe_list = []
 
-        for split in splits:
-            recv_end, send_end = mp.Pipe(False)
-            j = mp.Process(target=self.create_sub_grid, args=(split, send_end))
-            tasks.append(j)
-            pipe_list.append(recv_end)
-            j.start()
+            for split in splits:
+                recv_end, send_end = mp.Pipe(False)
+                j = mp.Process(target=self.create_sub_grid, args=(split, send_end))
+                tasks.append(j)
+                pipe_list.append(recv_end)
+                j.start()
 
-        for task in tasks:
-            task.join()
+            for task in tasks:
+                task.join()
 
-        self.grid = [x.recv() for x in pipe_list][0]
-        #TODO: Create merge dictionaries
+            self.grid = self.merge_dicts([x.recv() for x in pipe_list])
 
-    def chunks(self, l, n):
-        return [l[i:i+n] for i in range(0, len(l), n)]
+    @staticmethod
+    def split(a, n):
+        k, m = divmod(len(a), n)
+        return (a[i*k+min(i, m):(i+1)*k+min(i+1, m)] for i in range(n))
+    
+    @staticmethod
+    def merge_dicts(dicts: list[dict]):
+        merged_dict = defaultdict(list)
+        for d in dicts:
+            for key, value in d.items():
+                merged_dict[key].extend(value)
+        return merged_dict
 
     def create_sub_grid(self, trajectories: list[Trajectory], send_end) -> dict:
         sub_grid = defaultdict(list)

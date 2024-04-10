@@ -9,7 +9,7 @@ class TestCheapBenchmark:
         cls.grid_system = None
         cls.point_cloud = None
         cls.limit = 1000
-        cls.n_points = 100000000
+        cls.n_points = 10000
         cls.conn = None
         cls.handler = None
         cls.executor = None
@@ -29,10 +29,10 @@ class TestCheapBenchmark:
         self.__class__.grid_system = gridsystem.GridSystem(point_cloud)
         assert point_cloud is not None
     
-#    @pytest.mark.bm_cheap
-#    def test_build_grid_system(self, benchmark):
-#        benchmark.pedantic(self.__class__.grid_system.create_grid_system, rounds=1, iterations=1, warmup_rounds=0)
-#        assert self.__class__.grid_system != None
+    @pytest.mark.bm_cheap
+    def test_build_grid_system(self, benchmark):
+        benchmark.pedantic(self.__class__.grid_system.create_grid_system, rounds=1, iterations=1, warmup_rounds=0)
+        assert self.__class__.grid_system != None
 #    
 #    @pytest.mark.bm_cheap
 ##    def test_extract_main_route(self, benchmark):

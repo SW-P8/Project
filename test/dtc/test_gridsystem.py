@@ -65,11 +65,42 @@ class TestGridsystem():
         (x2, y2) = two_point_grid.calculate_exact_index_for_point(two_point_grid.pc.trajectories[0].points[1])
         assert (7, 7) == (floor(x2), floor(y2))
 
+    @pytest.mark.parametrize("input_list, input_n, split_list_lengths", 
+        [
+            ([1, 2, 3, 4], 1, [4]),
+            ([1, 2, 3, 4], 2, [2, 2]),
+            ([1, 2, 3, 4], 4, [1, 1, 1, 1]),
+            ([1], 4, [1, 0, 0, 0])
+        ]
+    )
+    def test_split_returns_correctly(self, input_list, input_n, split_list_lengths):
+        split_lists = list(GridSystem.split(input_list, input_n))
+
+        assert len(split_lists) == input_n
+        for i in range(input_n):
+            assert len(split_lists[i]) == split_list_lengths[i]
+
+    @pytest.mark.parametrize("input_dicts, output_merged_dict", 
+        [
+            ([{1: [1]}], {1: [1]}),
+            ([{1: [1]}, {2: [1]}], {1: [1], 2: [1]}),
+            ([{1: [1], 2: [1]}, {2: [2, 3]}], {1: [1], 2: [1, 2, 3]}),
+            ([{1: [1], 2: [1]}, {2: [2, 3], 3: [4]}], {1: [1], 2: [1, 2, 3], 3: [4]})
+        ]
+    )
+    def test_merge_dicts_returns_correctly(self, input_dicts, output_merged_dict):
+        combined_dict = GridSystem.merge_dicts(input_dicts)
+        assert combined_dict == output_merged_dict
+
     def test_grid_is_build_correctly(self, two_point_grid):
         assert two_point_grid.grid.keys() == {(3, 3), (7, 7)}
 
-        assert two_point_grid.pc.trajectories[0].points[0] == two_point_grid.grid[(3, 3)][0]
-        assert two_point_grid.pc.trajectories[0].points[1] == two_point_grid.grid[(7, 7)][0]
+        assert two_point_grid.pc.trajectories[0].points[0].get_coordinates() == two_point_grid.grid[(3, 3)][0].get_coordinates()
+        assert two_point_grid.pc.trajectories[0].points[0].timestamp == two_point_grid.grid[(3, 3)][0].timestamp
+
+        assert two_point_grid.pc.trajectories[0].points[1].get_coordinates() == two_point_grid.grid[(7, 7)][0].get_coordinates()
+        assert two_point_grid.pc.trajectories[0].points[1].timestamp == two_point_grid.grid[(7, 7)][0].timestamp
+
 
     def test_calculate_density_center_returns_correctly_with_single_point(self, single_point_grid):
         density_center = single_point_grid.calculate_density_center((2, 3))
@@ -378,8 +409,13 @@ class TestGridsystem():
         expected_d1 = DistanceCalculator.calculate_euclidian_distance_between_cells((3, 3), (3, 3))
         expected_d2 = DistanceCalculator.calculate_euclidian_distance_between_cells((7, 7), (3, 3))
 
+        (p1, d1), (p2, d2) = cs[(3, 3)]
+
+        coordinates_with_dist = {(two_point_grid.pc.trajectories[0].points[0].get_coordinates(), expected_d1), (two_point_grid.pc.trajectories[0].points[1].get_coordinates(), expected_d2)}
+
         assert len(cs) == 1
-        assert cs[(3, 3)] == {(two_point_grid.pc.trajectories[0].points[0], expected_d1), (two_point_grid.pc.trajectories[0].points[1], expected_d2)}
+        assert (p1.get_coordinates(), d1) in coordinates_with_dist
+        assert (p2.get_coordinates(), d2) in coordinates_with_dist
 
     def test_create_cover_sets_returns_correctly_with_two_anchors(self, two_point_grid):
         two_point_grid.route_skeleton = {(3, 3), (5, 6)}
@@ -388,9 +424,18 @@ class TestGridsystem():
         expected_d1 = DistanceCalculator.calculate_euclidian_distance_between_cells((3, 3), (3, 3))
         expected_d2 = DistanceCalculator.calculate_euclidian_distance_between_cells((7, 7), (5, 6))
 
+        p1, d1 = list(cs[(3, 3)])[0]
+        p2, d2 = list(cs[(5, 6)])[0]
+
         assert len(cs) == 2
-        assert cs[(3, 3)] == {(two_point_grid.pc.trajectories[0].points[0], expected_d1)}
-        assert cs[(5, 6)] == {(two_point_grid.pc.trajectories[0].points[1], expected_d2)}
+        assert p1.get_coordinates() == two_point_grid.pc.trajectories[0].points[0].get_coordinates()
+        assert p1.timestamp == two_point_grid.pc.trajectories[0].points[0].timestamp
+        assert d1 == expected_d1
+
+        assert p2.get_coordinates() == two_point_grid.pc.trajectories[0].points[1].get_coordinates()
+        assert p2.timestamp == two_point_grid.pc.trajectories[0].points[1].timestamp
+        assert d2 == expected_d2
+
         assert cs[(3, 3)].isdisjoint(cs[(5, 6)])
 
     def test_create_cover_sets_returns_correctly_with_multiple_anchors(self, two_point_grid):
@@ -400,10 +445,18 @@ class TestGridsystem():
         expected_d1 = DistanceCalculator.calculate_euclidian_distance_between_cells((3, 3), (3, 3))
         expected_d2 = DistanceCalculator.calculate_euclidian_distance_between_cells((7, 7), (7, 7))
 
+        p1, d1 = list(cs[(3, 3)])[0]
+        p2, d2 = list(cs[(7, 7)])[0]
+
         # Length is only gonna be 2 as defaultdict is utilized and (3, 3), (7, 7) does not have any points added
         assert len(cs) == 2
-        assert cs[(3, 3)] == {(two_point_grid.pc.trajectories[0].points[0], expected_d1)}
-        assert cs[(7, 7)] == {(two_point_grid.pc.trajectories[0].points[1], expected_d2)}
+        assert p1.get_coordinates() == two_point_grid.pc.trajectories[0].points[0].get_coordinates()
+        assert p1.timestamp == two_point_grid.pc.trajectories[0].points[0].timestamp
+        assert d1 == expected_d1
+
+        assert p2.get_coordinates() == two_point_grid.pc.trajectories[0].points[1].get_coordinates()
+        assert p2.timestamp == two_point_grid.pc.trajectories[0].points[1].timestamp
+        assert d2 == expected_d2
         assert cs[(2, 3)] == set()
         assert cs[(5, 6)] == set()
         assert cs[(3, 3)].isdisjoint(cs[(7, 7)])
