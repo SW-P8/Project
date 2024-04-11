@@ -6,7 +6,6 @@ from operator import itemgetter
 from collections import defaultdict
 import multiprocessing as mp
 
-
 class GridSystem:
     def __init__(self, pc: TrajectoryPointCloud) -> None:
         self.pc = pc
@@ -29,11 +28,12 @@ class GridSystem:
             dicts = []
 
             for split in splits:
-                recv_end, send_end = mp.Pipe(False)
-                j = mp.Process(target=self.create_sub_grid, args=(split, send_end))
-                tasks.append(j)
-                pipe_list.append(recv_end)
-                j.start()
+                if split != []:
+                    recv_end, send_end = mp.Pipe(False)
+                    j = mp.Process(target=self.create_sub_grid, args=(split, send_end))
+                    tasks.append(j)
+                    pipe_list.append(recv_end)
+                    j.start()
 
             for (i, task) in enumerate(tasks):
                 dicts.append(pipe_list[i].recv())
@@ -53,14 +53,6 @@ class GridSystem:
         k, m = divmod(len(a), n)
         return (a[i*k+min(i, m):(i+1)*k+min(i+1, m)] for i in range(n))
     
-    @staticmethod
-    def merge_dicts(dicts: list[dict]):
-        merged_dict = defaultdict(list)
-        for d in dicts:
-            for key, value in d.items():
-                merged_dict[key].extend(value)
-        return merged_dict
-
     def create_sub_grid(self, trajectories: list[Trajectory], send_end) -> dict:
         sub_grid = defaultdict(list)
         for trajectory in trajectories:
@@ -68,8 +60,52 @@ class GridSystem:
                 (x,y) = self.calculate_exact_index_for_point(point)
                 floored_index = (floor(x), floor(y))
                 sub_grid[floored_index].append(point)
-
+#            trajectories.remove(trajectory)    
+        
         send_end.send(sub_grid)
+    
+    @staticmethod
+    def merge_dicts(dicts: list[dict], multiprocessing: bool = True):
+        if multiprocessing:
+            # Function to merge dictionaries
+            def merge_dicts_worker(input_dict, output_pipe):
+                merged_dict = defaultdict(list)
+                for d in input_dict:
+                    for key, value in d.items():
+                        merged_dict[key].extend(value)
+                output_pipe.send(merged_dict)
+                output_pipe.close()
+
+            # Split the input list of dictionaries into chunks for parallel processing
+            process_count = mp.cpu_count()
+            splits = GridSystem.split(dicts, process_count // 2)
+
+            # Create pipes for communication between processes
+            tasks = []
+            pipe_list = []
+            for split in splits:
+                if split != []:
+                    recv_end, send_end = mp.Pipe(False)
+                    j = mp.Process(target=merge_dicts_worker, args=(split, send_end))
+                    tasks.append(j)
+                    pipe_list.append(recv_end)
+                    j.start()
+
+            # Collect merged dictionaries from processes
+            merged_dict = defaultdict(list)
+            for (i, task) in enumerate(tasks):
+                d = pipe_list[i].recv()
+                for key, value in d.items():
+                    merged_dict[key].extend(value)
+                task.join()
+                
+            return merged_dict
+        else:
+            merged_dict = defaultdict(list)
+            for d in dicts:
+                for key, value in d.items():
+                    merged_dict[key].extend(value)
+            return merged_dict
 
     def calculate_exact_index_for_point(self, point: Point):
         # Calculate x index
