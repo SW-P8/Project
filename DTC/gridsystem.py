@@ -23,14 +23,14 @@ class GridSystem:
         # Fill grid with points
         if multiprocessing:
             process_count = mp.cpu_count()
-            splits = self.split(self.pc.trajectories, process_count)
+            splits = GridSystem.split(self.pc.trajectories, process_count)
             tasks = []
             pipe_list = []
             dicts = []
 
-            for (i, split) in enumerate(splits):
+            for split in splits:
                 recv_end, send_end = mp.Pipe(False)
-                j = mp.Process(target=self.create_sub_grid, args=(split, send_end, i))
+                j = mp.Process(target=self.create_sub_grid, args=(split, send_end))
                 tasks.append(j)
                 pipe_list.append(recv_end)
                 j.start()
@@ -61,7 +61,7 @@ class GridSystem:
                 merged_dict[key].extend(value)
         return merged_dict
 
-    def create_sub_grid(self, trajectories: list[Trajectory], send_end, pid) -> dict:
+    def create_sub_grid(self, trajectories: list[Trajectory], send_end) -> dict:
         sub_grid = defaultdict(list)
         for trajectory in trajectories:
             for point in trajectory.points:
