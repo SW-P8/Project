@@ -8,11 +8,6 @@ from tqdm import tqdm
 from pathlib import Path
 from io import StringIO
 
-BBB_MIN_LONG = 115.42
-BBB_MAX_LONG = 117.51
-BBB_MIN_LAT = 39.44
-BBB_MAX_LAT = 41.06
-
 CSV_DIR = "taxi_log_2008_by_id/"
 COPY_STATEMENT = """
     COPY TaxiData(taxi_id, date_time, longitude, latitude, trajectory_id)
@@ -53,12 +48,23 @@ def load_data_from_csv(db: SimpleConnectionPool, limit=0):
 def __get_numeric_part(file_name) -> int:
     return int(file_name.split('/')[-1].split('.')[0])
 
-def __transform_data(df: pd.DataFrame, trajectory_id: int) -> pd.DataFrame:
+def __transform_data(df: pd.DataFrame, trajectory_id: int, inner_city: bool = False) -> pd.DataFrame:
+    if inner_city:
+        min_long = 116.342222
+        max_long = 116.436389
+        min_lat = 39.866389
+        max_lat = 39.983056
+    else:
+        min_long = 115.42
+        max_long = 117.51
+        min_lat = 39.44
+        max_lat = 41.06
+
     mask = ~(
-        (df['longitude'] < BBB_MIN_LONG) |
-        (df['longitude'] > BBB_MAX_LONG) |
-        (df['latitude'] < BBB_MIN_LAT) |
-        (df['latitude'] > BBB_MAX_LAT)
+        (df['longitude'] < min_long) |
+        (df['longitude'] > max_long) |
+        (df['latitude'] < min_lat) |
+        (df['latitude'] > max_lat)
     )
 
     df.sort_values(by='date_time', inplace=True)
