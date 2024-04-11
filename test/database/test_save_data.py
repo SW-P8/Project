@@ -1,13 +1,11 @@
 from datetime import datetime
 import pytest 
 from geopy import distance
-
 from DTC import gridsystem, trajectory
 from database import save_data
 from database.db import init_db
 
-class TestLoadData():
-    
+class TestSaveData():
     def _construct_gs(self) -> gridsystem.GridSystem:
         pc = trajectory.TrajectoryPointCloud()
         t = trajectory.Trajectory()
@@ -43,7 +41,6 @@ class TestLoadData():
 
         except Exception:
             return None
-
 
     def _get_latest_min_coords_and_datapoints(self, db):
         conn = db.getconn()
@@ -94,12 +91,9 @@ class TestLoadData():
         except Exception:
             return "AssertionError"
         
-    
-
     def test_save_data(self, test_save_data_with_fivepoint_grid_constructed_save_area, test_insert_safe_areas_with_no_long_lat, test_insert_long_lat_returns_id):
         actual_coords = [(7.0, 7.0, 2.8), (2.0, 2.0, 2.8)]
         assert actual_coords == test_save_data_with_fivepoint_grid_constructed_save_area
         assert 1 == test_insert_long_lat_returns_id
         assert "AssertionError" == test_insert_safe_areas_with_no_long_lat
         
-
