@@ -3,10 +3,8 @@ from DTC.point import Point
 from DTC.distance_calculator import DistanceCalculator
 from math import floor, sqrt
 from operator import itemgetter
-from DTC.Rtree.rtree_sk_extractor import RTreeSkeletonExtractor
 from collections import defaultdict
 import multiprocessing as mp
-import numpy
 
 
 class GridSystem:
@@ -21,15 +19,9 @@ class GridSystem:
         self.safe_areas = defaultdict(set)
 
 
-    def create_grid_system(self):
+    def create_grid_system(self, multiprocessing: bool = True):
         # Fill grid with points
-        if True:
-            for trajectory in self.pc.trajectories:
-                for point in trajectory.points:
-                    (x,y) = self.calculate_exact_index_for_point(point)
-                    floored_index = (floor(x), floor(y))
-                    self.grid[floored_index].append(point)
-        else:
+        if multiprocessing:
             process_count = mp.cpu_count()
             splits = self.split(self.pc.trajectories, process_count)
             tasks = []
@@ -47,7 +39,14 @@ class GridSystem:
                 dicts.append(pipe_list[i].recv())
                 task.join()
 
-            self.grid = self.merge_dicts(dicts)#[x.recv() for x in pipe_list])
+            self.grid = self.merge_dicts(dicts)
+        else:
+            for trajectory in self.pc.trajectories:
+                for point in trajectory.points:
+                    (x,y) = self.calculate_exact_index_for_point(point)
+                    floored_index = (floor(x), floor(y))
+                    self.grid[floored_index].append(point)
+
 
     @staticmethod
     def split(a, n):
