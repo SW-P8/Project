@@ -23,7 +23,7 @@ class GridSystem:
 
     def create_grid_system(self):
         # Fill grid with points
-        if False:
+        if True:
             for trajectory in self.pc.trajectories:
                 for point in trajectory.points:
                     (x,y) = self.calculate_exact_index_for_point(point)
@@ -34,18 +34,20 @@ class GridSystem:
             splits = self.split(self.pc.trajectories, process_count)
             tasks = []
             pipe_list = []
+            dicts = []
 
-            for split in splits:
+            for (i, split) in enumerate(splits):
                 recv_end, send_end = mp.Pipe(False)
-                j = mp.Process(target=self.create_sub_grid, args=(split, send_end))
+                j = mp.Process(target=self.create_sub_grid, args=(split, send_end, i))
                 tasks.append(j)
                 pipe_list.append(recv_end)
                 j.start()
 
-            for task in tasks:
+            for (i, task) in enumerate(tasks):
+                dicts.append(pipe_list[i].recv())
                 task.join()
 
-            self.grid = self.merge_dicts([x.recv() for x in pipe_list])
+            self.grid = self.merge_dicts(dicts)#[x.recv() for x in pipe_list])
 
     @staticmethod
     def split(a, n):
@@ -60,7 +62,7 @@ class GridSystem:
                 merged_dict[key].extend(value)
         return merged_dict
 
-    def create_sub_grid(self, trajectories: list[Trajectory], send_end) -> dict:
+    def create_sub_grid(self, trajectories: list[Trajectory], send_end, pid) -> dict:
         sub_grid = defaultdict(list)
         for trajectory in trajectories:
             for point in trajectory.points:
@@ -69,7 +71,6 @@ class GridSystem:
                 sub_grid[floored_index].append(point)
 
         send_end.send(sub_grid)
-
 
     def calculate_exact_index_for_point(self, point: Point):
         # Calculate x index
