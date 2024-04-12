@@ -3,7 +3,6 @@ from DTC.trajectory import Trajectory, TrajectoryPointCloud
 from DTC.gridsystem import GridSystem
 from DTC.noise_correction import NoiseCorrection
 from DTC.distance_calculator import DistanceCalculator
-from datetime import datetime
 import copy
 
 class TestNoiseCorrection():    
@@ -13,14 +12,14 @@ class TestNoiseCorrection():
         t = Trajectory()
         
         # Add point to use initialization point
-        t.add_point(1,1,datetime(2024, 1, 1, 1, 1, 1))
+        t.add_point(1,1)
 
         for i in range(1, 5):
             # Shift points 5 meters north and east (should result in 5 points being 1 cell apart in both x and y)
             shifted_point = DistanceCalculator.shift_point_with_bearing(t.points[0], i * 5, DistanceCalculator.NORTH)
             shifted_point = DistanceCalculator.shift_point_with_bearing(shifted_point, i * 5, DistanceCalculator.EAST)
         
-            t.add_point(shifted_point[0], shifted_point[1], datetime(2024, 1, 1, 1, 1, 1 + i))
+            t.add_point(shifted_point[0], shifted_point[1])
         pc.add_trajectory(t)
         gs = GridSystem(pc) 
         gs.create_grid_system()
@@ -35,7 +34,7 @@ class TestNoiseCorrection():
 
         nc.correct_noisy_point(nc.gridsystem.pc.trajectories[0], 1)
         
-        expected_point = nc.gridsystem.convert_cell_to_point((5,5))
+        expected_point = DistanceCalculator.convert_cell_to_point(five_point_grid.initialization_point, (5,5))
 
         assert nc.gridsystem.pc.trajectories[0].points[1].longitude == expected_point[0]
         assert nc.gridsystem.pc.trajectories[0].points[1].latitude == expected_point[1]
@@ -56,12 +55,11 @@ class TestNoiseCorrection():
 
         nc.correct_noisy_point(nc.gridsystem.pc.trajectories[0], 3)
         
-        expected_point = nc.gridsystem.convert_cell_to_point((5,5))
+        expected_point = DistanceCalculator.convert_cell_to_point(five_point_grid.initialization_point, (5,5))
 
         assert nc.gridsystem.pc.trajectories[0].points[3].longitude == expected_point[0]
         assert nc.gridsystem.pc.trajectories[0].points[3].latitude == expected_point[1]
         assert nc.gridsystem.pc.trajectories[0].points[3].timestamp == original_timestamp
-
 
     def test_correct_noisy_point_with_timestamp_none(self, five_point_grid):
         nc = NoiseCorrection(five_point_grid)
@@ -75,7 +73,7 @@ class TestNoiseCorrection():
 
         assert nc.gridsystem.pc.trajectories[0].points[3].timestamp == None
 
-    # test should not correct any points
+    # Test should not correct any points
     def test_noise_detection_no_noise(self, five_point_grid):
         nc = NoiseCorrection(five_point_grid)
 
@@ -90,7 +88,7 @@ class TestNoiseCorrection():
 
     def test_noise_detection_correct_noisy_point(self, five_point_grid):
         nc = NoiseCorrection(five_point_grid)
-    
+
         trajectory_before_correction = copy.deepcopy(nc.gridsystem.pc.trajectories[0])
 
         nc.gridsystem.route_skeleton = {(0,0), (2.5,2.5), (5,5), (7,7), (10,10)}
@@ -106,7 +104,7 @@ class TestNoiseCorrection():
         
         nc.noise_detection(nc.gridsystem.pc.trajectories[0])
         
-        expected_corrected_point = nc.gridsystem.convert_cell_to_point((5,5))
+        expected_corrected_point = DistanceCalculator.convert_cell_to_point(five_point_grid.initialization_point, (5,5))
 
         assert nc.gridsystem.pc.trajectories[0] != trajectory_before_correction 
         assert nc.gridsystem.pc.trajectories[0].points[3].longitude == expected_corrected_point[0]

@@ -20,7 +20,8 @@ def insert_safe_areas(model_id, safe_areas, cursor, conn):
     INSERT INTO DTC_model_safe_areas (model_id, anchor_x, anchor_y, radius)
     VALUES (%s, %s, %s, %s);
     """
-    params = [(model_id, anchor_x, anchor_y, radius) for (anchor_x, anchor_y), radius in safe_areas.items()]
+    params = [(model_id, value.center[0], value.center[1], value.radius) for _, value in safe_areas.items()]
+    
     try:
         cursor.executemany(sql, params)
         conn.commit()
