@@ -66,7 +66,7 @@ def test_transform_data_When_given_dataframe_with_errors_Should_return_cleaned_d
     assert result.shape == (8, 5) # There are two erroneus coordinate points, so there sould only be 8 rows
     assert result['trajectory_id'].nunique() == 2 # There should be two distinct trajectories for taxi 1
 
-def test_transform_data_innercity_when_given_dataframe_with_errors_Should_return_cleaned_dataframe(create_erroneous_innercity_data):
+def test_transform_data_innercity_when_given_dataframe_with_errors_should_return_cleaned_dataframe(create_erroneous_innercity_data):
     # Arrange
     test_trajectory_id = 1
     expected_longitude = [116.350000, 116.360000, 116.355000, 116.365000, 116.370000, 116.375000, 116.380000, 116.385000, 116.390000]
