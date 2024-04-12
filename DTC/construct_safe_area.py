@@ -54,6 +54,7 @@ class SafeArea:
         self.center = anchor
         self.radius = 0
         self.confidence = 1
+        self.cardinality = 0
         self.timestamp = datetime.now() # Could be used to indicate creation or update time if we use time for weights, change value.
         self.construct(anchor_cover_set, decrease_factor)
 
@@ -73,6 +74,7 @@ class SafeArea:
             filtered_cover_set = {(p, d) for (p, d) in filtered_cover_set if d <= radius}
             removed_count = cover_set_size - len(filtered_cover_set)
 
+        self.cardinality = len(filtered_cover_set)
         self.radius = radius
 
     # TODO add logic for deciding confidence.
