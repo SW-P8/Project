@@ -1,4 +1,4 @@
-from DTC.construct_safe_area import SafeArea, ConstructSafeArea
+from DTC.construct_safe_area import SafeArea
 from DTC.trajectory import TrajectoryPointCloud
 from DTC.distance_calculator import DistanceCalculator
 
@@ -20,7 +20,7 @@ class Incremental:
                     #TODO: Bare lav increase og decrease af confidence nu lmao
                     pass
                 else:
-                    pass
+                    self.noisy_points.add(p)
 
     def __get_anchor_coordinate_set(self):
         cs = set()
