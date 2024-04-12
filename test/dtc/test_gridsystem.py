@@ -80,18 +80,6 @@ class TestGridsystem():
         for i in range(input_n):
             assert len(split_lists[i]) == split_list_lengths[i]
 
-    @pytest.mark.parametrize("input_dicts, output_merged_dict", 
-        [
-            ([{1: [1]}], {1: [1]}),
-            ([{1: [1]}, {2: [1]}], {1: [1], 2: [1]}),
-            ([{1: [1], 2: [1]}, {2: [2, 3]}], {1: [1], 2: [1, 2, 3]}),
-            ([{1: [1], 2: [1]}, {2: [2, 3], 3: [4]}], {1: [1], 2: [1, 2, 3], 3: [4]})
-        ]
-    )
-    def test_merge_dicts_returns_correctly(self, input_dicts, output_merged_dict):
-        combined_dict = GridSystem.merge_dicts(input_dicts)
-        assert combined_dict == output_merged_dict
-
     def test_grid_is_build_correctly(self, two_point_grid):
         assert two_point_grid.grid.keys() == {(3, 3), (7, 7)}
 

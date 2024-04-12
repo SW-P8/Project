@@ -25,7 +25,6 @@ class GridSystem:
             splits = GridSystem.split(self.pc.trajectories, process_count)
             tasks = []
             pipe_list = []
-            dicts = []
 
             for split in splits:
                 if split != []:
@@ -35,11 +34,15 @@ class GridSystem:
                     pipe_list.append(recv_end)
                     j.start()
 
+            # Receive subgrids from processes and merge
+            merged_dict = defaultdict(list)
             for (i, task) in enumerate(tasks):
-                dicts.append(pipe_list[i].recv())
+                d = pipe_list[i].recv()
                 task.join()
+                for key, value in d.items():
+                    merged_dict[key].extend(value)
 
-            self.grid = self.merge_dicts(dicts)
+            self.grid = merged_dict
         else:
             for trajectory in self.pc.trajectories:
                 for point in trajectory.points:
@@ -60,52 +63,8 @@ class GridSystem:
                 (x,y) = self.calculate_exact_index_for_point(point)
                 floored_index = (floor(x), floor(y))
                 sub_grid[floored_index].append(point)
-#            trajectories.remove(trajectory)    
         
         send_end.send(sub_grid)
-    
-    @staticmethod
-    def merge_dicts(dicts: list[dict], multiprocessing: bool = True):
-        if multiprocessing:
-            # Function to merge dictionaries
-            def merge_dicts_worker(input_dict, output_pipe):
-                merged_dict = defaultdict(list)
-                for d in input_dict:
-                    for key, value in d.items():
-                        merged_dict[key].extend(value)
-                output_pipe.send(merged_dict)
-                output_pipe.close()
-
-            # Split the input list of dictionaries into chunks for parallel processing
-            process_count = mp.cpu_count()
-            splits = GridSystem.split(dicts, process_count // 2)
-
-            # Create pipes for communication between processes
-            tasks = []
-            pipe_list = []
-            for split in splits:
-                if split != []:
-                    recv_end, send_end = mp.Pipe(False)
-                    j = mp.Process(target=merge_dicts_worker, args=(split, send_end))
-                    tasks.append(j)
-                    pipe_list.append(recv_end)
-                    j.start()
-
-            # Collect merged dictionaries from processes
-            merged_dict = defaultdict(list)
-            for (i, task) in enumerate(tasks):
-                d = pipe_list[i].recv()
-                for key, value in d.items():
-                    merged_dict[key].extend(value)
-                task.join()
-                
-            return merged_dict
-        else:
-            merged_dict = defaultdict(list)
-            for d in dicts:
-                for key, value in d.items():
-                    merged_dict[key].extend(value)
-            return merged_dict
 
     def calculate_exact_index_for_point(self, point: Point):
         # Calculate x index
@@ -122,15 +81,13 @@ class GridSystem:
         if distance_scale >= 0.5:
             raise ValueError("distance scale must be less than neighborhood size divided by 2")
         distance_threshold = distance_scale * self.neighborhood_size
-        i = 0
+        print(len(self.grid.keys()))
         for cell in self.grid.keys():
             density_center = self.calculate_density_center(cell)
 
             if DistanceCalculator.calculate_euclidian_distance_between_cells(cell, density_center) < distance_threshold:
                 x, y = cell
-                #self.main_route.insert(i, [x, y, x, y])
                 self.main_route.add((x, y))
-                i += 1
 
     def calculate_density_center(self, index):
         (x, y) = index
