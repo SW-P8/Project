@@ -82,7 +82,7 @@ def test_transform_data_innercity_when_given_dataframe_with_errors_should_return
     assert result['longitude'].tolist() == expected_longitude
     assert result['latitude'].tolist() == expected_latitude
 
-def test_transform_data_When_given_correct_data_Should_not_change_anything(create_correct_data):
+def test_transform_data_when_given_correct_data_should_not_change_anything(create_correct_data):
     # Arrange
     test_trajectory_id = 1
     expected_longitude = [116.350000, 116.355000, 116.360000, 116.365000, 116.370000, 116.375000, 116.380000, 116.385000, 116.390000, 116.395000]
