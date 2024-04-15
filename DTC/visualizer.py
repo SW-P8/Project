@@ -46,8 +46,8 @@ class Visualizer():
             self.draw_point(self.sk_ax, point)
 
     def draw_safe_area(self):
-        for anchor, radius in self.grid_system.safe_areas.items():
-            self.draw_circle(self.sk_ax, anchor, radius)
+        for anchor, safe_area in self.grid_system.safe_areas.items():
+            self.draw_circle(self.sk_ax, safe_area.anchor, safe_area.radius, safe_area.confidence)
 
     def draw_point(self, ax, point):
         if isinstance(point, Point):
@@ -56,12 +56,16 @@ class Visualizer():
             x, y = point
         ax.scatter(x, y, c='blue', s=1)
 
-    def draw_circle(self, ax, point, radius):
+    def draw_circle(self, ax, point, radius, confidence = None):
+        if confidence is None:
+            color = 'g'
+        else:
+            color = (1 - confidence, confidence, 0)  # Green for high confidence, Red for low confidence
         if isinstance(point, Point):
             circle = plt.Circle(point.get_coordinates(),
-                                radius, color='blue', fill=False)
+                                radius, color=color, fill=False)
         else:
-            circle = plt.Circle(point, radius, color='blue', fill=False)
+            circle = plt.Circle(point, radius, color=color, fill=False)
         ax.add_patch(circle)
 
     def draw_populated_cells(self):
@@ -84,9 +88,8 @@ class Visualizer():
 
 if __name__ == "__main__":
     dtc_executor = DTCExecutor()
-    pc = dtc_executor.create_point_cloud_with_n_points(1000000)
+    pc = dtc_executor.create_point_cloud_with_n_points(2000)
     gs = GridSystem(pc)
     gs.create_grid_system()
-    distribution = Analyzer.get_point_distribution_for_cells(gs.grid)
-    print(distribution)
-    Visualizer.visualize_distribution_of_cells(distribution)
+    vs = Visualizer(gs)
+    vs.visualize()
