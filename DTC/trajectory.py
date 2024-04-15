@@ -1,5 +1,6 @@
 from datetime import datetime
 from math import floor
+from typing import Optional
 from DTC.point import Point
 from DTC.distance_calculator import DistanceCalculator
 
@@ -11,7 +12,7 @@ class Trajectory:
         self.min_latitude = float('inf')
         self.max_latitude = float('-inf')
 
-    def add_point(self,longitude: float, latitude: float, timestamp: datetime) -> None:
+    def add_point(self,longitude: float, latitude: float, timestamp: Optional[datetime] = None) -> None:
         self.points.append(Point(longitude, latitude, timestamp))
 
         # Check if added longitude is new max
@@ -31,14 +32,12 @@ class Trajectory:
             self.min_latitude = latitude
 
 class TrajectoryPointCloud:
-    def __init__(self, cell_size = 5, neighborhood_size = 9) -> None:
+    def __init__(self) -> None:
         self.trajectories = list[Trajectory]()
         self.min_longitude = float('inf')
         self.max_longitude = float('-inf')
         self.min_latitude = float('inf')
         self.max_latitude = float('-inf')
-        self.cell_size = cell_size        #Based on observation in DTC paper that minimal width of a road is 5m
-        self.neighborhood_size = neighborhood_size #To be determined but DTC uses 9
 
     def add_trajectory(self,trajectory: Trajectory) -> None:
         self.trajectories.append(trajectory)
@@ -61,7 +60,7 @@ class TrajectoryPointCloud:
 
     def get_shifted_min(self) -> tuple[float, float]:
         #Bearing: South (180), West (270)
-        shift_distance = self.cell_size * floor(self.neighborhood_size / 2)
+        shift_distance = DistanceCalculator.CELL_SIZE * floor(DistanceCalculator.NEIGHBORHOOD_SIZE / 2)
 
         # Shift min point south and west
         shifted_point = DistanceCalculator.shift_point_with_bearing((self.min_longitude, self.min_latitude), shift_distance, DistanceCalculator.WEST)
@@ -71,7 +70,7 @@ class TrajectoryPointCloud:
     
     def get_shifted_max(self) -> tuple[float, float]:
         #Bearing: North (0), East (90)
-        shift_distance = self.cell_size * floor(self.neighborhood_size / 2)
+        shift_distance = DistanceCalculator.CELL_SIZE * floor(DistanceCalculator.NEIGHBORHOOD_SIZE / 2)
 
         # Shift max point north and east
         shifted_point = DistanceCalculator.shift_point_with_bearing((self.max_longitude, self.max_latitude), shift_distance, DistanceCalculator.NORTH)
