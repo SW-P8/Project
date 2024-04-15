@@ -3,6 +3,7 @@ from DTC.distance_calculator import DistanceCalculator
 from DTC.construct_safe_area import ConstructSafeArea
 from DTC.construct_main_route import ConstructMainRoute
 from DTC.route_skeleton import RouteSkeleton
+from DTC.incremental import Incremental
 from math import floor
 
 class GridSystem:
@@ -34,4 +35,10 @@ class GridSystem:
 
     def construct_safe_areas(self, decrease_factor: float = 0.01):
         self.safe_areas = ConstructSafeArea.construct_safe_areas(self.route_skeleton, self.grid, self.populated_cells, decrease_factor, self.initialization_point)
+
+    def incremental_refinement(self, pc: TrajectoryPointCloud):
+        inc = Incremental(self.safe_areas)
+        for trajectory in pc.trajectories:
+            for p in trajectory.points:
+                inc.incremental_refine(p, self.initialization_point)
 

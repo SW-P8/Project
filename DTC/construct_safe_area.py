@@ -53,7 +53,7 @@ class SafeArea:
     def __init__(self, anchor_cover_set, anchor: tuple[float, float], decrease_factor: float) -> None:
         self.center = anchor
         self.radius = 0
-        self.confidence = 1
+        self.confidence = 1.0
         self.cardinality = 0
         self.timestamp = datetime.now() # Could be used to indicate creation or update time if we use time for weights, change value.
         self.construct(anchor_cover_set, decrease_factor)
@@ -81,10 +81,10 @@ class SafeArea:
     def calculate_confidence(self):
         return self.confidence
 
-    def increase_weight(self):
-        pass
+    def increase_confidence(self, increase = 0.1):
+        self.confidence += increase
 
-    def decrease_weight(self):
-        pass
+    def decrease_confidence(self, decrease = 0.1):
+        self.confidence -= decrease
     
 
