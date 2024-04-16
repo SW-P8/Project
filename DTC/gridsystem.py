@@ -1,37 +1,75 @@
-from DTC.trajectory import TrajectoryPointCloud
+from DTC.trajectory import TrajectoryPointCloud, Trajectory
 from DTC.distance_calculator import DistanceCalculator
+from math import floor
+from collections import defaultdict
+import multiprocessing as mp
 from DTC.construct_safe_area import ConstructSafeArea
 from DTC.construct_main_route import ConstructMainRoute
 from DTC.route_skeleton import RouteSkeleton
-from math import floor
+from typing import Iterator
 
 class GridSystem:
     def __init__(self, pc: TrajectoryPointCloud) -> None:
         self.pc = pc
         self.initialization_point = pc.get_shifted_min()
-        self.grid = dict()
-        self.populated_cells = set()
+        self.grid = defaultdict(list)
         self.main_route = set()
         self.route_skeleton = set()
-        self.safe_areas = dict()
+        self.safe_areas = defaultdict(set)
 
-    def create_grid_system(self):
+    def create_grid_system(self, multiprocessing: bool = True):
         # Fill grid with points
-        for trajectory in self.pc.trajectories:
+        if multiprocessing:
+            process_count = mp.cpu_count()
+            splits = GridSystem.split(self.pc.trajectories, process_count)
+            tasks = []
+            pipe_list = []
+
+            for split in splits:
+                if split != []:
+                    recv_end, send_end = mp.Pipe(False)
+                    t = mp.Process(target=self.create_sub_grid, args=(split, send_end))
+                    tasks.append(t)
+                    pipe_list.append(recv_end)
+                    t.start()
+
+            # Receive subgrids from processes and merge
+            merged_dict = defaultdict(list)
+            for (i, task) in enumerate(tasks):
+                d = pipe_list[i].recv()
+                task.join()
+                for key, value in d.items():
+                    merged_dict[key].extend(value)
+
+            self.grid = merged_dict
+        else:
+            for trajectory in self.pc.trajectories:
+                for point in trajectory.points:
+                    (x,y) = self.calculate_exact_index_for_point(point)
+                    floored_index = (floor(x), floor(y))
+                    self.grid[floored_index].append(point)
+
+
+    @staticmethod
+    def split(a, n) -> Iterator[list[Trajectory]]:
+        k, m = divmod(len(a), n)
+        return (a[i*k+min(i, m):(i+1)*k+min(i+1, m)] for i in range(n))
+    
+    def create_sub_grid(self, trajectories: list[Trajectory], send_end) -> dict:
+        sub_grid = defaultdict(list)
+        for trajectory in trajectories:
             for point in trajectory.points:
                 (x,y) = DistanceCalculator.calculate_exact_index_for_point(point, self.initialization_point)
                 floored_index = (floor(x), floor(y))
-                if floored_index not in self.populated_cells:
-                    self.populated_cells.add(floored_index)
-                    self.grid[floored_index] = list()
-                self.grid[floored_index].append(point)
-    
+                sub_grid[floored_index].append(point)
+        
+        send_end.send(sub_grid)   
+
     def extract_main_route(self, distance_scale: float = 0.2):
-        self.main_route = ConstructMainRoute.extract_main_route(self.populated_cells, self.grid, distance_scale)
+        self.main_route = ConstructMainRoute.extract_main_route(self.grid, distance_scale)
     
     def extract_route_skeleton(self, smooth_radius: int = 25, filtering_list_radius: int = 20, distance_interval: int = 20):
         self.route_skeleton = RouteSkeleton.extract_route_skeleton(self.main_route, smooth_radius, filtering_list_radius, distance_interval)
 
     def construct_safe_areas(self, decrease_factor: float = 0.01):
-        self.safe_areas = ConstructSafeArea.construct_safe_areas(self.route_skeleton, self.grid, self.populated_cells, decrease_factor, self.initialization_point)
-
+        self.safe_areas = ConstructSafeArea.construct_safe_areas(self.route_skeleton, self.grid, decrease_factor, self.initialization_point)

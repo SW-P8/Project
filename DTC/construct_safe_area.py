@@ -2,11 +2,12 @@ from operator import itemgetter
 from datetime import datetime
 from math import sqrt
 from DTC.distance_calculator import DistanceCalculator
+from collections import defaultdict
 
 class ConstructSafeArea:
     @staticmethod
-    def construct_safe_areas(route_skeleton: set, grid: dict, populated_cells: set, decrease_factor: float, initialization_point) -> dict:
-        cs = ConstructSafeArea._create_cover_sets(route_skeleton, grid, populated_cells, initialization_point)
+    def construct_safe_areas(route_skeleton: set, grid: dict, decrease_factor: float, initialization_point) -> dict:
+        cs = ConstructSafeArea._create_cover_sets(route_skeleton, grid, initialization_point)
 
         safe_areas = dict()
 
@@ -16,17 +17,14 @@ class ConstructSafeArea:
         return safe_areas
 
     @staticmethod
-    def _create_cover_sets(route_skeleton: set, grid: dict, populated_cells: set, initialization_point: tuple, find_candidate_algorithm = None) -> dict:
+    def _create_cover_sets(route_skeleton: set, grid: dict, initialization_point: tuple, find_candidate_algorithm = None) -> dict:
         if find_candidate_algorithm is None:
             find_candidate_algorithm = ConstructSafeArea._find_candidate_nearest_neighbors
         
-        cs = dict()
-        # Initialize dictionary with a key for each anchor and an empty set for each
-        for anchor in route_skeleton:
-            cs[anchor] = set()
+        cs = defaultdict(set)
 
         # Assign points to their nearest anchor
-        for (x, y) in populated_cells:
+        for (x, y) in grid.keys():
             candidates = find_candidate_algorithm(route_skeleton, (x + 0.5, y + 0.5))
             for point in grid[(x, y)]:
                 (anchor, dist) = DistanceCalculator.find_nearest_neighbor_from_candidates(point, candidates, initialization_point)

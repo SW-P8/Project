@@ -1,51 +1,72 @@
 from DTC.distance_calculator import DistanceCalculator
+from collections import defaultdict
 
 class RouteSkeleton:
     @staticmethod
     def extract_route_skeleton(main_route: set, smooth_radius: int, filtering_list_radius: int, distance_interval: int):
         smr = RouteSkeleton.smooth_main_route(main_route, smooth_radius)
-        cmr = RouteSkeleton.filter_outliers_in_main_route(smr, filtering_list_radius)
+        cmr = RouteSkeleton.filter_outliers_in_main_route(smr, len(main_route), filtering_list_radius)
         return RouteSkeleton.sample_main_route(cmr, distance_interval)
 
     @staticmethod
     def smooth_main_route(main_route: set, radius: int) -> set:
-        smr = set()
-        
+        smr = defaultdict(set)
         for (x1, y1) in main_route:
-            ns = {(x2, y2) for (x2, y2) in main_route if DistanceCalculator.calculate_euclidian_distance_between_cells((x1 + 0.5, y1 + 0.5), (x2 + 0.5, y2 + 0.5)) <= radius}
-            x_sum = sum(x for x, _ in ns) + len(ns) * 0.5
-            y_sum = sum(y for _, y in ns) + len(ns) * 0.5
+            x_sum = 0
+            y_sum = 0
+            count = 0
+            for i in range(x1 - radius, x1 + radius + 1):
+                for j in range(y1 - radius, y1 + radius + 1):
+                    if (i,j) in main_route and DistanceCalculator.calculate_euclidian_distance_between_cells((x1, y1), (i, j)) <= radius:
+                        x_sum += i + 0.5
+                        y_sum += j + 0.5
+                        count += 1
 
             if x_sum != 0:
-                x_sum /= len(ns)
+                x_sum /= count
 
             if y_sum != 0:
-                y_sum /= len(ns)
-            
-            smr.add((x_sum, y_sum))
-        
+                y_sum /= count
+            x_sum = round(x_sum, 2)
+            y_sum = round(y_sum, 2)
+
+            smr[(int(x_sum), int(y_sum))].add((x_sum, y_sum))
         return smr
 
     @staticmethod
-    def filter_outliers_in_main_route(smr: set, radius_prime: int) -> set:
-        cmr = set()
-        
-        for (x1, y1) in smr:
-            targets = {(x2, y2) for (x2, y2) in smr if DistanceCalculator.calculate_euclidian_distance_between_cells((x1, y1), (x2, y2)) <= radius_prime}
-            if len(targets) >= 0.01 * len(smr):
-                cmr.add((x1, y1))
-        
+    def filter_outliers_in_main_route(smr: dict, main_route_length, radius_prime: int) -> set:
+        cmr = defaultdict(set)
+        connection_threshold_factor = 0.01
+        connection_threshold = connection_threshold_factor * main_route_length
+        for cell_values in smr.values():
+            for (x1, y1) in cell_values:
+                targets = 0
+                for i in range(int(x1) - radius_prime, int(x1) + radius_prime + 1):
+                    for j in range(int(y1) - radius_prime, int(y1) + radius_prime + 1):
+                        candidates = smr.get((i, j))
+                        if candidates is not None:
+                            for (x2, y2) in candidates:
+                                if DistanceCalculator.calculate_euclidian_distance_between_cells((x1, y1), (x2, y2)) <= radius_prime:
+                                    targets += 1
+                if targets >= connection_threshold:
+                    cmr[(int(x1), int(y1))].add((x1, y1))
         return cmr
     
     @staticmethod
-    def sample_main_route(cmr: set, distance_interval: int) -> set:
+    def sample_main_route(cmr: dict, distance_interval: int) -> set:
         rs = set()
-        
-        for c1 in cmr:
-            targets = {c2 for c2 in cmr if DistanceCalculator.calculate_euclidian_distance_between_cells(c1, c2) <= distance_interval}
-            # targets should be greater than 1 to take self into account
-            if len(targets) > 1:
-                rs.add(c1)
-        
+        for cell_values in cmr.values():
+            for (x1, y1) in cell_values:
+                targets = 0
+                for i in range(int(x1) - distance_interval, int(x1) + distance_interval + 1):
+                    for j in range(int(y1) - distance_interval, int(y1) + distance_interval + 1):
+                        candidates = cmr.get((i, j))
+                        if candidates is not None:
+                            for (x2, y2) in candidates:
+                                if DistanceCalculator.calculate_euclidian_distance_between_cells((x1, y1), (x2, y2)) <= distance_interval:
+                                    targets += 1
+                # targets should be greater than 1 to take self into account
+                if targets > 1:
+                    rs.add((x1, y1))
         return rs
      

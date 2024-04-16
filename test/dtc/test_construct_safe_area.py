@@ -27,36 +27,58 @@ class TestConstructSafeArea():
 
     def test_create_cover_sets_returns_correctly_with_single_anchor(self, two_point_grid):
         two_point_grid.route_skeleton = {(3, 3)}
-        cs = ConstructSafeArea._create_cover_sets(two_point_grid.route_skeleton, two_point_grid.grid, two_point_grid.populated_cells, two_point_grid.initialization_point)
+        cs = ConstructSafeArea._create_cover_sets(two_point_grid.route_skeleton, two_point_grid.grid, two_point_grid.initialization_point)
 
         expected_d1 = DistanceCalculator.calculate_euclidian_distance_between_cells((3, 3), (3, 3))
         expected_d2 = DistanceCalculator.calculate_euclidian_distance_between_cells((7, 7), (3, 3))
+        
+        (p1, d1), (p2, d2) = cs[(3, 3)]
+        coordinates_with_dist = {(two_point_grid.pc.trajectories[0].points[0].get_coordinates(), expected_d1), (two_point_grid.pc.trajectories[0].points[1].get_coordinates(), expected_d2)}
 
         assert len(cs) == 1
-        assert cs[(3, 3)] == {(two_point_grid.pc.trajectories[0].points[0], expected_d1), (two_point_grid.pc.trajectories[0].points[1], expected_d2)}
+        assert (p1.get_coordinates(), d1) in coordinates_with_dist
+        assert (p2.get_coordinates(), d2) in coordinates_with_dist
 
     def test_create_cover_sets_returns_correctly_with_two_anchors(self, two_point_grid):
         two_point_grid.route_skeleton = {(3, 3), (5, 6)}
-        cs = ConstructSafeArea._create_cover_sets(two_point_grid.route_skeleton, two_point_grid.grid, two_point_grid.populated_cells, two_point_grid.initialization_point)
+        cs = ConstructSafeArea._create_cover_sets(two_point_grid.route_skeleton, two_point_grid.grid, two_point_grid.initialization_point)
 
         expected_d1 = DistanceCalculator.calculate_euclidian_distance_between_cells((3, 3), (3, 3))
         expected_d2 = DistanceCalculator.calculate_euclidian_distance_between_cells((7, 7), (5, 6))
+        p1, d1 = list(cs[(3, 3)])[0]
+        p2, d2 = list(cs[(5, 6)])[0]
 
         assert len(cs) == 2
-        assert cs[(3, 3)] == {(two_point_grid.pc.trajectories[0].points[0], expected_d1)}
-        assert cs[(5, 6)] == {(two_point_grid.pc.trajectories[0].points[1], expected_d2)}
+        assert p1.get_coordinates() == two_point_grid.pc.trajectories[0].points[0].get_coordinates()
+        assert p1.timestamp == two_point_grid.pc.trajectories[0].points[0].timestamp
+        assert d1 == expected_d1
+
+        assert p2.get_coordinates() == two_point_grid.pc.trajectories[0].points[1].get_coordinates()
+        assert p2.timestamp == two_point_grid.pc.trajectories[0].points[1].timestamp
+        assert d2 == expected_d2
+
+
         assert cs[(3, 3)].isdisjoint(cs[(5, 6)])
 
     def test_create_cover_sets_returns_correctly_with_multiple_anchors(self, two_point_grid):
         two_point_grid.route_skeleton = {(2, 3), (3, 3), (5, 6), (7, 7)}
-        cs = ConstructSafeArea._create_cover_sets(two_point_grid.route_skeleton, two_point_grid.grid, two_point_grid.populated_cells, two_point_grid.initialization_point)
+        cs = ConstructSafeArea._create_cover_sets(two_point_grid.route_skeleton, two_point_grid.grid, two_point_grid.initialization_point)
 
         expected_d1 = DistanceCalculator.calculate_euclidian_distance_between_cells((3, 3), (3, 3))
         expected_d2 = DistanceCalculator.calculate_euclidian_distance_between_cells((7, 7), (7, 7))
 
-        assert len(cs) == 4
-        assert cs[(3, 3)] == {(two_point_grid.pc.trajectories[0].points[0], expected_d1)}
-        assert cs[(7, 7)] == {(two_point_grid.pc.trajectories[0].points[1], expected_d2)}
+        p1, d1 = list(cs[(3, 3)])[0]
+        p2, d2 = list(cs[(7, 7)])[0]
+
+        # Length is only gonna be 2 as defaultdict is utilized and (3, 3), (7, 7) does not have any points added
+        assert len(cs) == 2
+        assert p1.get_coordinates() == two_point_grid.pc.trajectories[0].points[0].get_coordinates()
+        assert p1.timestamp == two_point_grid.pc.trajectories[0].points[0].timestamp
+        assert d1 == expected_d1
+
+        assert p2.get_coordinates() == two_point_grid.pc.trajectories[0].points[1].get_coordinates()
+        assert p2.timestamp == two_point_grid.pc.trajectories[0].points[1].timestamp
+        assert d2 == expected_d2
         assert cs[(2, 3)] == set()
         assert cs[(5, 6)] == set()
         assert cs[(3, 3)].isdisjoint(cs[(7, 7)])

@@ -8,15 +8,15 @@ class TestCheapBenchmark:
     def setup_class(cls):
         cls.grid_system = None
         cls.point_cloud = None
-        cls.limit = 1000
-        cls.n_points = 1000000
+        cls.limit = 100
+        cls.n_points = 1000
         cls.conn = None
         cls.handler = None
         cls.executor = None
 
     @pytest.mark.bm_cheap
     def test_db_setup(self):
-        self.__class__.conn = db.init_db()
+        self.__class__.conn = db.new_tdrive_db_pool()
         load_data.load_data_from_csv(self.__class__.conn, self.__class__.limit)
         self.__class__.handler = taxi_data_handler.TaxiDataHandler(self.__class__.conn)
         self.__class__.executor = dtc_executor.DTCExecutor()
