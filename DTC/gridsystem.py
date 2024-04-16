@@ -45,7 +45,7 @@ class GridSystem:
         else:
             for trajectory in self.pc.trajectories:
                 for point in trajectory.points:
-                    (x,y) = self.calculate_exact_index_for_point(point)
+                    (x,y) = DistanceCalculator.calculate_exact_index_for_point(point, self.initialization_point)
                     floored_index = (floor(x), floor(y))
                     self.grid[floored_index].append(point)
 
