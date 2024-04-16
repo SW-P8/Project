@@ -18,7 +18,6 @@ class GridSystem:
         self.safe_areas = defaultdict(set)
 
     def create_grid_system(self, multiprocessing: bool = True):
-        # Fill grid with points
         if multiprocessing:
             process_count = mp.cpu_count()
             splits = GridSystem.split(self.pc.trajectories, process_count)
@@ -52,10 +51,11 @@ class GridSystem:
 
     @staticmethod
     def split(a, n) -> Iterator[list[Trajectory]]:
+        a = list(a)
         k, m = divmod(len(a), n)
         return (a[i*k+min(i, m):(i+1)*k+min(i+1, m)] for i in range(n))
     
-    def create_sub_grid(self, trajectories: list[Trajectory], send_end) -> dict:
+    def create_sub_grid(self, trajectories: list[Trajectory], send_end):
         sub_grid = defaultdict(list)
         for trajectory in trajectories:
             for point in trajectory.points:

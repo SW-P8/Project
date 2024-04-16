@@ -63,7 +63,10 @@ class TestGridsystem():
             ([1, 2, 3, 4], 1, [4]),
             ([1, 2, 3, 4], 2, [2, 2]),
             ([1, 2, 3, 4], 4, [1, 1, 1, 1]),
-            ([1], 4, [1, 0, 0, 0])
+            ([1], 4, [1, 0, 0, 0]),
+            ({1, 2, 3, 4}, 1, [4]),
+            ({1, 2, 3, 4}, 2, [2, 2]),
+            ({1}, 4, [1, 0, 0, 0])
         ]
     )
     def test_split_returns_correctly(self, input_list, input_n, split_list_lengths):
