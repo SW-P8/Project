@@ -1,7 +1,6 @@
 from collections import defaultdict
 from typing import Iterator
-from DTC.trajectory import Trajectory
-
+from operator import itemgetter
 class CollectionUtils:
     @staticmethod
     def get_point_distribution_for_cells(grid: dict):
@@ -19,4 +18,8 @@ class CollectionUtils:
         a = list(a)
         k, m = divmod(len(a), n)
         return (a[i*k+min(i, m):(i+1)*k+min(i+1, m)] for i in range(n))
+    
+    @staticmethod
+    def sort_collection_of_tuples(collection_of_tuples):
+        return sorted(collection_of_tuples, key=(itemgetter(0,1)))
   

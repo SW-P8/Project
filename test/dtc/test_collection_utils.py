@@ -54,3 +54,16 @@ class TestCollectionUtils:
         for i in range(input_n):
             assert len(split_lists[i]) == split_list_lengths[i]
 
+    @pytest.mark.parametrize("input_unsorted_collection, output_sorted_collection", 
+        [
+            ([(2, 1), (1, 2)], [(1, 2), (2, 1)]),
+            ([(3, 1), (2, 1), (1, 1)], [(1, 1), (2, 1), (3, 1)]),
+            ([(2, 2), (2, 1), (1, 2)], [(1, 2), (2, 1), (2, 2)]),
+            ({(2, 1), (1, 2)}, [(1, 2), (2, 1)]),
+            ({(3, 1), (2, 1), (1, 1)}, [(1, 1), (2, 1), (3, 1)]),
+            ({(2, 2), (2, 1), (1, 2)}, [(1, 2), (2, 1), (2, 2)]),
+        ]
+    )
+    def test_sort_collection_of_tuples_returns_correctly(self, input_unsorted_collection, output_sorted_collection):
+        assert output_sorted_collection == CollectionUtils.sort_collection_of_tuples(input_unsorted_collection)
+
