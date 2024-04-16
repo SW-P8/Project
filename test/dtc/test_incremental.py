@@ -47,9 +47,12 @@ class TestIncremental():
 
     def test_incremental_outlier_with_two_safe_areas(self, two_point_grid):
         sa = two_point_grid.safe_areas
+        sa[(7,7)].cardinality = 10
         inc = Incremental(sa)
         inc.incremental_refine(two_point_grid.pc.trajectories[0].points[2], two_point_grid.initialization_point)
 
+        print(inc.safe_areas[(7,7)].confidence)
+        
         assert inc.safe_areas[(7,7)].confidence < 1.0
         assert len(inc.noisy_points) == 1
 
@@ -61,4 +64,3 @@ class TestIncremental():
 
         assert inc.safe_areas[(3,3)].confidence > 1.0
         assert len(inc.noisy_points) == 0
-

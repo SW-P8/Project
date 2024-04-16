@@ -10,14 +10,9 @@ class Incremental:
 
     def incremental_refine(self, point: Point, initialization_point):
         (anchor, min_dist) = DistanceCalculator.find_nearest_neighbor_from_candidates(point, self.safe_areas.keys(), initialization_point) 
-        if ((min_dist <= (self.safe_areas[anchor].radius))):
-            self.safe_areas[anchor].increase_confidence()
-        else:
-            self.safe_areas[anchor].decrease_confidence()
+        print(min_dist)
+        self.safe_areas[anchor].update_confidence(min_dist)
+        if ((min_dist > (self.safe_areas[anchor].radius))):
             self.noisy_points.add(point)
-
-
-
-
     
 

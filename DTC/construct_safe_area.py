@@ -1,7 +1,8 @@
 from operator import itemgetter
 from datetime import datetime
-from math import sqrt
+from math import sqrt, tanh
 from DTC.distance_calculator import DistanceCalculator
+import numpy as np
 
 class ConstructSafeArea:
     @staticmethod
@@ -50,12 +51,15 @@ class ConstructSafeArea:
         return {a for a, d in candidates if d <= min_dist + distance_to_corner_of_cell}
 
 class SafeArea:
-    def __init__(self, anchor_cover_set, anchor: tuple[float, float], decrease_factor: float) -> None:
+    def __init__(self, anchor_cover_set, anchor: tuple[float, float], decrease_factor: float, confidence_change: float = 0.0001, squish_factor: float = 0.5) -> None:
         self.center = anchor
         self.radius = 0
-        self.confidence = 1.0
         self.cardinality = 0
-        self.timestamp = datetime.now() # Could be used to indicate creation or update time if we use time for weights, change value.
+        self.confidence = 1.0
+        self.__confidence_change_factor = confidence_change
+        self.__decay_factor = 1 / (60*60*24*2)
+        self.__squish_factor = squish_factor
+        self.timestamp: datetime = datetime.now() # Could be used to indicate creation or update time if we use time for weights, change value.
         self.construct(anchor_cover_set, decrease_factor)
 
     def construct(self, anchor, decrease_factor):
@@ -77,14 +81,38 @@ class SafeArea:
         self.cardinality = len(filtered_cover_set)
         self.radius = radius
 
-    # TODO add logic for deciding confidence.
-    def calculate_confidence(self):
-        return self.confidence
+    def get_current_confidence_with_timestamp(self) -> tuple[float, datetime]:
+        now = datetime.now()
+        delta = now - self.timestamp
+        new_confidence = self.__calculate_timed_decay(delta.total_seconds())
+        return (new_confidence, now)
 
-    def increase_confidence(self, increase = 0.1):
-        self.confidence += increase
+    def __set_confidence(self, confidence: float, timestamp: datetime):
+        self.confidence = confidence
+        self.timestamp = timestamp
 
-    def decrease_confidence(self, decrease = 0.1):
-        self.confidence -= decrease
+    def update_confidence(self, dist):
+        distance_to_sa = dist - self.radius 
+        if (distance_to_sa <= 0):
+            (curr_conf, time) = self.get_current_confidence_with_timestamp()
+            self.__set_confidence(curr_conf + self.__confidence_change_factor, time)
+            self.cardinality += 1
+        else:
+            self.confidence -= self.__calculate_confidence_decrease(distance_to_sa)
     
+    def __calculate_timed_decay(self, delta:float):
+        #More magic numbers because why not at this point?
+        offset = (-1/10000) * self.cardinality + 2
+        x = delta * self.__decay_factor
+        decay = self.__sigmoid(x, offset)
 
+        return decay
+        
+    def __sigmoid(self, x: float, offset: float) -> float:
+        return 1/(1 + np.exp(-x + offset))
+
+    def __calculate_confidence_decrease(self, delta):
+        dec = 0.2*tanh((3*delta)/(4 * self.radius))
+        if (dec > 0.15):
+            return 0.15
+        return dec
