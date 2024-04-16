@@ -1,8 +1,10 @@
 from operator import itemgetter
 from datetime import datetime
 from math import sqrt
-from DTC.distance_calculator import DistanceCalculator
 from collections import defaultdict
+import multiprocessing as mp
+from DTC.distance_calculator import DistanceCalculator
+from DTC.collection_utils import CollectionUtils
 
 class ConstructSafeArea:
     @staticmethod
@@ -17,10 +19,48 @@ class ConstructSafeArea:
         return safe_areas
 
     @staticmethod
-    def _create_cover_sets(route_skeleton: set, grid: dict, initialization_point: tuple, find_candidate_algorithm = None) -> dict:
+    def _create_cover_sets(route_skeleton: set, grid: dict, initialization_point: tuple, find_candidate_algorithm = None, multiprocessing: bool = True) -> dict:
         if find_candidate_algorithm is None:
             find_candidate_algorithm = ConstructSafeArea._find_candidate_nearest_neighbors
         
+        if multiprocessing:
+            process_count = mp.cpu_count()
+            splits = CollectionUtils.split(route_skeleton, process_count)
+            tasks = []
+            pipe_list = []
+            
+            for split in splits:
+                if split != []:
+                    recv_end, send_end = mp.Pipe(False)
+                    t = mp.Process(target=ConstructSafeArea.create_cover_sets_sub_grid, args=(split, grid, initialization_point, find_candidate_algorithm, send_end))
+                    tasks.append(t)
+                    pipe_list.append(recv_end)
+                    t.start()
+
+            # Receive subgrids from processes and merge
+            merged_dict = defaultdict(set)
+            for (i, task) in enumerate(tasks):
+                d = pipe_list[i].recv()
+                task.join()
+                for key, value in d.items():
+                    merged_dict[key] = merged_dict[key].union(value)
+
+            return merged_dict
+
+        else:
+            cs = defaultdict(set)
+
+            # Assign points to their nearest anchor
+            for (x, y) in grid.keys():
+                candidates = find_candidate_algorithm(route_skeleton, (x + 0.5, y + 0.5))
+                for point in grid[(x, y)]:
+                    (anchor, dist) = DistanceCalculator.find_nearest_neighbor_from_candidates(point, candidates, initialization_point)
+                    cs[anchor].add((point, dist))
+
+            return cs
+
+    @staticmethod
+    def create_cover_sets_sub_grid(route_skeleton: set, grid: dict, initialization_point: tuple, find_candidate_algorithm, send_end):
         cs = defaultdict(set)
 
         # Assign points to their nearest anchor
@@ -30,7 +70,7 @@ class ConstructSafeArea:
                 (anchor, dist) = DistanceCalculator.find_nearest_neighbor_from_candidates(point, candidates, initialization_point)
                 cs[anchor].add((point, dist))
 
-        return cs
+        send_end.send(cs)
 
     @staticmethod
     def _find_candidate_nearest_neighbors(route_skeleton: set, cell: tuple) -> dict:
