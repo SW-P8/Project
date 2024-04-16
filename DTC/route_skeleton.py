@@ -36,7 +36,8 @@ class RouteSkeleton:
     @staticmethod
     def filter_outliers_in_main_route(smr: dict, main_route_length, radius_prime: int) -> set:
         cmr = defaultdict(set)
-        connection_threshold = 0.01 * main_route_length
+        connection_threshold_factor = 0.01
+        connection_threshold = connection_threshold_factor * main_route_length
         for cell_values in smr.values():
             for (x1, y1) in cell_values:
                 targets = 0

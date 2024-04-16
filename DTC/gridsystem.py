@@ -6,6 +6,7 @@ import multiprocessing as mp
 from DTC.construct_safe_area import ConstructSafeArea
 from DTC.construct_main_route import ConstructMainRoute
 from DTC.route_skeleton import RouteSkeleton
+from typing import Iterator
 
 class GridSystem:
     def __init__(self, pc: TrajectoryPointCloud) -> None:
@@ -27,10 +28,10 @@ class GridSystem:
             for split in splits:
                 if split != []:
                     recv_end, send_end = mp.Pipe(False)
-                    j = mp.Process(target=self.create_sub_grid, args=(split, send_end))
-                    tasks.append(j)
+                    t = mp.Process(target=self.create_sub_grid, args=(split, send_end))
+                    tasks.append(t)
                     pipe_list.append(recv_end)
-                    j.start()
+                    t.start()
 
             # Receive subgrids from processes and merge
             merged_dict = defaultdict(list)
@@ -50,7 +51,7 @@ class GridSystem:
 
 
     @staticmethod
-    def split(a, n):
+    def split(a, n) -> Iterator[list[Trajectory]]:
         k, m = divmod(len(a), n)
         return (a[i*k+min(i, m):(i+1)*k+min(i+1, m)] for i in range(n))
     
