@@ -1,7 +1,7 @@
 import pytest
-from DTC.analyzer import Analyzer
+from DTC.collection_utils import CollectionUtils
 
-class TestAnalyzer:
+class TestCollectionUtils:
 
     @pytest.mark.parametrize("input_grid, output_distribution", 
         [
@@ -11,7 +11,7 @@ class TestAnalyzer:
         ]
     )
     def test_point_distribution_for_cells_returns_correctly_with_single_cell(self, input_grid, output_distribution):
-        assert Analyzer.get_point_distribution_for_cells(input_grid) == output_distribution
+        assert CollectionUtils.get_point_distribution_for_cells(input_grid) == output_distribution
 
     @pytest.mark.parametrize("input_grid, output_distribution", 
         [
@@ -21,7 +21,7 @@ class TestAnalyzer:
         ]
     )
     def test_point_distribution_for_cells_returns_correctly_with_two_cells(self, input_grid, output_distribution):
-        assert Analyzer.get_point_distribution_for_cells(input_grid) == output_distribution
+        assert CollectionUtils.get_point_distribution_for_cells(input_grid) == output_distribution
 
     @pytest.mark.parametrize("input_grid, output_distribution", 
         [
@@ -31,4 +31,20 @@ class TestAnalyzer:
         ]
     )
     def test_point_distribution_for_cells_returns_correctly_with_three_cells(self, input_grid, output_distribution):
-        assert Analyzer.get_point_distribution_for_cells(input_grid) == output_distribution
+        assert CollectionUtils.get_point_distribution_for_cells(input_grid) == output_distribution
+
+    @pytest.mark.parametrize("input_list, input_n, split_list_lengths", 
+        [
+            ([1, 2, 3, 4], 1, [4]),
+            ([1, 2, 3, 4], 2, [2, 2]),
+            ([1, 2, 3, 4], 4, [1, 1, 1, 1]),
+            ([1], 4, [1, 0, 0, 0])
+        ]
+    )
+    def test_split_returns_correctly(self, input_list, input_n, split_list_lengths):
+        split_lists = list(CollectionUtils.split(input_list, input_n))
+
+        assert len(split_lists) == input_n
+        for i in range(input_n):
+            assert len(split_lists[i]) == split_list_lengths[i]
+

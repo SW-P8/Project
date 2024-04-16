@@ -58,21 +58,6 @@ class TestGridsystem():
         gs.create_grid_system()
         return gs
 
-    @pytest.mark.parametrize("input_list, input_n, split_list_lengths", 
-        [
-            ([1, 2, 3, 4], 1, [4]),
-            ([1, 2, 3, 4], 2, [2, 2]),
-            ([1, 2, 3, 4], 4, [1, 1, 1, 1]),
-            ([1], 4, [1, 0, 0, 0])
-        ]
-    )
-    def test_split_returns_correctly(self, input_list, input_n, split_list_lengths):
-        split_lists = list(GridSystem.split(input_list, input_n))
-
-        assert len(split_lists) == input_n
-        for i in range(input_n):
-            assert len(split_lists[i]) == split_list_lengths[i]
-
     def test_grid_is_build_correctly(self, two_point_grid):
         assert two_point_grid.grid.keys() == {(3, 3), (7, 7)}
 
