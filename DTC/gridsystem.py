@@ -6,7 +6,7 @@ import multiprocessing as mp
 from DTC.construct_safe_area import ConstructSafeArea
 from DTC.construct_main_route import ConstructMainRoute
 from DTC.route_skeleton import RouteSkeleton
-from typing import Iterator
+from DTC.collection_utils import CollectionUtils
 
 class GridSystem:
     def __init__(self, pc: TrajectoryPointCloud) -> None:
@@ -20,7 +20,7 @@ class GridSystem:
     def create_grid_system(self, multiprocessing: bool = True):
         if multiprocessing:
             process_count = mp.cpu_count()
-            splits = GridSystem.split(self.pc.trajectories, process_count)
+            splits = CollectionUtils.split(self.pc.trajectories, process_count)
             tasks = []
             pipe_list = []
 
@@ -48,14 +48,7 @@ class GridSystem:
                     floored_index = (floor(x), floor(y))
                     self.grid[floored_index].append(point)
 
-
-    @staticmethod
-    def split(a, n) -> Iterator[list[Trajectory]]:
-        a = list(a)
-        k, m = divmod(len(a), n)
-        return (a[i*k+min(i, m):(i+1)*k+min(i+1, m)] for i in range(n))
-    
-    def create_sub_grid(self, trajectories: list[Trajectory], send_end):
+    def create_sub_grid(self, trajectories: list[Trajectory], send_end) -> dict:
         sub_grid = defaultdict(list)
         for trajectory in trajectories:
             for point in trajectory.points:
