@@ -64,20 +64,6 @@ class DistanceCalculator():
                 min_dist = dist
 
         return (nearest_anchor, min_dist)
- 
-    @staticmethod
-    def find_nearest_neighbor_from_candidate_safe_areas(point: Point, candidates: set) -> tuple[tuple[float, float], float]:
-        min_dist = float("inf")
-        nearest_anchor: Optional[tuple[float, float]] = None
-        (x, y) = point.get_coordinates()
-        
-        for candidate in candidates:
-            dist = DistanceCalculator.calculate_euclidian_distance_between_cells((x,y), candidate)
-            if dist < min_dist:
-                nearest_anchor = candidate
-                min_dist = dist
-
-        return (nearest_anchor, min_dist)
 
     # Converts cell coordinate to long lat based on initialization_point
     @staticmethod

@@ -19,8 +19,15 @@ class TestIncremental():
         DistanceCalculator.shift_point_with_bearing(t.points[0], 20, DistanceCalculator.NORTH)
         shifted_point = DistanceCalculator.shift_point_with_bearing(t.points[0], 20, DistanceCalculator.NORTH)
         shifted_point = DistanceCalculator.shift_point_with_bearing(shifted_point, 20, DistanceCalculator.EAST)
-        
+
         t.add_point(shifted_point[0], shifted_point[1])
+
+        DistanceCalculator.shift_point_with_bearing(t.points[1], 20, DistanceCalculator.NORTH)
+        shifted_point = DistanceCalculator.shift_point_with_bearing(t.points[1], 20, DistanceCalculator.NORTH)
+        shifted_point = DistanceCalculator.shift_point_with_bearing(shifted_point, 20, DistanceCalculator.EAST)
+
+        t.add_point(shifted_point[0], shifted_point[1])
+
         pc.add_trajectory(t)
         gs = GridSystem(pc)
         gs.create_grid_system()
@@ -41,19 +48,16 @@ class TestIncremental():
     def test_incremental_outlier_with_two_safe_areas(self, two_point_grid):
         sa = two_point_grid.safe_areas
         inc = Incremental(sa)
-        p = Point(1,1, None)
-        inc.incremental_refine(p, two_point_grid.initialization_point)
+        inc.incremental_refine(two_point_grid.pc.trajectories[0].points[2], two_point_grid.initialization_point)
 
-        assert inc.safe_areas[(3,3)].confidence < 1.0
+        assert inc.safe_areas[(7,7)].confidence < 1.0
         assert len(inc.noisy_points) == 1
 
 
     def test_incremental_correct_point_with_two_safe_areas(self, two_point_grid):
         sa = two_point_grid.safe_areas
         inc = Incremental(sa)
-        p = Point(3,3, None)
-        print(two_point_grid.initialization_point)
-        inc.incremental_refine(p, two_point_grid.initialization_point)
+        inc.incremental_refine(two_point_grid.pc.trajectories[0].points[0], two_point_grid.initialization_point)
 
         assert inc.safe_areas[(3,3)].confidence > 1.0
         assert len(inc.noisy_points) == 0
