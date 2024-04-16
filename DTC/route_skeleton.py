@@ -38,7 +38,7 @@ class RouteSkeleton:
     
     @staticmethod
     def smooth_sub_main_route(sub_main_route, main_route, radius, send_end):
-        sub_smr = defaultdict(set)
+        sub_smoothed_main_route = defaultdict(set)
         for (x1, y1) in sub_main_route:
             x_sum = 0
             y_sum = 0
@@ -58,8 +58,8 @@ class RouteSkeleton:
             x_sum = round(x_sum, 2)
             y_sum = round(y_sum, 2)
 
-            sub_smr[(int(x_sum), int(y_sum))].add((x_sum, y_sum))
-        send_end.send(sub_smr)
+            sub_smoothed_main_route[(int(x_sum), int(y_sum))].add((x_sum, y_sum))
+        send_end.send(sub_smoothed_main_route)
 
     @staticmethod
     def filter_outliers_in_smoothed_main_route(smoothed_main_route: dict, main_route_length, radius_prime: int) -> defaultdict[set]:
