@@ -28,13 +28,13 @@ class TestRouteSkeleton():
         # Should only contain 3 positions
         assert smr == {(15, 3): {(15, 3.5)}, (20, 3): {(20.83, 3.5)}, (30, 3): {(30, 3.5)}}
 
-    def test_filter_outliers_in_main_route_returns_correctly_with_single_element(self):
+    def test_filter_outliers_in_smoothed_main_route_returns_correctly_with_single_element(self):
         smr = {(2, 3): {(2.5, 3.5)}}
-        cmr = RouteSkeleton.filter_outliers_in_main_route(smr, 1, 20)
+        cmr = RouteSkeleton.filter_outliers_in_smoothed_main_route(smr, 1, 20)
         
         assert cmr == {(2, 3): {(2.5, 3.5)}}
 
-    def test_filter_outliers_in_main_route_filters_outlier_correctly(self):
+    def test_filter_outliers_in_smoothed_main_route_filters_outlier_correctly(self):
         smr = defaultdict(set)
 
         for i in range(1, 101):
@@ -42,13 +42,13 @@ class TestRouteSkeleton():
         
         # Add cell more than radius prime distance from others
         smr[(23, 3)].add((23, 3.5))        
-        cmr = RouteSkeleton.filter_outliers_in_main_route(smr, 101, 20)
+        cmr = RouteSkeleton.filter_outliers_in_smoothed_main_route(smr, 101, 20)
 
         # Check that outlier cell is correctly removed
         assert (23, 3) not in cmr.keys()
         assert cmr[(23, 3)] == set()
 
-    def test_filter_outliers_in_main_route_returns_correctly_with_multiple_elements(self):
+    def test_filter_outliers_in_smoothed_main_route_returns_correctly_with_multiple_elements(self):
         smr = defaultdict(set)
 
         for i in range(1, 101):
@@ -57,29 +57,29 @@ class TestRouteSkeleton():
         # Add two cell more than radius prime distance from others (should be enough to not be filtered out)
         smr[(23, 3)].add((23, 3.5))        
         smr[(23, 3)].add((23.1, 3.5))        
-        cmr = RouteSkeleton.filter_outliers_in_main_route(smr, 102, 20)
+        cmr = RouteSkeleton.filter_outliers_in_smoothed_main_route(smr, 102, 20)
 
         # Check that the two far cells are not removed
         assert (23, 3) in cmr.keys()
         assert cmr[(23, 3)] == {(23, 3.5), (23.1, 3.5)}
 
-    def test_sample_main_route_returns_correctly_with_single_cell(self):
+    def test_sample_contracted_main_route_returns_correctly_with_single_cell(self):
         cmr = {(2, 3): {(2, 3)}}
-        rs = RouteSkeleton.sample_main_route(cmr, 20)
+        rs = RouteSkeleton.sample_contracted_main_route(cmr, 20)
         
         assert rs == set()
 
-    def test_sample_main_route_returns_correctly_with_two_cells(self):
+    def test_sample_contracted_main_route_returns_correctly_with_two_cells(self):
         cmr = {(2, 3): {(2, 3)}, (22, 3): {(22, 3)}}
-        rs1 = RouteSkeleton.sample_main_route(cmr, 20)
+        rs1 = RouteSkeleton.sample_contracted_main_route(cmr, 20)
         
         assert rs1 == {(2, 3), (22, 3)}
 
-        rs2 = RouteSkeleton.sample_main_route(cmr, 19)
+        rs2 = RouteSkeleton.sample_contracted_main_route(cmr, 19)
         
         assert rs2 == set()
 
-    def test_sample_main_route_returns_correctly(self):
+    def test_sample_contracted_main_route_returns_correctly(self):
         cmr = defaultdict(set)
 
         for i in range(1, 101):
@@ -87,7 +87,7 @@ class TestRouteSkeleton():
         
         # Add cell a large distance from others
         cmr[(23, 3)].add((23, 3.5))
-        rs = RouteSkeleton.sample_main_route(cmr, 20)
+        rs = RouteSkeleton.sample_contracted_main_route(cmr, 20)
 
         # Check that outlier cell is correctly removed
         assert (23, 3.5) not in rs
