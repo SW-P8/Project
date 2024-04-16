@@ -15,7 +15,7 @@ class CollectionUtils:
         return dict(sorted(distribution.items()))
     
     @staticmethod
-    def split(a, n) -> Iterator[list[Trajectory]]:
+    def split(a, n) -> Iterator[list]:
         a = list(a)
         k, m = divmod(len(a), n)
         return (a[i*k+min(i, m):(i+1)*k+min(i+1, m)] for i in range(n))
