@@ -3,6 +3,8 @@ from DTC.trajectory import Trajectory, TrajectoryPointCloud
 from DTC.gridsystem import GridSystem
 from DTC.distance_calculator import DistanceCalculator
 from datetime import datetime
+from math import floor
+from collections import defaultdict
 
 class TestGridsystem():
     @pytest.fixture
@@ -55,13 +57,16 @@ class TestGridsystem():
         gs = GridSystem(pc)
         gs.create_grid_system()
         return gs
- 
-    def test_grid_is_build_correctly(self, two_point_grid):
-        assert two_point_grid.populated_cells == {(3, 3), (7, 7)}
 
-        assert two_point_grid.pc.trajectories[0].points[0] == two_point_grid.grid[(3, 3)][0]
-        assert two_point_grid.pc.trajectories[0].points[1] == two_point_grid.grid[(7, 7)][0]
- 
+    def test_grid_is_build_correctly(self, two_point_grid):
+        assert two_point_grid.grid.keys() == {(3, 3), (7, 7)}
+
+        assert two_point_grid.pc.trajectories[0].points[0].get_coordinates() == two_point_grid.grid[(3, 3)][0].get_coordinates()
+        assert two_point_grid.pc.trajectories[0].points[0].timestamp == two_point_grid.grid[(3, 3)][0].timestamp
+
+        assert two_point_grid.pc.trajectories[0].points[1].get_coordinates() == two_point_grid.grid[(7, 7)][0].get_coordinates()
+        assert two_point_grid.pc.trajectories[0].points[1].timestamp == two_point_grid.grid[(7, 7)][0].timestamp
+
     def test_extract_main_route_returns_correctly_with_single_point(self, single_point_grid):
         single_point_grid.extract_main_route()
 
@@ -105,19 +110,22 @@ class TestGridsystem():
         assert gs.main_route == {(3, 3)}
 
     def test_extract_route_skeleton_returns_correctly_with_single_cell(self, single_point_grid):
-        single_point_grid.main_route = {(2, 3)}
+        single_point_grid.main_route = {(3, 3)}
         single_point_grid.extract_route_skeleton()
         assert single_point_grid.route_skeleton == set()
 
     def test_extract_route_skeleton_returns_correctly_with_two_cells(self, single_point_grid):
-        single_point_grid.main_route = {(2, 3), (12, 3)}
+        single_point_grid.main_route = {(3, 3), (12, 3)}
+        single_point_grid.grid[(12, 3)].append("some random val")
         single_point_grid.extract_route_skeleton()
         assert single_point_grid.route_skeleton == set()
 
     def test_extract_route_skeleton_returns_correctly_with_three_cells(self, single_point_grid):
-        single_point_grid.main_route = {(2, 3), (27, 3), (32, 3)}
+        single_point_grid.main_route = {(3, 3), (28, 3), (33, 3)}
+        single_point_grid.grid[(28, 3)].append("some random val")
+        single_point_grid.grid[(33, 3)].append(("some random val"))
         single_point_grid.extract_route_skeleton()
-        assert single_point_grid.route_skeleton == {(15, 3.5), ((2.5 + 27.5 + 32.5)/3, 3.5), (30, 3.5)}
+        assert single_point_grid.route_skeleton == {(16, 3.5), (21.83, 3.5), (31, 3.5)}
 
     def test_extract_route_skeleton_returns_correctly_with_many_cells(self, single_point_grid):
         single_point_grid.main_route = set()
