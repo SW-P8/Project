@@ -28,8 +28,8 @@ class CollectionUtils:
         return {key:d[key] for key in keys}
 
     @staticmethod
-    def get_tuples_within_bounds(collection_of_tuples, bounds: tuple):
-        return [(x, y) for x, y in collection_of_tuples if bounds[0] <= x <= bounds[2] and bounds[1] <= y <= bounds[3]]
+    def get_tuples_within_bounds(collection_of_tuples, bounds: tuple) -> set:
+        return {(x, y) for x, y in collection_of_tuples if bounds[0] <= x <= bounds[2] and bounds[1] <= y <= bounds[3]}
 
     @staticmethod
     def get_min_max_with_padding_from_collection_of_tuples(collection_of_tuples, padding) -> tuple:

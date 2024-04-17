@@ -36,7 +36,6 @@ class RouteSkeleton:
             task.join()
             for key, value in sub_smoothed_main_route.items():
                 smoothed_main_route[key] = smoothed_main_route[key].union(value)
-
         return smoothed_main_route
     
     @staticmethod
@@ -92,7 +91,6 @@ class RouteSkeleton:
             task.join()
             for key, value in sub_contracted_main_route.items():
                 contracted_main_route[key] = contracted_main_route[key].union(value)
-
         return contracted_main_route
         
     @staticmethod

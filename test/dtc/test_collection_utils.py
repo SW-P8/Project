@@ -104,11 +104,11 @@ class TestCollectionUtils:
 
     @pytest.mark.parametrize("input_collection_of_tuples, input_bounds, output_filtered_collection",
         [
-            ([(1, 2)], (1, 1, 2, 2), [(1, 2)]),
-            ([(1, 2), (0,0)], (1, 1, 2, 2), [(1, 2)]),
-            ([(1, 2), (2, 1), (0, 0)], (1, 1, 2, 2), [(1, 2), (2, 1)]),
-            ({(1, 2), (0,0)}, (1, 1, 2, 2), [(1, 2)]),
-            ({(2, 1): "something", (0, 0): "somethingelse"}.keys(), (1, 1, 2, 2), [(2, 1)])
+            ([(1, 2)], (1, 1, 2, 2), {(1, 2)}),
+            ([(1, 2), (0,0)], (1, 1, 2, 2), {(1, 2)}),
+            ([(1, 2), (2, 1), (0, 0)], (1, 1, 2, 2), {(1, 2), (2, 1)}),
+            ({(1, 2), (0,0)}, (1, 1, 2, 2), {(1, 2)}),
+            ({(2, 1): "something", (0, 0): "somethingelse"}.keys(), (1, 1, 2, 2), {(2, 1)})
         ]
     )
     def test_get_tuples_within_bounds(self, input_collection_of_tuples, input_bounds, output_filtered_collection):
