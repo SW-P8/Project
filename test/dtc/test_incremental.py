@@ -1,4 +1,5 @@
 import pytest
+from datetime import datetime
 from DTC.construct_safe_area import SafeArea
 from DTC.distance_calculator import DistanceCalculator
 from DTC.trajectory import Trajectory, TrajectoryPointCloud
@@ -50,17 +51,44 @@ class TestIncremental():
         sa[(7,7)].cardinality = 10
         inc = Incremental(sa)
         inc.incremental_refine(two_point_grid.pc.trajectories[0].points[2], two_point_grid.initialization_point)
-
-        print(inc.safe_areas[(7,7)].confidence)
         
         assert inc.safe_areas[(7,7)].confidence < 1.0
         assert len(inc.noisy_points) == 1
 
-
-    def test_incremental_correct_point_with_two_safe_areas(self, two_point_grid):
+    def test_incremental_correct_point_with_two_safe_areas_high_frequency_inserts(self, two_point_grid):
         sa = two_point_grid.safe_areas
         inc = Incremental(sa)
+        inc.safe_areas[(3,3)].timestamp = datetime.now()
+        inc.incremental_refine(two_point_grid.pc.trajectories[0].points[0], two_point_grid.initialization_point)
+
+        #Test for insertion when cardinality for SA is 1
+        assert inc.safe_areas[(3,3)].confidence > 1.0
+        assert len(inc.noisy_points) == 0
+
+        #Test for insertion when cardinality for SA is 100
+        inc.safe_areas[(3,3)].cardinality = 100
+        inc.incremental_refine(two_point_grid.pc.trajectories[0].points[0], two_point_grid.initialization_point)
+    
+        assert inc.safe_areas[(3,3)].confidence > 1.0
+        assert len(inc.noisy_points) == 0
+
+        #Test for insertion when cardinality for SA is 1000
+        inc.safe_areas[(3,3)].cardinality = 20000
+        inc.incremental_refine(two_point_grid.pc.trajectories[0].points[0], two_point_grid.initialization_point)
         inc.incremental_refine(two_point_grid.pc.trajectories[0].points[0], two_point_grid.initialization_point)
 
         assert inc.safe_areas[(3,3)].confidence > 1.0
         assert len(inc.noisy_points) == 0
+        assert False
+
+
+
+
+
+
+
+
+
+
+
+

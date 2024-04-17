@@ -49,7 +49,7 @@ class ConstructSafeArea:
         return {a for a, d in candidates if d <= min_dist + distance_to_corner_of_cell}
 
 class SafeArea:
-    def __init__(self, anchor_cover_set, anchor: tuple[float, float], decrease_factor: float, confidence_change: float = 0.0001, squish_factor: float = 0.5) -> None:
+    def __init__(self, anchor_cover_set, anchor: tuple[float, float], decrease_factor: float, confidence_change: float = 0.01, squish_factor: float = 0.05) -> None:
         self.center = anchor
         self.radius = 0
         self.cardinality = 0
@@ -82,7 +82,7 @@ class SafeArea:
     def get_current_confidence_with_timestamp(self) -> tuple[float, datetime]:
         now = datetime.now()
         delta = now - self.timestamp
-        new_confidence = self.__calculate_timed_decay(delta.total_seconds())
+        new_confidence = self.confidence - self.__calculate_timed_decay(delta.total_seconds())
         return (new_confidence, now)
 
     def __set_confidence(self, confidence: float, timestamp: datetime):
@@ -100,17 +100,18 @@ class SafeArea:
     
     def __calculate_timed_decay(self, delta:float):
         #More magic numbers because why not at this point?
-        offset = (-1/10000) * self.cardinality + 2
         x = delta * self.__decay_factor
-        decay = self.__sigmoid(x, offset)
-
-        return decay
+        #offset = max((-1/10000) * self.cardinality + 2, 0.0)
+        offset = max(min(self.cardinality * delta + 2.5, 3), 0.0)
+        print(f'delta = {delta}, cardinality = {self.cardinality}, x = {x}, offset = {offset}')
+        decay = SafeArea.sigmoid(x, offset)
+        print(f"Decay = {decay}")
+        return round(decay, 5)
         
-    def __sigmoid(self, x: float, offset: float) -> float:
-        return 1/(1 + np.exp(-x + offset))
+    @staticmethod
+    def sigmoid(x: float, offset: float) -> float:
+        return 1/(1 + np.exp((-x * 0.01) + offset))
 
     def __calculate_confidence_decrease(self, delta):
         dec = 0.2*tanh((3*delta)/(4 * self.radius))
-        if (dec > 0.15):
-            return 0.15
-        return dec
+        return min(0.15, dec)
