@@ -39,7 +39,7 @@ class RouteSkeleton:
         return smoothed_main_route
     
     @staticmethod
-    def smooth_sub_main_route(sub_main_route, sub_main_route_with_padding, radius, send_end):
+    def smooth_sub_main_route(sub_main_route: set, sub_main_route_with_padding: set, radius: float, send_end):
         sub_smoothed_main_route = defaultdict(set)
         for (x1, y1) in sub_main_route:
             x_sum = 0
@@ -64,7 +64,7 @@ class RouteSkeleton:
         send_end.send(sub_smoothed_main_route)
 
     @staticmethod
-    def filter_outliers_in_smoothed_main_route(smoothed_main_route: dict, main_route_length, radius_prime: int) -> defaultdict[set]:
+    def filter_outliers_in_smoothed_main_route(smoothed_main_route: dict, main_route_length: int, radius_prime: int) -> defaultdict[set]:
         connection_threshold_factor = 0.01
         connection_threshold = connection_threshold_factor * main_route_length
         process_count = mp.cpu_count()
@@ -94,7 +94,7 @@ class RouteSkeleton:
         return contracted_main_route
         
     @staticmethod
-    def filter_outliers_in_sub_smoothed_main_route(sub_smoothed_main_route_keys: list, sub_smoothed_main_route_with_padding: dict, connection_threshold, radius_prime, send_end):
+    def filter_outliers_in_sub_smoothed_main_route(sub_smoothed_main_route_keys: list, sub_smoothed_main_route_with_padding: dict, connection_threshold, radius_prime: int, send_end):
         sub_contracted_main_route = defaultdict(set)
         for key in sub_smoothed_main_route_keys:
             for (x1, y1) in sub_smoothed_main_route_with_padding[key]:
@@ -139,7 +139,7 @@ class RouteSkeleton:
         return route_skeleton
         
     @staticmethod
-    def sample_sub_contracted_main_route(sub_contracted_main_route_keys, sub_contracted_main_route_with_padding, distance_interval, send_end):
+    def sample_sub_contracted_main_route(sub_contracted_main_route_keys: set, sub_contracted_main_route_with_padding, distance_interval: int, send_end):
         sub_route_skeleton = set()
         for key in sub_contracted_main_route_keys:
             for (x1, y1) in sub_contracted_main_route_with_padding[key]:
