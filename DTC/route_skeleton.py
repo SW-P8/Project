@@ -39,7 +39,7 @@ class RouteSkeleton:
         return smoothed_main_route
     
     @staticmethod
-    def smooth_sub_main_route(sub_main_route: set, sub_main_route_with_padding: set, radius: float, send_end):
+    def smooth_sub_main_route(sub_main_route: set, sub_main_route_with_padding: set, radius: int, send_end):
         sub_smoothed_main_route = defaultdict(set)
         for (x1, y1) in sub_main_route:
             x_sum = 0
@@ -94,7 +94,7 @@ class RouteSkeleton:
         return contracted_main_route
         
     @staticmethod
-    def filter_outliers_in_sub_smoothed_main_route(sub_smoothed_main_route_keys: list, sub_smoothed_main_route_with_padding: dict, connection_threshold, radius_prime: int, send_end):
+    def filter_outliers_in_sub_smoothed_main_route(sub_smoothed_main_route_keys: list, sub_smoothed_main_route_with_padding: dict, connection_threshold: float, radius_prime: int, send_end):
         sub_contracted_main_route = defaultdict(set)
         for key in sub_smoothed_main_route_keys:
             for (x1, y1) in sub_smoothed_main_route_with_padding[key]:
