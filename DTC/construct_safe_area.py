@@ -1,6 +1,6 @@
 from operator import itemgetter
 from datetime import datetime
-from math import sqrt, tanh
+from math import sqrt, tanh, sinh
 from DTC.distance_calculator import DistanceCalculator
 import numpy as np
 from collections import defaultdict
@@ -49,13 +49,13 @@ class ConstructSafeArea:
         return {a for a, d in candidates if d <= min_dist + distance_to_corner_of_cell}
 
 class SafeArea:
-    def __init__(self, anchor_cover_set, anchor: tuple[float, float], decrease_factor: float, confidence_change: float = 0.01, squish_factor: float = 0.05) -> None:
+    def __init__(self, anchor_cover_set, anchor: tuple[float, float], decrease_factor: float, confidence_change: float = 0.01, squish_factor: float = 0.5) -> None:
         self.center = anchor
         self.radius = 0
         self.cardinality = 0
         self.confidence = 1.0
         self.__confidence_change_factor = confidence_change
-        self.__decay_factor = 1 / (60*60*24*2)
+        self.__decay_factor = 1 / (60*60*24)
         self.__squish_factor = squish_factor
         self.timestamp: datetime = datetime.now() # Could be used to indicate creation or update time if we use time for weights, change value.
         self.construct(anchor_cover_set, decrease_factor)
@@ -93,7 +93,7 @@ class SafeArea:
         distance_to_sa = dist - self.radius 
         if (distance_to_sa <= 0):
             (curr_conf, time) = self.get_current_confidence_with_timestamp()
-            self.__set_confidence(curr_conf + self.__confidence_change_factor, time)
+            self.__set_confidence(min(curr_conf + self.__get_confidence_increase(), 1.0), time)
             self.cardinality += 1
         else:
             self.confidence -= self.__calculate_confidence_decrease(distance_to_sa)
@@ -101,16 +101,23 @@ class SafeArea:
     def __calculate_timed_decay(self, delta:float):
         #More magic numbers because why not at this point?
         x = delta * self.__decay_factor
-        #offset = max((-1/10000) * self.cardinality + 2, 0.0)
-        offset = max(min(self.cardinality * delta + 2.5, 3), 0.0)
-        print(f'delta = {delta}, cardinality = {self.cardinality}, x = {x}, offset = {offset}')
-        decay = SafeArea.sigmoid(x, offset)
-        print(f"Decay = {decay}")
-        return round(decay, 5)
-        
+            
+        print(f'delta = {delta}, cardinality = {self.cardinality}, x = {x}')
+        cardinality_decay = min(SafeArea.sigmoid(self.cardinality, 1, 0, 0), 0.25)
+        time_decay = SafeArea.sigmoid(x, 0, -0.5, 2)
+        cardinality_decay = 0.0 # TODO: Implement impact of cardinality on decay
+        total_decay = 1/2 * (time_decay + cardinality_decay)
+        print(f"Timed decay = {time_decay}, Cardinality decay = {cardinality_decay}, Decay = {total_decay}")
+        return round(total_decay, 5)
+    
     @staticmethod
-    def sigmoid(x: float, offset: float) -> float:
-        return 1/(1 + np.exp((-x * 0.01) + offset))
+    def sigmoid(x: float, x_offset: float, y_offset, multiplier: float) -> float:
+        return (1/(1 + np.exp((-x) + x_offset)) + y_offset) * multiplier
+
+    def __get_confidence_increase(self):
+        inc = max(min((1 / (self.cardinality * 1/10)), 0.1), self.__confidence_change_factor)
+        print(f'increase = {inc}')
+        return inc
 
     def __calculate_confidence_decrease(self, delta):
         dec = 0.2*tanh((3*delta)/(4 * self.radius))

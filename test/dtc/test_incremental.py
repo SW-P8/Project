@@ -1,5 +1,5 @@
 import pytest
-from datetime import datetime
+from datetime import datetime, timedelta
 from DTC.construct_safe_area import SafeArea
 from DTC.distance_calculator import DistanceCalculator
 from DTC.trajectory import Trajectory, TrajectoryPointCloud
@@ -62,33 +62,51 @@ class TestIncremental():
         inc.incremental_refine(two_point_grid.pc.trajectories[0].points[0], two_point_grid.initialization_point)
 
         #Test for insertion when cardinality for SA is 1
-        assert inc.safe_areas[(3,3)].confidence > 1.0
+        print(f'Confidence = {inc.safe_areas[(3,3)].confidence}')
+        assert inc.safe_areas[(3,3)].confidence >= 1.0
         assert len(inc.noisy_points) == 0
 
         #Test for insertion when cardinality for SA is 100
         inc.safe_areas[(3,3)].cardinality = 100
+        inc.safe_areas[(3,3)].timestamp = datetime.now()
         inc.incremental_refine(two_point_grid.pc.trajectories[0].points[0], two_point_grid.initialization_point)
+        print(f'Confidence = {inc.safe_areas[(3,3)].confidence}')
     
-        assert inc.safe_areas[(3,3)].confidence > 1.0
+        assert inc.safe_areas[(3,3)].confidence >= 1.0
         assert len(inc.noisy_points) == 0
 
         #Test for insertion when cardinality for SA is 1000
-        inc.safe_areas[(3,3)].cardinality = 20000
+        inc.safe_areas[(3,3)].cardinality = 1000
+        inc.safe_areas[(3,3)].timestamp = datetime.now()
         inc.incremental_refine(two_point_grid.pc.trajectories[0].points[0], two_point_grid.initialization_point)
-        inc.incremental_refine(two_point_grid.pc.trajectories[0].points[0], two_point_grid.initialization_point)
-
-        assert inc.safe_areas[(3,3)].confidence > 1.0
+        print(f'Confidence = {inc.safe_areas[(3,3)].confidence}')
+    
+        assert inc.safe_areas[(3,3)].confidence >= 1.0
         assert len(inc.noisy_points) == 0
-        assert False
 
+        #Test for insertion when cardinality for SA is 20000
+        inc.safe_areas[(3,3)].cardinality = 20000
+        inc.safe_areas[(3,3)].timestamp = datetime.now()
+        inc.incremental_refine(two_point_grid.pc.trajectories[0].points[0], two_point_grid.initialization_point)
+        print(f'Confidence20000 = {inc.safe_areas[(3,3)].confidence}')
+        inc.incremental_refine(two_point_grid.pc.trajectories[0].points[0], two_point_grid.initialization_point)
+        print(f'Confidence20001 = {inc.safe_areas[(3,3)].confidence}')
 
+        assert inc.safe_areas[(3,3)].confidence >= 1.0
+        assert len(inc.noisy_points) == 0
+        #assert False
 
+    def test_incremental_correct_points_with_large_time_intervals(self, two_point_grid):
+        sa = two_point_grid.safe_areas
+        inc = Incremental(sa)
+        td = timedelta(hours=12)
+        ts = datetime.now() - td
+        inc.safe_areas[(3,3)].timestamp = ts
+        
+        inc.incremental_refine(two_point_grid.pc.trajectories[0].points[0], two_point_grid.initialization_point)
 
-
-
-
-
-
-
-
-
+        #Test for insertion when cardinality for SA is 1
+        print(f'Confidence = {inc.safe_areas[(3,3)].confidence}')
+        assert inc.safe_areas[(3,3)].confidence < 1.0
+        assert inc.safe_areas[(3,3)].confidence > 0.90
+        assert len(inc.noisy_points) == 0
