@@ -17,6 +17,8 @@ if [[ ! "$filename" =~ \.py$ ]]; then
     exit 1
 fi
 
+python "$filename"
+
 inotifywait -e close_write,moved_to,create -m . |
 while read -r directory events changed_file; do
   if [ "$changed_file" = "$filename" ]; then
