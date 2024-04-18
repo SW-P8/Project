@@ -12,9 +12,14 @@ if [ ! -f "$filename" ]; then
     exit 1
 fi
 
+if [[ ! "$filename" =~ \.py$ ]]; then
+    echo "Error: File '$filename' is not a Python file (.py extension required)"
+    exit 1
+fi
+
 inotifywait -e close_write,moved_to,create -m . |
 while read -r directory events changed_file; do
   if [ "$changed_file" = "$filename" ]; then
-    ./"$filename"
+    python "$filename"
   fi
 done
