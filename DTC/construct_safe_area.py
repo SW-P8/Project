@@ -19,20 +19,20 @@ class ConstructSafeArea:
         return safe_areas
 
     @staticmethod
-    def _create_cover_sets(route_skeleton: set, grid: dict, initialization_point: tuple, find_candidate_algorithm = None, multiprocessing: bool = True) -> dict:
+    def _create_cover_sets(route_skeleton: set, grid: dict, initialization_point: tuple, find_candidate_algorithm = None, multiprocessing: bool = False) -> dict:
         if find_candidate_algorithm is None:
             find_candidate_algorithm = ConstructSafeArea._find_candidate_nearest_neighbors
         
         if multiprocessing:
             process_count = mp.cpu_count()
-            splits = CollectionUtils.split(route_skeleton, process_count)
+            splits = CollectionUtils.split(grid, process_count)
             tasks = []
             pipe_list = []
             
             for split in splits:
                 if split != []:
                     recv_end, send_end = mp.Pipe(False)
-                    t = mp.Process(target=ConstructSafeArea.create_cover_sets_sub_grid, args=(split, grid, initialization_point, find_candidate_algorithm, send_end))
+                    t = mp.Process(target=ConstructSafeArea.create_cover_sets_sub_grid, args=(route_skeleton, grid, initialization_point, find_candidate_algorithm, send_end))
                     tasks.append(t)
                     pipe_list.append(recv_end)
                     t.start()
