@@ -60,7 +60,7 @@ class TestRouteSkeleton():
             smr.add((1 + 0.01 * i, 3.5))
         
         expected = deepcopy(smr)
-        
+
         smr.add((23, 3.5)) #add cell more than radius prime distance from others  
         min_pts = floor(0.02 * len(smr)) #minimum of 2% of dataset size, this is an arbritrary value
 
@@ -92,31 +92,46 @@ class TestRouteSkeleton():
         assert (23.1, 3.5) in result
         assert result == expected
 
-    def test_sample_contracted_main_route_returns_correctly_with_single_cell(self):
-        cmr = {(2, 3): {(2, 3)}}
-        rs = RouteSkeleton.sample_contracted_main_route(cmr, 20)
-        
-        assert rs == set()
+    def test_filter_sparse_points_returns_correctly_with_single_cell(self):
+        # Arrange
+        cmr = {(2, 3), (2,3.1)}
+        expected = {(2, 3)}
 
-    def test_sample_contracted_main_route_returns_correctly_with_two_cells(self):
-        cmr = {(2, 3): {(2, 3)}, (22, 3): {(22, 3)}}
-        rs1 = RouteSkeleton.sample_contracted_main_route(cmr, 20)
+        # Act
+        result = RouteSkeleton.filter_sparse_points(cmr, 20)
         
-        assert rs1 == {(2, 3), (22, 3)}
+        # Assert
+        assert result == expected
 
-        rs2 = RouteSkeleton.sample_contracted_main_route(cmr, 19)
+    def test_filter_sparse_points_returns_correctly_with_two_cells(self):
+        # Arrange
+        cmr = {(2, 3),(22, 3)}
+
+        # Act
+        result = RouteSkeleton.filter_sparse_points(cmr, 20)
+        result2 = RouteSkeleton.filter_sparse_points(cmr, 22)
         
-        assert rs2 == set()
+        # Assert
+        assert result == {(2, 3), (22, 3)}
+        assert result2 == {(2, 3)}
+        
+        
 
-    def test_sample_contracted_main_route_returns_correctly(self):
-        cmr = defaultdict(set)
+    def test_filter_sparse_points_returns_correctly(self):
+        # Arrange
+        cmr = set()
 
         for i in range(1, 101):
-            cmr[(int(1 + 0.01 * i), 3)].add((1 + 0.01 * i, 3.5))
+            cmr.add((1 + 0.01 * i, 3.5))
         
-        # Add cell a large distance from others
-        cmr[(23, 3)].add((23, 3.5))
-        rs = RouteSkeleton.sample_contracted_main_route(cmr, 20)
+        cmr.add((23, 3.5))
 
-        # Check that outlier cell is correctly removed
-        assert (23, 3.5) not in rs
+        # Act
+        result = RouteSkeleton.filter_sparse_points(cmr, 20)
+
+        # Assert
+        assert (23, 3.5) in result
+        assert len(result) == 2
+
+test = TestRouteSkeleton()
+test.test_filter_sparse_points_returns_correctly_with_two_cells()

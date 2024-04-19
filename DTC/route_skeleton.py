@@ -4,6 +4,7 @@ from typing import Iterator
 import multiprocessing as mp
 from math import dist, floor
 from DTC.collection_utils import CollectionUtils
+from copy import deepcopy
 
 class RouteSkeleton:
     @staticmethod
@@ -63,7 +64,7 @@ class RouteSkeleton:
             sub_smoothed_main_route.add((x_sum, y_sum))
         send_end.send(sub_smoothed_main_route)
 
-    def graph_based_filter(data: set, epsilon: float, min_pts):
+    def graph_based_filter(data: set, epsilon: float, min_pts) -> set:
         visited = set()
         clusters = set()
         
@@ -83,6 +84,17 @@ class RouteSkeleton:
         
         return clusters
     
+    def filter_sparse_points(data: set, distance_threshold):
+        points = deepcopy(data)
+        filtered_points = set()
+        for point1 in points:
+            if point1 not in filtered_points:
+                for point2 in points:
+                    if point1 != point2 and DistanceCalculator.calculate_euclidian_distance_between_cells(point1, point2) < distance_threshold:
+                        filtered_points.add(point2)
+        points.difference_update(filtered_points)
+        return points
+
     @staticmethod
     def sample_contracted_main_route(contracted_main_route: dict, distance_interval: int) -> set:
         process_count = mp.cpu_count()
