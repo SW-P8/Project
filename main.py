@@ -1,7 +1,7 @@
 """ Program entrypoint """
 import sys
 from DTC.dtc_executor import DTCExecutor
-from DTC.visualizer import Visualizer
+from visuals.visualizer import Visualizer
 
 INIT_DB = False
 for arg in sys.argv:
