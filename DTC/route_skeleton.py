@@ -65,6 +65,7 @@ class RouteSkeleton:
             sub_smoothed_main_route.add((x_sum, y_sum))
         send_end.send(sub_smoothed_main_route)
 
+    @staticmethod
     def graph_based_filter(data: set, epsilon: float, min_pts) -> set:
         visited = set()
         clusters = set()
@@ -84,7 +85,8 @@ class RouteSkeleton:
                     clusters = clusters.union(cluster)
         
         return clusters
-    
+
+    @staticmethod
     def filter_sparse_points(data: set, distance_threshold):
         points = deepcopy(data)
         filtered_points = set()
