@@ -101,14 +101,13 @@ class SafeArea:
     def __calculate_timed_decay(self, delta:float):
         #More magic numbers because why not at this point?
         x = delta * self.__decay_factor
-            
-        print(f'delta = {delta}, cardinality = {self.cardinality}, x = {x}')
-        cardinality_decay = min(SafeArea.sigmoid(self.cardinality, 1, 0, 0), 0.25)
-        time_decay = SafeArea.sigmoid(x, 0, -0.5, 2)
-        cardinality_decay = 0.0 # TODO: Implement impact of cardinality on decay
-        total_decay = 1/2 * (time_decay + cardinality_decay)
-        print(f"Timed decay = {time_decay}, Cardinality decay = {cardinality_decay}, Decay = {total_decay}")
-        return round(total_decay, 5)
+        normalised_cardinality = self.cardinality / 100000
+        cardinality_offset = SafeArea.sigmoid(normalised_cardinality, 3.0, -0.1, 1)    # Division by 5000 and the number 3 are just magic numbers lmao
+        #cardinality_offset = 0
+        print(f'delta = {delta}, cardinality = {self.cardinality}, x = {x}, Cardinality offset = {cardinality_offset}')
+        decay = SafeArea.sigmoid(x, -cardinality_offset, -0.5, 2) # -0.5 forces the line to go through (0,0) and 2 normalizes the function such that it maps any number to a value between -1 and 1
+        print(f"Timed decay = {decay}")
+        return round(decay, 5)
     
     @staticmethod
     def sigmoid(x: float, x_offset: float, y_offset, multiplier: float) -> float:
