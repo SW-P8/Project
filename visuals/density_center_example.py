@@ -53,7 +53,7 @@ centerCell = plt.Rectangle((5, 5), 1, 1, color='green',
                            alpha=0.375, label="Current cell")
 neighborhood = plt.Rectangle((5 - DistanceCalculator.NEIGHBORHOOD_SIZE // 2, 5 - DistanceCalculator.NEIGHBORHOOD_SIZE // 2),
                              DistanceCalculator.NEIGHBORHOOD_SIZE, DistanceCalculator.NEIGHBORHOOD_SIZE,
-                             color='red', fill=False, linewidth=2, label="Neighborhood")
+                             color='green', alpha=0.1, fill=True, linewidth=2, label="Neighborhood")
 ax.add_patch(centerCell)
 ax.add_patch(neighborhood)
 

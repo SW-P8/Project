@@ -12,7 +12,7 @@ class DistanceCalculator():
 
     # Metric constants
     CELL_SIZE = 5 # Based on observation in DTC paper that minimal width of a road is 5m
-    NEIGHBORHOOD_SIZE = 9 # To be determined but DTC uses 9
+    NEIGHBORHOOD_SIZE = 3 # To be determined but DTC uses 9
 
     @staticmethod
     def calculate_exact_index_for_point(point: Point, initialization_point: tuple) -> tuple:
