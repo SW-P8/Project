@@ -90,10 +90,10 @@ class RouteSkeleton:
     def filter_sparse_points(data: set, distance_threshold):
         points = deepcopy(data)
         filtered_points = set()
-        for point in points:
-            if point not in filtered_points:
+        for source in points:
+            if source not in filtered_points:
                 for target in points:
-                    if point != target and DistanceCalculator.calculate_euclidian_distance_between_cells(point, target) < distance_threshold:
+                    if source != target and DistanceCalculator.calculate_euclidian_distance_between_cells(source, target) < distance_threshold:
                         filtered_points.add(target)
         points.difference_update(filtered_points)
         return points
