@@ -46,9 +46,9 @@ fig, ax = plt.subplots()
 
 x, y = density_centers.pop((5, 5))
 plt.scatter(*zip(*points), color='g', label='Point')
-plt.scatter(x, y, color='red', label='Density center for current cell')
 plt.scatter(*zip(*density_centers.values()), color='orange',
             label='Density center for other cells')
+plt.scatter(x, y, color='red', label='Density center for current cell')
 centerCell = plt.Rectangle((5, 5), 1, 1, color='green',
                            alpha=0.375, label="Current cell")
 neighborhood = plt.Rectangle((5 - DistanceCalculator.NEIGHBORHOOD_SIZE // 2, 5 - DistanceCalculator.NEIGHBORHOOD_SIZE // 2),
