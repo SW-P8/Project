@@ -62,7 +62,6 @@ class TestIncremental():
         inc.incremental_refine(two_point_grid.pc.trajectories[0].points[0], two_point_grid.initialization_point)
 
         #Test for insertion when cardinality for SA is 1
-        print(f'Confidence = {inc.safe_areas[(3,3)].confidence}')
         assert inc.safe_areas[(3,3)].confidence >= 1.0
         assert len(inc.noisy_points) == 0
 
@@ -70,7 +69,6 @@ class TestIncremental():
         inc.safe_areas[(3,3)].cardinality = 100
         inc.safe_areas[(3,3)].timestamp = datetime.now()
         inc.incremental_refine(two_point_grid.pc.trajectories[0].points[0], two_point_grid.initialization_point)
-        print(f'Confidence = {inc.safe_areas[(3,3)].confidence}')
     
         assert inc.safe_areas[(3,3)].confidence >= 1.0
         assert len(inc.noisy_points) == 0
@@ -79,7 +77,6 @@ class TestIncremental():
         inc.safe_areas[(3,3)].cardinality = 1000
         inc.safe_areas[(3,3)].timestamp = datetime.now()
         inc.incremental_refine(two_point_grid.pc.trajectories[0].points[0], two_point_grid.initialization_point)
-        print(f'Confidence = {inc.safe_areas[(3,3)].confidence}')
     
         assert inc.safe_areas[(3,3)].confidence >= 1.0
         assert len(inc.noisy_points) == 0
@@ -88,14 +85,12 @@ class TestIncremental():
         inc.safe_areas[(3,3)].cardinality = 20000
         inc.safe_areas[(3,3)].timestamp = datetime.now()
         inc.incremental_refine(two_point_grid.pc.trajectories[0].points[0], two_point_grid.initialization_point)
-        print(f'Confidence20000 = {inc.safe_areas[(3,3)].confidence}')
         inc.incremental_refine(two_point_grid.pc.trajectories[0].points[0], two_point_grid.initialization_point)
-        print(f'Confidence20001 = {inc.safe_areas[(3,3)].confidence}')
 
         assert inc.safe_areas[(3,3)].confidence >= 1.0
         assert len(inc.noisy_points) == 0
 
-    def test_incremental_correct_points_with_large_time_intervals(self, two_point_grid):
+    def test_incremental_correct_point_insertion_with_large_time_intervals(self, two_point_grid):
         sa = two_point_grid.safe_areas
         inc = Incremental(sa)
         td = timedelta(hours=12)
@@ -105,8 +100,43 @@ class TestIncremental():
         inc.incremental_refine(two_point_grid.pc.trajectories[0].points[0], two_point_grid.initialization_point)
 
         #Test for insertion when cardinality for SA is 1
-        print(f'Confidence = {inc.safe_areas[(3,3)].confidence}')
         assert inc.safe_areas[(3,3)].confidence < 1.0 #A safe area should probably lose confidence if it only gets one point every 12 hours.  
         assert inc.safe_areas[(3,3)].confidence > 0.85
         assert len(inc.noisy_points) == 0
+
+
+    def test_incremental_insert_correct_points_after_large_time_interval(self, two_point_grid):
+        sa = two_point_grid.safe_areas
+        inc = Incremental(sa)
+        td = timedelta(hours=12)
+        ts = datetime.now() - td
+        inc.safe_areas[(3,3)].timestamp = ts
+        inc.incremental_refine(two_point_grid.pc.trajectories[0].points[0], two_point_grid.initialization_point)
+
+        conf1 = inc.safe_areas[(3,3)].confidence
+        assert inc.safe_areas[(3,3)].confidence < 1.0 #A safe area should probably lose confidence if it only gets one point every 12 hours.  
+        assert inc.safe_areas[(3,3)].confidence > 0.85
+        assert len(inc.noisy_points) == 0
+
+        inc.incremental_refine(two_point_grid.pc.trajectories[0].points[0], two_point_grid.initialization_point)
+        assert inc.safe_areas[(3,3)].confidence < 1.0   
+        assert inc.safe_areas[(3,3)].confidence > 0.85
+        assert len(inc.noisy_points) == 0
+        assert inc.safe_areas[(3,3)].confidence > conf1 
+
+        inc.safe_areas[(3,3)].confidence = 1.0
+        inc.safe_areas[(3,3)].timestamp = ts
+        inc.safe_areas[(3,3)].cardinality = 20000
+        inc.incremental_refine(two_point_grid.pc.trajectories[0].points[0], two_point_grid.initialization_point)
+
+        conf2 = inc.safe_areas[(3,3)].confidence
+        assert inc.safe_areas[(3,3)].confidence < 1.0   
+        assert inc.safe_areas[(3,3)].confidence > 0.6
+        assert len(inc.noisy_points) == 0
+
+        inc.incremental_refine(two_point_grid.pc.trajectories[0].points[0], two_point_grid.initialization_point)
+        assert inc.safe_areas[(3,3)].confidence < 1.0   
+        assert inc.safe_areas[(3,3)].confidence > conf2
+        assert len(inc.noisy_points) == 0
+
 

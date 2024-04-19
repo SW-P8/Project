@@ -107,6 +107,7 @@ class SafeArea:
         print(f'delta = {delta}, cardinality = {self.cardinality}, x = {x}, Cardinality offset = {cardinality_offset}')
         decay = SafeArea.sigmoid(x, -cardinality_offset, -0.5, 2) # -0.5 forces the line to go through (0,0) and 2 normalizes the function such that it maps any number to a value between -1 and 1
         print(f"Timed decay = {decay}")
+        decay = max(decay, 0.0)
         return round(decay, 5)
     
     @staticmethod
