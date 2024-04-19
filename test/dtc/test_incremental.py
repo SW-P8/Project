@@ -109,5 +109,4 @@ class TestIncremental():
         assert inc.safe_areas[(3,3)].confidence < 1.0 #A safe area should probably lose confidence if it only gets one point every 12 hours.  
         assert inc.safe_areas[(3,3)].confidence > 0.85
         assert len(inc.noisy_points) == 0
-        assert False
 
