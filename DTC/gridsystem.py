@@ -20,7 +20,6 @@ class GridSystem:
         self.safe_areas = defaultdict(set)
 
     def create_grid_system(self, multiprocessing: bool = True):
-        # Fill grid with points
         if multiprocessing:
             process_count = mp.cpu_count()
             splits = CollectionUtils.split(self.pc.trajectories, process_count)
@@ -50,7 +49,7 @@ class GridSystem:
                     (x,y) = DistanceCalculator.calculate_exact_index_for_point(point, self.initialization_point)
                     floored_index = (floor(x), floor(y))
                     self.grid[floored_index].append(point)
-  
+
     def create_sub_grid(self, trajectories: list[Trajectory], send_end) -> dict:
         sub_grid = defaultdict(list)
         for trajectory in trajectories:
