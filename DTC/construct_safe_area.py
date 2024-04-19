@@ -1,8 +1,10 @@
 from operator import itemgetter
 from datetime import datetime
 from math import sqrt
-from DTC.distance_calculator import DistanceCalculator
 from collections import defaultdict
+import multiprocessing as mp
+from DTC.distance_calculator import DistanceCalculator
+from DTC.collection_utils import CollectionUtils
 
 class ConstructSafeArea:
     @staticmethod
@@ -21,6 +23,32 @@ class ConstructSafeArea:
         if find_candidate_algorithm is None:
             find_candidate_algorithm = ConstructSafeArea._find_candidate_nearest_neighbors
         
+        process_count = mp.cpu_count()
+        sub_grid_keys = CollectionUtils.split(grid.keys(), process_count)
+        tasks = []
+        pipe_list = []
+        
+        for split in sub_grid_keys:
+            if split != []:
+                recv_end, send_end = mp.Pipe(False)
+                sub_grid = CollectionUtils.get_sub_dict_from_subset_of_keys(grid, split)
+                task = mp.Process(target=ConstructSafeArea.create_cover_sets_sub_grid, args=(route_skeleton, sub_grid, initialization_point, find_candidate_algorithm, send_end))
+                tasks.append(task)
+                pipe_list.append(recv_end)
+                task.start()
+
+        # Receive subgrids from processes and merge
+        merged_dict = defaultdict(set)
+        for (i, task) in enumerate(tasks):
+            d = pipe_list[i].recv()
+            task.join()
+            for key, value in d.items():
+                merged_dict[key] = merged_dict[key].union(value)
+
+        return merged_dict
+
+    @staticmethod
+    def create_cover_sets_sub_grid(route_skeleton: set, grid: dict, initialization_point: tuple, find_candidate_algorithm, send_end):
         cs = defaultdict(set)
 
         # Assign points to their nearest anchor
@@ -30,7 +58,7 @@ class ConstructSafeArea:
                 (anchor, dist) = DistanceCalculator.find_nearest_neighbor_from_candidates(point, candidates, initialization_point)
                 cs[anchor].add((point, dist))
 
-        return cs
+        send_end.send(cs)
 
     @staticmethod
     def _find_candidate_nearest_neighbors(route_skeleton: set, cell: tuple) -> dict:
