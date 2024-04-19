@@ -9,9 +9,10 @@ from copy import deepcopy
 class RouteSkeleton:
     @staticmethod
     def extract_route_skeleton(main_route: set, smooth_radius: int, filtering_list_radius: int, distance_interval: int):
+        min_pts = 0.01 * len(main_route)
         smoothed_main_route = RouteSkeleton.smooth_main_route(main_route, smooth_radius)
-        contracted_main_route = RouteSkeleton.filter_outliers_in_smoothed_main_route(smoothed_main_route, len(main_route), filtering_list_radius)
-        return RouteSkeleton.sample_contracted_main_route(contracted_main_route, distance_interval)
+        contracted_main_route = RouteSkeleton.graph_based_filter(smoothed_main_route, filtering_list_radius, min_pts)
+        return RouteSkeleton.filter_sparse_points(contracted_main_route, distance_interval)
 
     @staticmethod
     def smooth_main_route(main_route: set, radius: int) -> defaultdict[set]:
