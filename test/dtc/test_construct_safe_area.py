@@ -25,20 +25,19 @@ class TestConstructSafeArea():
 
         return gs
 
-    # def test_create_cover_sets_returns_correctly_with_single_anchor(self, two_point_grid):
-    #     two_point_grid.route_skeleton = {(3, 3)}
-    #     cs = ConstructSafeArea._create_cover_sets(two_point_grid.route_skeleton, two_point_grid.grid, two_point_grid.initialization_point)
+    def test_create_cover_sets_returns_correctly_with_single_anchor(self, two_point_grid):
+        two_point_grid.route_skeleton = {(3, 3)}
+        cs = ConstructSafeArea._create_cover_sets(two_point_grid.route_skeleton, two_point_grid.grid, two_point_grid.initialization_point)
 
-    #     expected_d1 = DistanceCalculator.calculate_euclidian_distance_between_cells((3, 3), (3, 3))
-    #     expected_d2 = DistanceCalculator.calculate_euclidian_distance_between_cells((7, 7), (3, 3))
-    #     print("TEST")
-    #     print(cs)
-    #     (p1, d1), (p2, d2) = cs[(3, 3)]
-    #     coordinates_with_dist = {(two_point_grid.pc.trajectories[0].points[0].get_coordinates(), expected_d1), (two_point_grid.pc.trajectories[0].points[1].get_coordinates(), expected_d2)}
+        expected_d1 = DistanceCalculator.calculate_euclidian_distance_between_cells((3, 3), (3, 3))
+        expected_d2 = DistanceCalculator.calculate_euclidian_distance_between_cells((7, 7), (3, 3))
+        
+        (p1, d1), (p2, d2) = cs[(3, 3)]
+        coordinates_with_dist = {(two_point_grid.pc.trajectories[0].points[0].get_coordinates(), expected_d1), (two_point_grid.pc.trajectories[0].points[1].get_coordinates(), expected_d2)}
 
-    #     assert len(cs) == 1
-    #     assert (p1.get_coordinates(), d1) in coordinates_with_dist
-    #     assert (p2.get_coordinates(), d2) in coordinates_with_dist
+        assert len(cs) == 1
+        assert (p1.get_coordinates(), d1) in coordinates_with_dist
+        assert (p2.get_coordinates(), d2) in coordinates_with_dist
 
     def test_create_cover_sets_returns_correctly_with_two_anchors(self, two_point_grid):
         two_point_grid.route_skeleton = {(3, 3), (5, 6)}

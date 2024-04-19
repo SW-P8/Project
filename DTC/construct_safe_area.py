@@ -19,45 +19,33 @@ class ConstructSafeArea:
         return safe_areas
 
     @staticmethod
-    def _create_cover_sets(route_skeleton: set, grid: dict, initialization_point: tuple, find_candidate_algorithm = None, multiprocessing: bool = False) -> dict:
+    def _create_cover_sets(route_skeleton: set, grid: dict, initialization_point: tuple, find_candidate_algorithm = None, multiprocessing: bool = True) -> dict:
         if find_candidate_algorithm is None:
             find_candidate_algorithm = ConstructSafeArea._find_candidate_nearest_neighbors
         
-        if multiprocessing:
-            process_count = mp.cpu_count()
-            splits = CollectionUtils.split(grid, process_count)
-            tasks = []
-            pipe_list = []
-            
-            for split in splits:
-                if split != []:
-                    recv_end, send_end = mp.Pipe(False)
-                    t = mp.Process(target=ConstructSafeArea.create_cover_sets_sub_grid, args=(route_skeleton, grid, initialization_point, find_candidate_algorithm, send_end))
-                    tasks.append(t)
-                    pipe_list.append(recv_end)
-                    t.start()
+        process_count = mp.cpu_count()
+        splits = CollectionUtils.split(grid.keys(), process_count)
+        tasks = []
+        pipe_list = []
+        
+        for split in splits:
+            if split != []:
+                recv_end, send_end = mp.Pipe(False)
+                sub_grid = CollectionUtils.get_sub_dict_from_subset_of_keys(grid, split)
+                task = mp.Process(target=ConstructSafeArea.create_cover_sets_sub_grid, args=(route_skeleton, sub_grid, initialization_point, find_candidate_algorithm, send_end))
+                tasks.append(task)
+                pipe_list.append(recv_end)
+                task.start()
 
-            # Receive subgrids from processes and merge
-            merged_dict = defaultdict(set)
-            for (i, task) in enumerate(tasks):
-                d = pipe_list[i].recv()
-                task.join()
-                for key, value in d.items():
-                    merged_dict[key] = merged_dict[key].union(value)
+        # Receive subgrids from processes and merge
+        merged_dict = defaultdict(set)
+        for (i, task) in enumerate(tasks):
+            d = pipe_list[i].recv()
+            task.join()
+            for key, value in d.items():
+                merged_dict[key] = merged_dict[key].union(value)
 
-            return merged_dict
-
-        else:
-            cs = defaultdict(set)
-
-            # Assign points to their nearest anchor
-            for (x, y) in grid.keys():
-                candidates = find_candidate_algorithm(route_skeleton, (x + 0.5, y + 0.5))
-                for point in grid[(x, y)]:
-                    (anchor, dist) = DistanceCalculator.find_nearest_neighbor_from_candidates(point, candidates, initialization_point)
-                    cs[anchor].add((point, dist))
-
-            return cs
+        return merged_dict
 
     @staticmethod
     def create_cover_sets_sub_grid(route_skeleton: set, grid: dict, initialization_point: tuple, find_candidate_algorithm, send_end):

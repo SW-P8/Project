@@ -8,8 +8,8 @@ class TestCheapBenchmark:
     def setup_class(cls):
         cls.grid_system = None
         cls.point_cloud = None
-        cls.limit = 1000
-        cls.n_points = 100000
+        cls.limit = 100
+        cls.n_points = 1000
         cls.conn = None
         cls.handler = None
         cls.executor = None
@@ -38,7 +38,7 @@ class TestCheapBenchmark:
     def test_extract_main_route(self, benchmark):
         benchmark.pedantic(self.__class__.grid_system.extract_main_route, rounds=1, iterations=1, warmup_rounds=0)
         assert self.__class__.grid_system != None
-
+    
     @pytest.mark.bm_cheap
     def test_extract_route_skeleton(self, benchmark):
         benchmark.pedantic(self.__class__.grid_system.extract_route_skeleton, rounds=1, iterations=1, warmup_rounds=0)
