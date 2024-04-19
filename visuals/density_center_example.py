@@ -32,8 +32,13 @@ for point in points:
         grid_system[(x, y)] = []
     grid_system[(x, y)].append(point)
 for cell, cell_points in grid_system.items():
-    density_centers[cell] = ConstructMainRoute.calculate_density_center(cell, grid_system)
-    print(f"Cell {cell} - {cell_points} - {density_centers[cell]}")
+    density_centers[cell] = ConstructMainRoute.calculate_density_center(
+        cell, grid_system)
+    points_str = ", ".join([f"({x}, {y})" for x, y in cell_points])
+    print(f"Cell {cell}:")
+    print(f"    Points: {points_str}")
+    print(f"    Density Center: {density_centers[cell]}")
+    print()
 
 
 # Region -- Insert data into figure
@@ -42,9 +47,13 @@ fig, ax = plt.subplots()
 x, y = density_centers.pop((5, 5))
 plt.scatter(*zip(*points), color='g', label='Point')
 plt.scatter(x, y, color='red', label='Density center for current cell')
-plt.scatter(*zip(*density_centers.values()), color='orange', label='Density center for other cells')
-centerCell = plt.Rectangle((5, 5), 1, 1, color='green', alpha=0.375, label="Current cell")
-neighborhood = plt.Rectangle((5 - DistanceCalculator.NEIGHBORHOOD_SIZE // 2, 5 - DistanceCalculator.NEIGHBORHOOD_SIZE // 2), DistanceCalculator.NEIGHBORHOOD_SIZE, DistanceCalculator.NEIGHBORHOOD_SIZE, color='red', fill=False, linewidth=2, label="Neighborhood")
+plt.scatter(*zip(*density_centers.values()), color='orange',
+            label='Density center for other cells')
+centerCell = plt.Rectangle((5, 5), 1, 1, color='green',
+                           alpha=0.375, label="Current cell")
+neighborhood = plt.Rectangle((5 - DistanceCalculator.NEIGHBORHOOD_SIZE // 2, 5 - DistanceCalculator.NEIGHBORHOOD_SIZE // 2),
+                             DistanceCalculator.NEIGHBORHOOD_SIZE, DistanceCalculator.NEIGHBORHOOD_SIZE,
+                             color='red', fill=False, linewidth=2, label="Neighborhood")
 ax.add_patch(centerCell)
 ax.add_patch(neighborhood)
 
@@ -55,7 +64,9 @@ ax.set_yticks(grid_ticks)
 ax.grid()
 ax.set_axisbelow(True)
 ax.set_aspect('equal')
-plt.xlim(0, 10)
-plt.ylim(0, 10)
+plt.xlim(2, 10)
+plt.ylim(2, 10)
+plt.tick_params(left=False, right=False, labelleft=False,
+                labelbottom=False, bottom=False)
 plt.legend()
 plt.show()
