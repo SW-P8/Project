@@ -2,6 +2,7 @@ import numpy as np
 import matplotlib as mpl
 import matplotlib.pyplot as plt
 from DTC.construct_main_route import ConstructMainRoute
+from DTC.distance_calculator import DistanceCalculator
 points = [
     (3.1, 3.1),
     (3.8, 3.8),
@@ -43,9 +44,9 @@ ax.grid()
 plt.scatter(*zip(*points), color='g')
 plt.scatter(*zip(*density_centers), color='red')
 
-
-centerCell = plt.Rectangle((5, 5), 1, 1, color='green', alpha=0.375)
-neighborhood = plt.Rectangle((1,1), 9, 9, color='red', fill=False)
+neighborhood_center = DistanceCalculator.NEIGHBORHOOD_SIZE // 2 + 1
+centerCell = plt.Rectangle((neighborhood_center, neighborhood_center), 1, 1, color='green', alpha=0.375)
+neighborhood = plt.Rectangle((1,1), DistanceCalculator.NEIGHBORHOOD_SIZE, DistanceCalculator.NEIGHBORHOOD_SIZE, color='red', fill=False)
 ax.add_patch(centerCell)
 ax.add_patch(neighborhood)
 plt.show()
