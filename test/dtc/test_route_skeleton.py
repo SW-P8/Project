@@ -132,6 +132,3 @@ class TestRouteSkeleton():
         # Assert
         assert (23, 3.5) in result
         assert len(result) == 2
-
-test = TestRouteSkeleton()
-test.test_filter_sparse_points_returns_correctly_with_two_cells()
