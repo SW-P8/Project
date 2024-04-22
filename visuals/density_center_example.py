@@ -36,13 +36,13 @@ for cell, cell_points in grid_system.items():
     density_centers[cell] = ConstructMainRoute.calculate_density_center(
         cell, grid_system)
 
-main_route = ConstructMainRoute.extract_main_route(grid_system)
+main_route = ConstructMainRoute.extract_main_route_with_density_center(grid_system)
 
 # Region -- Insert data into figures
-fig_all, ax_dc = plt.subplots()
-fig_main, ax_mr = plt.subplots()
+fig_dc, ax_dc = plt.subplots()
+fig_mr, ax_mr = plt.subplots()
 
-# Plot all elements in the first figure
+# Density center figure
 x, y = density_centers.pop((5, 5))
 ax_dc.scatter(*zip(*points), color='g', label='Point')
 ax_dc.scatter(*zip(*density_centers.values()), color='orange',
@@ -54,13 +54,22 @@ ax_dc.add_patch(plt.Rectangle((5 - DistanceCalculator.NEIGHBORHOOD_SIZE // 2, 5 
                                DistanceCalculator.NEIGHBORHOOD_SIZE, DistanceCalculator.NEIGHBORHOOD_SIZE,
                                color='green', alpha=0.1, fill=True, linewidth=2, label="Neighborhood"))
 
-# Plot only the main route in the second figure
-ax_mr.scatter(*zip(*points), color='g', label='Point')
-for i, cell in enumerate(main_route):
-    if i == 0:
-        ax_mr.add_patch(plt.Rectangle(cell, 1, 1, color='red', alpha=0.375, label='Main Route'))
+# Main route figure
+first = True
+for cell, density_center, active in main_route:
+    x, y = density_center
+    if first and active:
+        ax_mr.add_patch(plt.Rectangle(cell, 1, 1, color='green', alpha=0.375, label='Main Route'))
+        ax_mr.scatter(x, y, color='green')
+        first = False
     else:
-        ax_mr.add_patch(plt.Rectangle(cell, 1, 1, color='red', alpha=0.375))
+        if active:
+            ax_mr.add_patch(plt.Rectangle(cell, 1, 1, color='green', alpha=0.375))
+            ax_mr.scatter(x, y, color='green')
+        else:
+            ax_mr.add_patch(plt.Rectangle(cell, 1, 1, color='red', alpha=0.375))
+            ax_mr.scatter(x, y, color='red')
+            
 
 # Region -- Figure configurations
 for ax in [ax_dc, ax_mr]:
