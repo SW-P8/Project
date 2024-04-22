@@ -4,6 +4,31 @@ from DTC.gridsystem import GridSystem
 
 #warnings.simplefilter(action='ignore', category=UserWarning)
 
+
+
+
+
+def insert_noisy_points(gs: GridSystem, cursor, conn):
+    insert_query = 'INSERT INTO DTC_model_noisy_points (x, y, id_nearest_safe_area) VALUES (%s, %s, %s)'
+    data_to_insert = [
+       (point.longitude, point.latitude, calculate_id_nearest_safe_area(point))
+        for traj in gs.pc.trajectories
+        for point in traj.points
+    ]
+    cursor.executemany(insert_query, data_to_insert)
+    conn.commit()
+
+
+def calculate_id_nearest_safe_area(point):
+    # Dummy implementation
+    return "not implemented"  
+
+        
+
+
+
+
+
 def insert_safe_areas(model_id, safe_areas, cursor, conn):
     """
     Bulk inserts multiple safe areas for a given model instance into the database.
@@ -56,7 +81,7 @@ def insert_long_lat(min_longitude, min_latitude, conn, cursor):
     return model_id
 
 
-def save_data(gs: GridSystem, db: SimpleConnectionPool):
+def save_data(gs: GridSystem, db: SimpleConnectionPool, noisy_point=False):
     """
     Saves data related to a GridSystem instance into the database using a connection pool.
 
@@ -69,16 +94,21 @@ def save_data(gs: GridSystem, db: SimpleConnectionPool):
     with the GridSystem into the database. It commits the transaction upon success or prints
     the error if something goes wrong. Finally, it ensures the database connection is closed.
     """
-    # Get safe_areas
-    safe_areas = gs.safe_areas
-    # Get min_long_lat
-    min_long_lat = gs.pc.get_shifted_min()
+    if not noisy_point:
+        # Get safe_areas
+        safe_areas = gs.safe_areas
+        # Get min_long_lat
+        min_long_lat = gs.pc.get_shifted_min()
     
     try:
         conn = db.getconn()
         cursor = conn.cursor()
-        id = insert_long_lat(min_long_lat[0], min_long_lat[1], conn, cursor)
-        insert_safe_areas(id, safe_areas, cursor, conn)
+        if not noisy_point:
+            id = insert_long_lat(min_long_lat[0], min_long_lat[1], conn, cursor)
+            insert_safe_areas(id, safe_areas, cursor, conn)
+        elif noisy_point:
+            insert_noisy_points(gs, cursor, conn)
+
     except (Exception, psycopg2.DatabaseError) as error:
         print("error in main",error)
     finally:

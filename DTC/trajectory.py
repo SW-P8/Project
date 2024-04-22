@@ -11,6 +11,28 @@ class Trajectory:
         self.max_longitude = float('-inf')
         self.min_latitude = float('inf')
         self.max_latitude = float('-inf')
+    
+    @classmethod
+    def cls_input_list(cls, points : list[Point]):
+        cls.points = points
+        cls.min_longitude = float('inf')
+        cls.max_longitude = float('-inf')
+        cls.min_latitude = float('inf')
+        cls.max_latitude = float('-inf')
+        for point in points:
+            if point.longitude > cls.max_longitude:
+                cls.max_longitude = point.longitude
+
+            if point.longitude < cls.min_longitude:
+                cls.min_longitude = point.longitude
+
+            if point.latitude > cls.max_latitude:
+                cls.max_latitude = point.latitude
+
+            if point.latitude < cls.min_latitude:
+                cls.min_latitude = point.latitude
+
+
 
     def add_point(self,longitude: float, latitude: float, timestamp: Optional[datetime] = None) -> None:
         self.points.append(Point(longitude, latitude, timestamp))
