@@ -55,21 +55,25 @@ ax_dc.add_patch(plt.Rectangle((5 - DistanceCalculator.NEIGHBORHOOD_SIZE // 2, 5 
                                color='green', alpha=0.1, fill=True, linewidth=2, label="Neighborhood"))
 
 # Main route figure
-first = True
+first_active = True
+first_inactive = True
 for cell, density_center, active in main_route:
-    x, y = density_center
-    if first and active:
-        ax_mr.add_patch(plt.Rectangle(cell, 1, 1, color='green', alpha=0.375, label='Main Route'))
-        ax_mr.scatter(x, y, color='green')
-        first = False
-    else:
-        if active:
-            ax_mr.add_patch(plt.Rectangle(cell, 1, 1, color='green', alpha=0.375))
-            ax_mr.scatter(x, y, color='green')
-        else:
-            ax_mr.add_patch(plt.Rectangle(cell, 1, 1, color='red', alpha=0.375))
-            ax_mr.scatter(x, y, color='red')
-            
+    print(active)
+    x_c, y_c = cell
+    x_d, y_d = density_center
+    color = 'green' if active else 'red'
+    label = ('Main Route' if first_active and active else
+            ('Not included in main route' if first_inactive and not active else None))
+    
+    ax_mr.add_patch(plt.Rectangle(cell, 1, 1, color=color, alpha=0.375, label=label))
+    ax_mr.scatter(x_d, y_d, color=color)
+    ax_mr.plot([x_c, x_d], [y_c, y_d], color='blue', zorder=0)
+    
+    if first_active and active:
+        first_active = False
+    if first_inactive and not active:
+        first_inactive = False
+
 
 # Region -- Figure configurations
 for ax in [ax_dc, ax_mr]:

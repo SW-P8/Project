@@ -16,6 +16,7 @@ class ConstructMainRoute:
                 main_route.add(cell)
         
         return main_route
+
     @staticmethod
     def extract_main_route_with_density_center(grid: dict, distance_scale: float = 0.2):
         """This method is used for visualisation"""
