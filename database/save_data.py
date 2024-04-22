@@ -8,12 +8,11 @@ from DTC.gridsystem import GridSystem
 
 
 
-def insert_noisy_points(gs: GridSystem, cursor, conn):
+def insert_noisy_points(points, cursor, conn):
     insert_query = 'INSERT INTO DTC_model_noisy_points (x, y, id_nearest_safe_area) VALUES (%s, %s, %s)'
     data_to_insert = [
        (point.longitude, point.latitude, calculate_id_nearest_safe_area(point))
-        for traj in gs.pc.trajectories
-        for point in traj.points
+        for point in points
     ]
     cursor.executemany(insert_query, data_to_insert)
     conn.commit()
@@ -81,7 +80,7 @@ def insert_long_lat(min_longitude, min_latitude, conn, cursor):
     return model_id
 
 
-def save_data(gs: GridSystem, db: SimpleConnectionPool, noisy_point=False):
+def save_data(gs: GridSystem, db: SimpleConnectionPool, noisy_point=False, points=None):
     """
     Saves data related to a GridSystem instance into the database using a connection pool.
 
@@ -107,7 +106,7 @@ def save_data(gs: GridSystem, db: SimpleConnectionPool, noisy_point=False):
             id = insert_long_lat(min_long_lat[0], min_long_lat[1], conn, cursor)
             insert_safe_areas(id, safe_areas, cursor, conn)
         elif noisy_point:
-            insert_noisy_points(gs, cursor, conn)
+            insert_noisy_points(points, cursor, conn)
 
     except (Exception, psycopg2.DatabaseError) as error:
         print("error in main",error)
