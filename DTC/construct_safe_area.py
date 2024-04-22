@@ -3,7 +3,6 @@ from datetime import datetime
 from math import sqrt, tanh, sinh
 from DTC.distance_calculator import DistanceCalculator
 import numpy as np
-
 from collections import defaultdict
 import multiprocessing as mp
 from DTC.distance_calculator import DistanceCalculator
@@ -80,16 +79,18 @@ class ConstructSafeArea:
         return {a for a, d in candidates if d <= min_dist + distance_to_corner_of_cell}
 
 class SafeArea:
-    def __init__(self, anchor_cover_set, anchor: tuple[float, float], decrease_factor: float, confidence_change: float = 0.01, squish_factor: float = 0.5) -> None:
+    def __init__(self, anchor_cover_set, anchor: tuple[float, float], decrease_factor: float, confidence_change: float = 0.01, cardinality_normalisation: int = 100000, cardinality_squish: float = 1/10, max_confidence_change: float = 0.1) -> None:
         self.center = anchor
         self.radius = 0
         self.cardinality = 0
         self.confidence = 1.0
         self.__confidence_change_factor = confidence_change
         self.__decay_factor = 1 / (60*60*24)
-        self.__squish_factor = squish_factor
         self.timestamp: datetime = datetime.now() # Could be used to indicate creation or update time if we use time for weights, change value.
         self.construct(anchor_cover_set, decrease_factor)
+        self.__cardinality_normalisation = cardinality_normalisation
+        self.__cardinality_squish = cardinality_squish
+        self.__max_confidence_change = max_confidence_change
 
     def construct(self, anchor, decrease_factor):
         self.calculate_radius(anchor, decrease_factor)
@@ -132,11 +133,9 @@ class SafeArea:
     def __calculate_timed_decay(self, delta:float):
         #More magic numbers because why not at this point?
         x = delta * self.__decay_factor
-        normalised_cardinality = self.cardinality / 100000
-        cardinality_offset = SafeArea.sigmoid(normalised_cardinality, 3.0, -0.1, 1)    # Division by 100000 and the number 3 are just magic numbers lmao
-        print(f'delta = {delta}, cardinality = {self.cardinality}, x = {x}, Cardinality offset = {cardinality_offset}')
+        normalised_cardinality = self.cardinality / self.__cardinality_normalisation
+        cardinality_offset = SafeArea.sigmoid(normalised_cardinality, 3.0, -0.1, 1)
         decay = SafeArea.sigmoid(x, -cardinality_offset, -0.5, 2) # -0.5 forces the line to go through (0,0) and 2 normalizes the function such that it maps any number to a value between -1 and 1
-        print(f"Timed decay = {decay}")
         decay = max(decay, 0.0)
         return round(decay, 5)
     
@@ -145,8 +144,7 @@ class SafeArea:
         return (1/(1 + np.exp((-x) + x_offset)) + y_offset) * multiplier
 
     def __get_confidence_increase(self):
-        inc = max(min((1 / (self.cardinality * 1/10)), 0.1), self.__confidence_change_factor)
-        print(f'increase = {inc}')
+        inc = max(min((1 / (self.cardinality * self.__cardinality_squish)), self.__max_confidence_change), self.__confidence_change_factor)
         return inc
 
     def __calculate_confidence_decrease(self, delta):
