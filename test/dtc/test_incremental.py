@@ -14,20 +14,20 @@ class TestIncremental():
         t = Trajectory()
         
         # Add point to use initialization point
-        t.add_point(1,0)
+        t.add_point(1, 0, datetime.now())
 
         # Shift second point 20 meters north and east (should result in the two points being 4 cells apart in both x and y)
         DistanceCalculator.shift_point_with_bearing(t.points[0], 20, DistanceCalculator.NORTH)
         shifted_point = DistanceCalculator.shift_point_with_bearing(t.points[0], 20, DistanceCalculator.NORTH)
         shifted_point = DistanceCalculator.shift_point_with_bearing(shifted_point, 20, DistanceCalculator.EAST)
 
-        t.add_point(shifted_point[0], shifted_point[1])
+        t.add_point(shifted_point[0], shifted_point[1], datetime.now())
 
         DistanceCalculator.shift_point_with_bearing(t.points[1], 20, DistanceCalculator.NORTH)
         shifted_point = DistanceCalculator.shift_point_with_bearing(t.points[1], 20, DistanceCalculator.NORTH)
         shifted_point = DistanceCalculator.shift_point_with_bearing(shifted_point, 20, DistanceCalculator.EAST)
 
-        t.add_point(shifted_point[0], shifted_point[1])
+        t.add_point(shifted_point[0], shifted_point[1], datetime.now())
 
         pc.add_trajectory(t)
         gs = GridSystem(pc)

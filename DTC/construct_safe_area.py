@@ -4,6 +4,7 @@ from math import sqrt, tanh, sinh
 from DTC.distance_calculator import DistanceCalculator
 import numpy as np
 from collections import defaultdict
+from DTC.point import Point
 
 class ConstructSafeArea:
     @staticmethod
@@ -79,8 +80,8 @@ class SafeArea:
         self.cardinality = len(filtered_cover_set)
         self.radius = radius
 
-    def get_current_confidence_with_timestamp(self) -> tuple[float, datetime]:
-        now = datetime.now()
+    def get_current_confidence_with_timestamp(self, timestamp_from_point: datetime) -> tuple[float, datetime]:
+        now = timestamp_from_point
         delta = now - self.timestamp
         new_confidence = self.confidence - self.__calculate_timed_decay(delta.total_seconds())
         return (new_confidence, now)
@@ -89,10 +90,10 @@ class SafeArea:
         self.confidence = confidence
         self.timestamp = timestamp
 
-    def update_confidence(self, dist):
+    def update_confidence(self, dist, point: Point):
         distance_to_sa = dist - self.radius 
         if (distance_to_sa <= 0):
-            (curr_conf, time) = self.get_current_confidence_with_timestamp()
+            (curr_conf, time) = self.get_current_confidence_with_timestamp(point.timestamp)
             self.__set_confidence(min(curr_conf + self.__get_confidence_increase(), 1.0), time)
             self.cardinality += 1
         else:
@@ -102,8 +103,7 @@ class SafeArea:
         #More magic numbers because why not at this point?
         x = delta * self.__decay_factor
         normalised_cardinality = self.cardinality / 100000
-        cardinality_offset = SafeArea.sigmoid(normalised_cardinality, 3.0, -0.1, 1)    # Division by 5000 and the number 3 are just magic numbers lmao
-        #cardinality_offset = 0
+        cardinality_offset = SafeArea.sigmoid(normalised_cardinality, 3.0, -0.1, 1)    # Division by 100000 and the number 3 are just magic numbers lmao
         print(f'delta = {delta}, cardinality = {self.cardinality}, x = {x}, Cardinality offset = {cardinality_offset}')
         decay = SafeArea.sigmoid(x, -cardinality_offset, -0.5, 2) # -0.5 forces the line to go through (0,0) and 2 normalizes the function such that it maps any number to a value between -1 and 1
         print(f"Timed decay = {decay}")
