@@ -112,10 +112,9 @@ class SafeArea:
         self.radius = radius
 
     def get_current_confidence_with_timestamp(self, timestamp_from_point: datetime) -> tuple[float, datetime]:
-        now = timestamp_from_point
-        delta = now - self.timestamp
+        delta = timestamp_from_point - self.timestamp
         new_confidence = self.confidence - self.calculate_timed_decay(delta.total_seconds())
-        return (new_confidence, now)
+        return (new_confidence, timestamp_from_point)
 
     def set_confidence(self, confidence: float, timestamp: datetime):
         self.confidence = confidence

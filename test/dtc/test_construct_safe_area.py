@@ -1,4 +1,5 @@
 import pytest
+from datetime import datetime, timedelta
 from DTC.construct_safe_area import ConstructSafeArea, SafeArea
 from DTC.distance_calculator import DistanceCalculator
 from DTC.trajectory import Trajectory, TrajectoryPointCloud
@@ -174,5 +175,22 @@ class TestSafeArea():
         res = round(default_safe_area.calculate_confidence_decrease(0.8), 5)
         assert res == 0.15
 
+    def test_set_confidence(self, default_safe_area):
+        new_time = datetime.now() + timedelta(minutes=2)
+        default_safe_area.set_confidence(0.2, new_time)
 
+        assert default_safe_area.confidence == 0.2
+        assert default_safe_area.timestamp == new_time
+
+    def test_get_confidence_and_time_change_over_time(self, default_safe_area):
+        new_time = datetime.now() + timedelta(hours=0)
+        
+        # not changed if same time 
+        assert (1, new_time) == default_safe_area.get_current_confidence_with_timestamp(new_time)
+
+        new_time = datetime.now() + timedelta(hours=100)
+        
+        assert (1, new_time) != default_safe_area.get_current_confidence_with_timestamp(new_time)
+
+        
 
