@@ -39,7 +39,7 @@ for cell, cell_points in grid_system.items():
     print(f"    Points: {points_str}")
     print(f"    Density Center: {density_centers[cell]}")
     print()
-
+main_route = ConstructMainRoute.extract_main_route(grid_system)
 
 # Region -- Insert data into figure
 fig, ax = plt.subplots()
@@ -56,6 +56,12 @@ neighborhood = plt.Rectangle((5 - DistanceCalculator.NEIGHBORHOOD_SIZE // 2, 5 -
                              color='green', alpha=0.1, fill=True, linewidth=2, label="Neighborhood")
 ax.add_patch(centerCell)
 ax.add_patch(neighborhood)
+for i, cell in enumerate(main_route):
+    if i == 0:
+        rec = plt.Rectangle(cell, 1, 1, color='red', label='Main Route', alpha=0.375)
+    else:
+        rec = plt.Rectangle(cell, 1, 1, color='red', alpha=0.375)
+    ax.add_patch(rec)
 
 # Region -- Figure configuration
 grid_ticks = np.arange(0, 100, 1)
