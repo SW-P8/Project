@@ -114,6 +114,11 @@ class TestConstructSafeArea():
         assert cnn3 == {(2.5, 2.5), (3, 3), (4, 4)}
 
 class TestSafeArea():
+    @pytest.fixture
+    def default_safe_area(self):
+        cover_set = {(5, 5)}
+        return SafeArea(cover_set, (5, 5), 0.1)
+
     @pytest.mark.parametrize("normalised_cardinality, expected_result",
         [
             (0.001, -0.053),# test with values for cardinality_offset with cardinality = 100
@@ -131,7 +136,7 @@ class TestSafeArea():
 
         assert round(res, 3) == expected_result
 
-    # Test for decay with above values x_offset.
+    # Test for decay with delta = 0.05 and x_offset from test_sigmoid_as_used_for_cardinality_offset.
     @pytest.mark.parametrize("x_offset, expected_result",
         [
             (-0.053, 0.556),    # test with values for cardinality_offset with cardinality = 100
@@ -148,4 +153,26 @@ class TestSafeArea():
         res = SafeArea.sigmoid(delta_decay, x_offset, y_offset, multiplier)
 
         assert round(res, 3) == expected_result
+
+    def test_confidense_increase_determined_by_max_confidence_change(self, default_safe_area):
+        default_safe_area.cardinality = 10
+        assert default_safe_area.get_confidence_increase() == 0.1
+
+    def test_confidense_increase_changed_less_than_max(self, default_safe_area):
+        default_safe_area.cardinality = 100000
+        assert default_safe_area.get_confidence_increase() == 0.01
+
+    def test_calculate_confidence_decrease(self, default_safe_area):
+        default_safe_area.radius = 5
+
+        res = round(default_safe_area.calculate_confidence_decrease(0.1), 5)
+        assert res == 0.00300
+
+    def test_calculate_confidence_decrease_determined_by_min_confidence(self, default_safe_area):
+        default_safe_area.radius = 0.02
+
+        res = round(default_safe_area.calculate_confidence_decrease(0.8), 5)
+        assert res == 0.15
+
+
 
