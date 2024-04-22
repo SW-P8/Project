@@ -3,7 +3,7 @@ import matplotlib.pyplot as plt
 from DTC.gridsystem import GridSystem
 from DTC.trajectory import TrajectoryPointCloud, Trajectory, Point
 from DTC.dtc_executor import DTCExecutor
-from DTC.analyzer import Analyzer
+from DTC.collection_utils import CollectionUtils
 
 
 class Visualizer():
@@ -87,6 +87,5 @@ if __name__ == "__main__":
     pc = dtc_executor.create_point_cloud_with_n_points(1000000)
     gs = GridSystem(pc)
     gs.create_grid_system()
-    distribution = Analyzer.get_point_distribution_for_cells(gs.grid)
-    print(distribution)
+    distribution = CollectionUtils.get_point_distribution_for_cells(gs.grid)
     Visualizer.visualize_distribution_of_cells(distribution)
