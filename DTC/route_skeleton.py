@@ -23,6 +23,7 @@ class RouteSkeleton:
         pipe_list = []
 
         for sub_main_route in sub_main_routes:
+            print(len(sub_main_route))
             if sub_main_route != []:
                 recv_end, send_end = mp.Pipe(False)
                 bounds = CollectionUtils.get_min_max_with_padding_from_collection_of_tuples(sub_main_route, radius)
@@ -38,6 +39,7 @@ class RouteSkeleton:
             sub_smoothed_main_route = pipe_list[i].recv()
             task.join()
             smoothed_main_route = smoothed_main_route.union(sub_smoothed_main_route)
+        print("Smoothed main route extracted: " + str(len(smoothed_main_route)))
         return smoothed_main_route
     
     @staticmethod
@@ -84,6 +86,7 @@ class RouteSkeleton:
                 if len(cluster) >= min_pts:
                     clusters = clusters.union(cluster)
         
+        print(len(clusters))
         return clusters
 
     @staticmethod

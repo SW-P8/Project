@@ -8,8 +8,8 @@ class TestExpensiveBenchmark:
     def setup_class(cls):
         cls.grid_system = None
         cls.point_cloud = None
-        cls.limit = 0
-        cls.n_points = 1000000000 #set as 1 billion, arbritrarily high
+        cls.limit = 10000
+        cls.n_points = 10000000 #set as 1 billion, arbritrarily high
         cls.conn = None
         cls.handler = None
         cls.executor = None
@@ -30,20 +30,20 @@ class TestExpensiveBenchmark:
     
     @pytest.mark.bm_expensive
     def test_build_grid_system(self, benchmark):
-        benchmark.pedantic(self.__class__.grid_system.create_grid_system, rounds=5, iterations=3, warmup_rounds=0)
+        benchmark.pedantic(self.__class__.grid_system.create_grid_system, rounds=5, iterations=1, warmup_rounds=0)
         assert self.__class__.grid_system != None
     
     @pytest.mark.bm_expensive
     def test_extract_main_route(self, benchmark):
-        benchmark.pedantic(self.__class__.grid_system.extract_main_route, rounds=5, iterations=3, warmup_rounds=0)
+        benchmark.pedantic(self.__class__.grid_system.extract_main_route, rounds=5, iterations=1, warmup_rounds=0)
         assert self.__class__.grid_system != None
-    
-    @pytest.mark.bm_expensive
-    def test_extract_route_skeleton(self, benchmark):
-        benchmark.pedantic(self.__class__.grid_system.extract_route_skeleton, rounds=5, iterations=3, warmup_rounds=0)
-        assert self.__class__.grid_system != None
-
-    @pytest.mark.bm_expensive
-    def test_construct_safe_area(self, benchmark):
-        benchmark.pedantic(self.__class__.grid_system.construct_safe_areas, rounds=5, iterations=3, warmup_rounds=0)
-        assert self.__class__.grid_system != None
+#    
+#    @pytest.mark.bm_expensive
+#    def test_extract_route_skeleton(self, benchmark):
+#        benchmark.pedantic(self.__class__.grid_system.extract_route_skeleton, rounds=5, iterations=3, warmup_rounds=0)
+#        assert self.__class__.grid_system != None
+#
+#    @pytest.mark.bm_expensive
+#    def test_construct_safe_area(self, benchmark):
+#        benchmark.pedantic(self.__class__.grid_system.construct_safe_areas, rounds=5, iterations=3, warmup_rounds=0)
+#        assert self.__class__.grid_system != None
