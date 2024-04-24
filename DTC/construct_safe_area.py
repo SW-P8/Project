@@ -84,13 +84,13 @@ class SafeArea:
         self.radius = 0
         self.cardinality = 0
         self.confidence = 1.0
-        self.__confidence_change_factor = confidence_change
-        self.__decay_factor = 1 / (60*60*24)
+        self.confidence_change_factor = confidence_change
+        self.decay_factor = 1 / (60*60*24)
         self.timestamp: datetime = datetime.now() # Could be used to indicate creation or update time if we use time for weights, change value.
         self.construct(anchor_cover_set, decrease_factor)
-        self.__cardinality_normalisation = cardinality_normalisation
-        self.__cardinality_squish = cardinality_squish
-        self.__max_confidence_change = max_confidence_change
+        self.cardinality_normalisation = cardinality_normalisation
+        self.cardinality_squish = cardinality_squish
+        self.max_confidence_change = max_confidence_change
 
     def construct(self, anchor, decrease_factor):
         self.calculate_radius(anchor, decrease_factor)
@@ -112,12 +112,11 @@ class SafeArea:
         self.radius = radius
 
     def get_current_confidence_with_timestamp(self, timestamp_from_point: datetime) -> tuple[float, datetime]:
-        now = timestamp_from_point
-        delta = now - self.timestamp
-        new_confidence = self.confidence - self.__calculate_timed_decay(delta.total_seconds())
-        return (new_confidence, now)
+        delta = timestamp_from_point - self.timestamp
+        new_confidence = self.confidence - self.calculate_timed_decay(delta.total_seconds())
+        return (new_confidence, timestamp_from_point)
 
-    def __set_confidence(self, confidence: float, timestamp: datetime):
+    def set_confidence(self, confidence: float, timestamp: datetime):
         self.confidence = confidence
         self.timestamp = timestamp
 
@@ -125,15 +124,15 @@ class SafeArea:
         distance_to_sa = dist - self.radius 
         if (distance_to_sa <= 0):
             (curr_conf, time) = self.get_current_confidence_with_timestamp(point.timestamp)
-            self.__set_confidence(min(curr_conf + self.__get_confidence_increase(), 1.0), time)
+            self.set_confidence(min(curr_conf + self.get_confidence_increase(), 1.0), time)
             self.cardinality += 1
         else:
-            self.confidence -= self.__calculate_confidence_decrease(distance_to_sa)
+            self.confidence -= self.calculate_confidence_decrease(distance_to_sa)
     
-    def __calculate_timed_decay(self, delta:float):
+    def calculate_timed_decay(self, delta:float):
         #More magic numbers because why not at this point?
-        x = delta * self.__decay_factor
-        normalised_cardinality = self.cardinality / self.__cardinality_normalisation
+        x = delta * self.decay_factor
+        normalised_cardinality = self.cardinality / self.cardinality_normalisation
         cardinality_offset = SafeArea.sigmoid(normalised_cardinality, 3.0, -0.1, 1)
         decay = SafeArea.sigmoid(x, -cardinality_offset, -0.5, 2) # -0.5 forces the line to go through (0,0) and 2 normalizes the function such that it maps any number to a value between -1 and 1
         decay = max(decay, 0.0)
@@ -143,10 +142,10 @@ class SafeArea:
     def sigmoid(x: float, x_offset: float, y_offset, multiplier: float) -> float:
         return (1/(1 + np.exp((-x) + x_offset)) + y_offset) * multiplier
 
-    def __get_confidence_increase(self):
-        inc = max(min((1 / (self.cardinality * self.__cardinality_squish)), self.__max_confidence_change), self.__confidence_change_factor)
+    def get_confidence_increase(self):
+        inc = max(min((1 / (self.cardinality * self.cardinality_squish)), self.max_confidence_change), self.confidence_change_factor)
         return inc
 
-    def __calculate_confidence_decrease(self, delta):
+    def calculate_confidence_decrease(self, delta):
         dec = 0.2*tanh((3*delta)/(4 * self.radius))
         return min(0.15, dec)
