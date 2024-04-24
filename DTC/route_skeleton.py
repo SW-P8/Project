@@ -1,15 +1,16 @@
 from DTC.distance_calculator import DistanceCalculator
 from collections import defaultdict
-from typing import Iterator
 import multiprocessing as mp
-from math import dist, floor
+from math import ceil
 from DTC.collection_utils import CollectionUtils
 from copy import deepcopy
+from sklearn.cluster import DBSCAN
+import numpy as np
 
 class RouteSkeleton:
     @staticmethod
     def extract_route_skeleton(main_route: set, smooth_radius: int, filtering_list_radius: int, distance_interval: int):
-        min_pts = 0.01 * len(main_route)
+        min_pts = ceil(0.01 * len(main_route))
         smoothed_main_route = RouteSkeleton.smooth_main_route(main_route, smooth_radius)
         contracted_main_route = RouteSkeleton.graph_based_filter(smoothed_main_route, filtering_list_radius, min_pts)
         return RouteSkeleton.filter_sparse_points(contracted_main_route, distance_interval)
@@ -69,25 +70,11 @@ class RouteSkeleton:
 
     @staticmethod
     def graph_based_filter(data: set, epsilon: float, min_pts) -> set:
-        visited = set()
-        clusters = set()
-        
-        def expand_cluster(point: tuple, cluster: set, visited):
-            cluster.add(point)
-            visited.add(point)
-            neighbors = {p for p in data if p not in visited and DistanceCalculator.calculate_euclidian_distance_between_cells(point, p) <= epsilon}
-            for neighbor in neighbors:
-                expand_cluster(neighbor, cluster, visited)
-        
-        for point in data:
-            if point not in visited:
-                cluster = set()
-                expand_cluster(point, cluster, visited)
-                if len(cluster) >= min_pts:
-                    clusters = clusters.union(cluster)
-        
-        print(len(clusters))
-        return clusters
+        main_route = np.array(list(data))
+        dbscan = DBSCAN(eps=epsilon, min_samples=min_pts, metric="euclidean")
+        dbscan.fit(main_route)
+        filtered_main_route = main_route[dbscan.labels_ != -1].T
+        return set(zip(filtered_main_route[0], filtered_main_route[1]))
 
     @staticmethod
     def filter_sparse_points(data: set, distance_threshold):
