@@ -24,7 +24,6 @@ class RouteSkeleton:
         pipe_list = []
 
         for sub_main_route in sub_main_routes:
-            print(len(sub_main_route))
             if sub_main_route != []:
                 recv_end, send_end = mp.Pipe(False)
                 bounds = CollectionUtils.get_min_max_with_padding_from_collection_of_tuples(sub_main_route, radius)
@@ -70,6 +69,9 @@ class RouteSkeleton:
 
     @staticmethod
     def graph_based_filter(data: set, epsilon: float, min_pts) -> set:
+        print(len(data))
+        print(min_pts)
+        print(epsilon)
         main_route = np.array(list(data))
         dbscan = DBSCAN(eps=epsilon, min_samples=min_pts, metric="euclidean")
         dbscan.fit(main_route)
@@ -78,6 +80,7 @@ class RouteSkeleton:
 
     @staticmethod
     def filter_sparse_points(data: set, distance_threshold):
+        print(len(data))
         points = deepcopy(data)
         filtered_points = set()
         for source in points:
@@ -86,4 +89,5 @@ class RouteSkeleton:
                     if source != target and DistanceCalculator.calculate_euclidian_distance_between_cells(source, target) < distance_threshold:
                         filtered_points.add(target)
         points.difference_update(filtered_points)
+        print(len(points))
         return points
