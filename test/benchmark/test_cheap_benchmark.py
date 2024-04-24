@@ -53,7 +53,6 @@ class TestCheapBenchmark:
     def test_extract_route_skeleton(self, benchmark):
         with open("100kMR.json", "r") as infile:
             data = json.load(infile)
-        print(len(data))
         main_route = {eval(v) for v in data}
         print(len(main_route))
         route_skeleton = benchmark.pedantic(RouteSkeleton.extract_route_skeleton, kwargs={'main_route': main_route, 'smooth_radius': 25, 'filtering_list_radius': 20, 'distance_interval': 20}, rounds=1, iterations=1, warmup_rounds=0)
