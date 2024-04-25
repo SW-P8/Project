@@ -1,8 +1,9 @@
 import numpy as np
-import matplotlib as mpl
 import matplotlib.pyplot as plt
+
 from DTC.construct_main_route import ConstructMainRoute
 from DTC.distance_calculator import DistanceCalculator
+
 # Region -- Arrange Data
 points = [
     (3.1, 3.1),
@@ -10,15 +11,15 @@ points = [
     (4.5, 4.2),
     (4.5, 4.8),
     (5.1, 5.1),
-    (5.3, 5.3),
     (5.1, 5.3),
     (5.3, 5.1),
+    (5.3, 5.3),
     (6.2, 5.1),
-    (6.8, 5.1),
     (6.2, 5.2),
+    (6.8, 5.1),
     (6.8, 5.2),
-    (7.2, 4.8),
     (7.2, 4.4),
+    (7.2, 4.8),
     (7.6, 4.4),
     (8.8, 3.2)
 ]
@@ -34,39 +35,57 @@ for point in points:
 for cell, cell_points in grid_system.items():
     density_centers[cell] = ConstructMainRoute.calculate_density_center(
         cell, grid_system)
-    points_str = ", ".join([f"({x}, {y})" for x, y in cell_points])
-    print(f"Cell {cell}:")
-    print(f"    Points: {points_str}")
-    print(f"    Density Center: {density_centers[cell]}")
-    print()
 
+main_route = ConstructMainRoute.extract_main_route_with_density_center(grid_system)
 
-# Region -- Insert data into figure
-fig, ax = plt.subplots()
+# Region -- Insert data into figures
+fig_dc, ax_dc = plt.subplots()
+fig_mr, ax_mr = plt.subplots()
 
+# Density center figure
 x, y = density_centers.pop((5, 5))
-plt.scatter(*zip(*points), color='g', label='Point')
-plt.scatter(*zip(*density_centers.values()), color='orange',
-            label='Density center for other cells')
-plt.scatter(x, y, color='red', label='Density center for current cell')
-centerCell = plt.Rectangle((5, 5), 1, 1, color='green',
-                           alpha=0.375, label="Current cell")
-neighborhood = plt.Rectangle((5 - DistanceCalculator.NEIGHBORHOOD_SIZE // 2, 5 - DistanceCalculator.NEIGHBORHOOD_SIZE // 2),
-                             DistanceCalculator.NEIGHBORHOOD_SIZE, DistanceCalculator.NEIGHBORHOOD_SIZE,
-                             color='green', alpha=0.1, fill=True, linewidth=2, label="Neighborhood")
-ax.add_patch(centerCell)
-ax.add_patch(neighborhood)
+ax_dc.scatter(*zip(*points), color='g', label='Point')
+ax_dc.scatter(*zip(*density_centers.values()), color='orange',
+               label='Density center for other cells')
+ax_dc.scatter(x, y, color='red', label='Density center for current cell')
+ax_dc.add_patch(plt.Rectangle((5, 5), 1, 1, color='green',
+                               alpha=0.375, label="Current cell"))
+ax_dc.add_patch(plt.Rectangle((5 - DistanceCalculator.NEIGHBORHOOD_SIZE // 2, 5 - DistanceCalculator.NEIGHBORHOOD_SIZE // 2),
+                               DistanceCalculator.NEIGHBORHOOD_SIZE, DistanceCalculator.NEIGHBORHOOD_SIZE,
+                               color='green', alpha=0.1, fill=True, linewidth=2, label="Neighborhood"))
 
-# Region -- Figure configuration
-grid_ticks = np.arange(0, 100, 1)
-ax.set_xticks(grid_ticks)
-ax.set_yticks(grid_ticks)
-ax.grid()
-ax.set_axisbelow(True)
-ax.set_aspect('equal')
-plt.xlim(2, 10)
-plt.ylim(2, 10)
-plt.tick_params(left=False, right=False, labelleft=False,
-                labelbottom=False, bottom=False)
-plt.legend()
+# Main route figure
+first_active = True
+first_inactive = True
+for cell, density_center, active in main_route:
+    print(active)
+    x_c, y_c = cell
+    x_d, y_d = density_center
+    color = 'green' if active else 'red'
+    label = ('Main Route' if first_active and active else
+            ('Not included in main route' if first_inactive and not active else None))
+    
+    ax_mr.add_patch(plt.Rectangle(cell, 1, 1, color=color, alpha=0.375, label=label))
+    ax_mr.scatter(x_d, y_d, color=color)
+    ax_mr.plot([x_c, x_d], [y_c, y_d], color='blue', zorder=0)
+    
+    if first_active and active:
+        first_active = False
+    if first_inactive and not active:
+        first_inactive = False
+
+
+# Region -- Figure configurations
+for ax in [ax_dc, ax_mr]:
+    ax.set_xticks(np.arange(0, 100, 1))
+    ax.set_yticks(np.arange(0, 100, 1))
+    ax.grid()
+    ax.set_axisbelow(True)
+    ax.set_aspect('equal')
+    ax.set_xlim(2, 10)
+    ax.set_ylim(2, 10)
+    ax.tick_params(left=False, right=False, labelleft=False,
+                   labelbottom=False, bottom=False)
+    ax.legend()
+
 plt.show()
