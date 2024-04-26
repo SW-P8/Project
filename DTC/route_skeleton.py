@@ -1,12 +1,11 @@
-from DTC.distance_calculator import DistanceCalculator
 from collections import defaultdict
-import multiprocessing as mp
 from math import ceil
-from DTC.collection_utils import CollectionUtils
 from copy import deepcopy
 from sklearn.cluster import DBSCAN
 from scipy.spatial import KDTree
 import numpy as np
+import multiprocessing as mp
+from DTC.collection_utils import CollectionUtils
 
 class RouteSkeleton:
     @staticmethod
@@ -44,27 +43,17 @@ class RouteSkeleton:
     
     @staticmethod
     def smooth_sub_main_route(sub_main_route: set, sub_main_route_with_padding: set, radius: int, send_end):
+        cell_centers = [(x + 0.5, y + 0.5) for (x,y) in sub_main_route]
+        cell_centers_with_padding = [(x + 0.5, y + 0.5) for (x,y) in sub_main_route_with_padding]
+        kd_tree = KDTree(cell_centers_with_padding)
         sub_smoothed_main_route = set()
-        for (x1, y1) in sub_main_route:
-            x_sum = 0
-            y_sum = 0
-            count = 0
-            for i in range(x1 - radius, x1 + radius + 1):
-                for j in range(y1 - radius, y1 + radius + 1):
-                    if (i,j) in sub_main_route_with_padding and DistanceCalculator.calculate_euclidian_distance_between_cells((x1, y1), (i, j)) <= radius:
-                        x_sum += i + 0.5
-                        y_sum += j + 0.5
-                        count += 1
+        
+        for cell_center in cell_centers:
+            indices = kd_tree.query_ball_point(cell_center, radius)
+            neighbour_set = {tuple(cell_centers_with_padding[i]) for i in indices}
+            avg_point = tuple(round(sum(x)/len(x), 2) for x in zip(*neighbour_set))
+            sub_smoothed_main_route.add(avg_point)
 
-            if x_sum != 0:
-                x_sum /= count
-
-            if y_sum != 0:
-                y_sum /= count
-            x_sum = round(x_sum, 2)
-            y_sum = round(y_sum, 2)
-
-            sub_smoothed_main_route.add((x_sum, y_sum))
         send_end.send(sub_smoothed_main_route)
 
     @staticmethod
