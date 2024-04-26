@@ -1,6 +1,6 @@
 from operator import itemgetter
 from datetime import datetime
-from math import sqrt, tanh, sinh
+from math import sqrt, tanh, floor
 from DTC.distance_calculator import DistanceCalculator
 import numpy as np
 from collections import defaultdict
@@ -79,67 +79,127 @@ class ConstructSafeArea:
         return {a for a, d in candidates if d <= min_dist + distance_to_corner_of_cell}
 
 class SafeArea:
-    def __init__(self, anchor_cover_set, anchor: tuple[float, float], decrease_factor: float, confidence_change: float = 0.01, cardinality_normalisation: int = 100000, cardinality_squish: float = 1/10, max_confidence_change: float = 0.1) -> None:
+    def __init__(self, anchor_cover_set, anchor: tuple[float, float], decrease_factor: float, confidence_change: float = 0.01, normalisation_factor: int = 100000, cardinality_squish: float = 0.1, max_confidence_change: float = 0.1) -> None:
+        """
+        Initializes a SafeArea instance.
+
+        Parameters:
+            anchor_cover_set (set): The set of points covering the anchor area.
+            anchor (tuple[float, float]): The center point of the anchor area.
+            decrease_factor (float): The factor by which to decrease the radius in each iteration.
+            confidence_change (float): The minimum change in confidence for each update.
+            cardinality_normalisation (int): The normalization factor for cardinality in confidence calculations.
+            cardinality_squish (float): The squishing factor for cardinality in confidence calculations.
+            max_confidence_change (float): The maximum allowed change in confidence for each update. A value between 0 and 1.
+            decrease_factor (float): The decrease a safe-area must see to have removed 'outliers'
+        """
         self.center = anchor
+        self.cover_set = anchor_cover_set
+        self.decrease_factor = decrease_factor
         self.radius = 0
         self.cardinality = 0
         self.confidence = 1.0
         self.confidence_change_factor = confidence_change
-        self.decay_factor = 1 / (60*60*24)
-        self.timestamp: datetime = datetime.now() # Could be used to indicate creation or update time if we use time for weights, change value.
-        self.construct(anchor_cover_set, decrease_factor)
-        self.cardinality_normalisation = cardinality_normalisation
+        self.decay_factor = 1 / (60*60*24) # Set as the fraction of a day 1 second represents. Done as TimeDelta is given in seconds.
+        self.timestamp = datetime.now() # Creation time.
+        self.construct()
+        self.cardinality_normalisation = normalisation_factor
         self.cardinality_squish = cardinality_squish
         self.max_confidence_change = max_confidence_change
 
-    def construct(self, anchor, decrease_factor):
-        self.calculate_radius(anchor, decrease_factor)
+    def construct(self):
+        """
+        Constructs the SafeArea by calculating its radius.
+
+        Parameters:
+            anchor (tuple[float, float]): The center point of the anchor area.
+            decrease_factor (float): The factor by which to decrease the radius in each iteration.
+        """
+        self.calculate_radius()
        
-    def calculate_radius(self, anchor, decrease_factor: float = 0.01):
-        radius = max(anchor, key=itemgetter(1), default=(0,0))[1]
+    def calculate_radius(self):
+        """
+        Calculates the radius of the Safe Area.
+
+        Parameters:
+            anchor (tuple[float, float]): The center point of the anchor area.
+            decrease_factor (float): The factor by which to decrease the radius in each iteration.
+        """
+        radius = max(self.cover_set, key=itemgetter(1), default=(0,0))[1]
         removed_count = 0
-        cover_set_size = len(anchor)
-        removal_threshold = decrease_factor * cover_set_size
-        filtered_cover_set = {(p, d) for (p, d) in anchor}
+        cover_set_size = len(self.cover_set)
+        removal_threshold = self.decrease_factor * cover_set_size
+        filtered_cover_set = {(p, d) for (p, d) in self.cover_set}
 
         #Refine radius of safe area radius
         while removed_count < removal_threshold:
-            radius *= (1 - decrease_factor)
+            radius *= (1 - self.decrease_factor)
             filtered_cover_set = {(p, d) for (p, d) in filtered_cover_set if d <= radius}
             removed_count = cover_set_size - len(filtered_cover_set)
 
         self.cardinality = len(filtered_cover_set)
         self.radius = radius
 
-    def get_current_confidence_with_timestamp(self, timestamp_from_point: datetime) -> tuple[float, datetime]:
-        delta = timestamp_from_point - self.timestamp
-        new_confidence = self.confidence - self.calculate_timed_decay(delta.total_seconds())
-        return (new_confidence, timestamp_from_point)
+    def get_current_confidence(self, timestamp: datetime) -> tuple[float, datetime]:
+        """
+        Gets the current confidence and timestamp based on a given timestamp.
+
+        Parameters:
+            timestamp (datetime): The timestamp for calculating the current confidence.
+
+        Returns:
+            tuple[float, datetime]: The current confidence and timestamp.
+        """
+        delta = timestamp - self.timestamp
+        new_confidence = self.confidence - self.calculate_time_decay(delta.total_seconds())
+        return (new_confidence, timestamp)
 
     def set_confidence(self, confidence: float, timestamp: datetime):
+        """
+        Sets the confidence and timestamp of the SafeArea.
+
+        Parameters:
+            confidence (float): The new confidence value.
+            timestamp (datetime): The timestamp associated with the confidence value.
+        """
         self.confidence = confidence
         self.timestamp = timestamp
 
     def update_confidence(self, dist, point: Point):
-        distance_to_sa = dist - self.radius 
-        if (distance_to_sa <= 0):
-            (curr_conf, time) = self.get_current_confidence_with_timestamp(point.timestamp)
+        """
+        Updates the confidence of the SafeArea based on the distance from a point.
+
+        Parameters:
+            dist (float): The distance from the SafeArea to the point.
+            point (Point): The point used for updating the confidence.
+        """
+        distance_to_safearea = dist - self.radius 
+        if (distance_to_safearea <= 0):
+            (curr_conf, time) = self.get_current_confidence(point.timestamp)
             self.set_confidence(min(curr_conf + self.get_confidence_increase(), 1.0), time)
             self.cardinality += 1
         else:
-            self.confidence -= self.calculate_confidence_decrease(distance_to_sa)
+            self.confidence -= self.calculate_confidence_decrease(distance_to_safearea)
     
-    def calculate_timed_decay(self, delta:float):
-        #More magic numbers because why not at this point?
-        x = delta * self.decay_factor
+    def calculate_time_decay(self, delta:float):
+        """
+        Calculates the time-based decay for confidence.
+
+        Parameters:
+            delta (float): The time difference in seconds.
+
+        Returns:
+            float: The decay factor for confidence.
+        """
+        decay = delta * self.decay_factor
         normalised_cardinality = self.cardinality / self.cardinality_normalisation
-        cardinality_offset = SafeArea.sigmoid(normalised_cardinality, 3.0, -0.1, 1)
-        decay = SafeArea.sigmoid(x, -cardinality_offset, -0.5, 2) # -0.5 forces the line to go through (0,0) and 2 normalizes the function such that it maps any number to a value between -1 and 1
+        cardinality_offset = self.sigmoid(normalised_cardinality, 3.0, -0.1, 1)
+        decay = self.sigmoid(decay, -cardinality_offset, -0.5, 2) # -0.5 forces the line to go through (0,0) and 2 normalizes the function such that it maps any number to a value between -1 and 1
         decay = max(decay, 0.0)
         return round(decay, 5)
     
-    @staticmethod
-    def sigmoid(x: float, x_offset: float, y_offset, multiplier: float) -> float:
+    
+    def sigmoid(self, x: float, x_offset: float, y_offset, multiplier: float) -> float:
         return (1/(1 + np.exp((-x) + x_offset)) + y_offset) * multiplier
 
     def get_confidence_increase(self):
