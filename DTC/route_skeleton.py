@@ -5,6 +5,7 @@ from math import ceil
 from DTC.collection_utils import CollectionUtils
 from copy import deepcopy
 from sklearn.cluster import DBSCAN
+from scipy.spatial import KDTree
 import numpy as np
 
 class RouteSkeleton:
@@ -76,12 +77,15 @@ class RouteSkeleton:
 
     @staticmethod
     def filter_sparse_points(data: set, distance_threshold):
-        points = deepcopy(data)
-        filtered_points = set()
+        points = list(deepcopy(data))
+        kd_tree = KDTree(points)
+        filtered_points = set() # Track points to remove
+
         for source in points:
             if source not in filtered_points:
-                for target in points:
-                    if source != target and DistanceCalculator.calculate_euclidian_distance_between_cells(source, target) < distance_threshold:
-                        filtered_points.add(target)
-        points.difference_update(filtered_points)
-        return points
+                indices = kd_tree.query_ball_point(source, distance_threshold - 0.01)
+                local_filtered = {tuple(points[i]) for i in indices if points[i] != source}
+                filtered_points.update(local_filtered)
+
+        # Update the points list by removing filtered points
+        return {point for point in points if tuple(point) not in filtered_points}
