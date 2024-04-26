@@ -56,7 +56,7 @@ class DistanceCalculator():
         min_dist = float("inf")
         nearest_anchor: Optional[tuple[float, float]] = None
         (x, y) = DistanceCalculator.calculate_exact_index_for_point(point, initialization_point)
-        
+
         for candidate in candidates:
             dist = DistanceCalculator.calculate_euclidian_distance_between_cells((x,y), candidate)
             if dist < min_dist:
@@ -64,7 +64,7 @@ class DistanceCalculator():
                 min_dist = dist
 
         return (nearest_anchor, min_dist)
- 
+
     # Converts cell coordinate to long lat based on initialization_point
     @staticmethod
     def convert_cell_to_point(initialization_point: tuple, cell: tuple) -> tuple:
