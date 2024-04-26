@@ -61,7 +61,7 @@ def test_transform_data_When_given_dataframe_with_errors_Should_return_cleaned_d
     # Arrange
     test_trajectory_id = 1
     # Act
-    result = load_data.__transform_data(create_erroneous_outercity_data, test_trajectory_id)
+    result = load_data._transform_data(create_erroneous_outercity_data, test_trajectory_id, "full")
     # Assert
     assert result.shape == (8, 5) # There are two erroneus coordinate points, so there sould only be 8 rows
     assert result['trajectory_id'].nunique() == 2 # There should be two distinct trajectories for taxi 1
@@ -73,7 +73,7 @@ def test_transform_data_innercity_when_given_dataframe_with_errors_should_return
     expected_latitude = [39.870000, 39.880000, 39.875000, 39.885000, 39.890000, 39.895000, 39.900000, 39.905000, 39.910000]
 
     # Act
-    result = load_data.__transform_data(create_erroneous_innercity_data, test_trajectory_id, True)
+    result = load_data._transform_data(create_erroneous_innercity_data, test_trajectory_id, "inner")
     
 
     # Assert
@@ -89,8 +89,8 @@ def test_transform_data_when_given_correct_data_should_not_change_anything(creat
     expected_latitude = [39.870000, 39.875000, 39.880000, 39.885000, 39.890000, 39.895000, 39.900000, 39.905000, 39.910000, 39.915000]
 
     # Act
-    resultInner = load_data.__transform_data(create_correct_data, test_trajectory_id, True)
-    resultOuter = load_data.__transform_data(create_correct_data, test_trajectory_id)
+    resultInner = load_data._transform_data(create_correct_data, test_trajectory_id, "inner")
+    resultOuter = load_data._transform_data(create_correct_data, test_trajectory_id, "full")
 
     # Assert
     assert resultInner.shape == (10, 5)
