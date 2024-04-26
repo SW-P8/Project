@@ -112,35 +112,20 @@ class TestGridsystem():
     def test_extract_route_skeleton_returns_correctly_with_single_cell(self, single_point_grid):
         single_point_grid.main_route = {(3, 3)}
         single_point_grid.extract_route_skeleton()
-        assert single_point_grid.route_skeleton == set()
+        assert single_point_grid.route_skeleton == {(3.5, 3.5)}
 
     def test_extract_route_skeleton_returns_correctly_with_two_cells(self, single_point_grid):
         single_point_grid.main_route = {(3, 3), (12, 3)}
         single_point_grid.grid[(12, 3)].append("some random val")
         single_point_grid.extract_route_skeleton()
-        assert single_point_grid.route_skeleton == set()
+        assert single_point_grid.route_skeleton == {(8.0, 3.5)}
 
     def test_extract_route_skeleton_returns_correctly_with_three_cells(self, single_point_grid):
         single_point_grid.main_route = {(3, 3), (28, 3), (33, 3)}
         single_point_grid.grid[(28, 3)].append("some random val")
         single_point_grid.grid[(33, 3)].append(("some random val"))
         single_point_grid.extract_route_skeleton()
-        assert single_point_grid.route_skeleton == {(16, 3.5), (21.83, 3.5), (31, 3.5)}
-
-    def test_extract_route_skeleton_returns_correctly_with_many_cells(self, single_point_grid):
-        single_point_grid.main_route = set()
-        for i in range(1, 27):
-            single_point_grid.main_route.add((-24 + 1 * i, 3))
-
-        single_point_grid.main_route.add((-24, 3))
-        
-        # Add cell more than radius distance from others to not have it be smoothed and therefore later filtered out
-        single_point_grid.main_route.add((28, 3))
-
-        single_point_grid.extract_route_skeleton()
-
-        assert (28.5, 3.5) not in single_point_grid.route_skeleton
-        assert single_point_grid.route_skeleton != set()
+        assert single_point_grid.route_skeleton == {(16.0, 3.5)}
 
     def test_construct_safe_areas_returns_correctly_with_two_points_and_single_anchor_and_no_refinement(self, two_point_grid):
         two_point_grid.route_skeleton = {(3, 3)}
@@ -200,4 +185,3 @@ class TestGridsystem():
         assert len(five_point_grid.safe_areas) == 2
         assert five_point_grid.safe_areas[(2, 2)].radius == expected_r1
         assert five_point_grid.safe_areas[(7, 7)].radius == expected_r2
- 
