@@ -77,7 +77,10 @@ def _transform_data(df: pd.DataFrame, trajectory_id: int, area: str = "full") ->
             min_lat = 39.866389
             max_lat = 39.983056
         case "city":
-            pass
+            min_long = 116.2031
+            max_long = 116.5334
+            min_lat = 39.7513
+            max_lat = 40.0245
         case _:
             pass
             

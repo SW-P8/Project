@@ -38,6 +38,13 @@ def create_erroneous_innercity_data(data):
     return df
 
 @pytest.fixture
+def create_erroneous_beijing_data(data):
+    df = data
+    df['longitude'] = [116.45, 116.48, 116.51, 116.53, 116.47, 116.50, 116.49, 116.52, 116.46, 116.20]
+    df['latitude'] = [39.85, 39.82, 39.89, 39.78, 39.84, 39.81, 39.88, 39.79, 39.86, 40.00]
+    return df
+
+@pytest.fixture
 def create_correct_data(data):
     df = data
     df['date_time'] = [
@@ -104,4 +111,19 @@ def test_transform_data_when_given_correct_data_should_not_change_anything(creat
 
     assert resultInner['latitude'].tolist() == expected_latitude
     assert resultOuter['latitude'].tolist() == expected_latitude
+
+def test_transform_data_beijing_when_data_with_errors_should_return_cleaned_dataframe(create_erroneous_beijing_data):
+    # Arrange
+    test_trajectory_id = 1
+    expected_longitude = [116.45, 116.51, 116.48, 116.53, 116.47, 116.50, 116.49, 116.52, 116.46]
+    expected_latitude = [39.85, 39.89, 39.82, 39.78, 39.84, 39.81, 39.88, 39.79, 39.86]
+
+    # Act
+    result = load_data._transform_data(create_erroneous_beijing_data, test_trajectory_id, "city")
     
+    # Assert
+    assert (9, 5) == result.shape
+    assert 2 == result['trajectory_id'].nunique()
+    assert expected_longitude == result['longitude'].tolist()
+    assert expected_latitude == result['latitude'].tolist()
+
