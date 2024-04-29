@@ -106,6 +106,7 @@ class SafeArea:
         self.cardinality_normalisation = normalisation_factor
         self.cardinality_squish = cardinality_squish
         self.max_confidence_change = max_confidence_change
+        self.point_cloud = set()
 
     def construct(self):
         """
@@ -139,6 +140,12 @@ class SafeArea:
 
         self.cardinality = len(filtered_cover_set)
         self.radius = radius
+
+    def add_to_point_cloud(self, point: Point):
+        self.point_cloud.add(point)
+
+    def get_point_cloud(self):
+        return self.point_cloud
 
     def get_current_confidence(self, timestamp: datetime) -> tuple[float, datetime]:
         """
