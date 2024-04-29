@@ -52,10 +52,13 @@ class DistanceCalculator():
         return round(distance.distance((latitude1, longitude1), (latitude2, longitude2)).meters, 2)
     
     @staticmethod
-    def find_nearest_neighbor_from_candidates(point: Point, candidates: set, initialization_point: tuple) -> tuple[tuple[float, float], float]:
+    def find_nearest_neighbor_from_candidates(point, candidates: set, initialization_point: tuple) -> tuple[tuple[float, float], float]:
         min_dist = float("inf")
         nearest_anchor: Optional[tuple[float, float]] = None
-        (x, y) = DistanceCalculator.calculate_exact_index_for_point(point, initialization_point)
+        if type(point) == Point:
+            (x, y) = DistanceCalculator.calculate_exact_index_for_point(point, initialization_point)
+        else:
+            (x, y) = point
 
         for candidate in candidates:
             dist = DistanceCalculator.calculate_euclidian_distance_between_cells((x,y), candidate)
