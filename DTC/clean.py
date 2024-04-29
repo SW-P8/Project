@@ -12,6 +12,17 @@ class CleanTraj:
     # Merge update_safe_areas into what claes and arthur is doing
 
     def __init__(self, gridsystem : gridsystem.GridSystem) -> None:
+        """
+        Initializes the CleanTraj object with a specific grid system.
+
+        Parameters:
+        - gridsystem (gridsystem.GridSystem): An instance of GridSystem that defines the grid layout, safe areas, and
+          other relevant parameters for trajectory cleaning.
+
+        Attributes:
+        - safe_areas (list): A list of safe areas derived from the grid system used to determine noise in trajectories.
+        - noisy_points (set): A set to accumulate points identified as noisy during the trajectory cleaning process.
+        """
         self.gridsystem = gridsystem
         self.safe_areas = self.gridsystem.safe_areas
     
@@ -19,22 +30,23 @@ class CleanTraj:
 
     def clean(self, points: list):
         """
-        Processes a list of points to identify and corrects noise, refining the trajectory.
+        Processes a list of trajectory points to identify and correct noise, refining the trajectory.
 
-        This method takes a list of points representing a trajectory, calculates their exact indices in relation to a
-        defined grid system's initialization point, and applies noise correction techniques. The goal is to distinguish
-        between noisy points and clear points, updating the trajectory accordingly.
+        This method executes several steps to refine given trajectory points by detecting noise, adjusting points based
+        on the grid system initialization point, and applying corrections based on defined safe areas. It separates
+        points into noisy and clear categories, then updates the trajectory accordingly.
 
         Parameters:
-        - points (list): A list of points (e.g., GPS coordinates or spatial data points) that make up a trajectory.
+        - points (list[Point]): A list of trajectory points, where each point is an instance of the Point class, 
+          potentially containing GPS coordinates or other spatial data points.
 
         Steps:
         1. Initializes a Trajectory object and sets its points.
         2. Uses a DistanceCalculator to refine the position of each point relative to the grid system's initial point.
         3. Applies a NoiseCorrection process to detect noisy points within the trajectory.
-        4. Separates the points into noisy and clear categories.
-        5. Updates the noisy points based on their proximity to safe areas defined within the grid system.
-        6. Records the noisy points in a specific set for further handling or analysis.
+        4. Updates noisy points based on their proximity to safe areas defined within the grid system.
+        5. Optionally records the noisy points in a specific set for further handling or analysis (see additional 
+           methods for handling noisy points).
 
         Returns:
         None. This method modifies the trajectory's points in place and handles the classification of points internally.
