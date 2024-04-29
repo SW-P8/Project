@@ -38,7 +38,7 @@ class CleanTraj:
 
         Parameters:
         - points (list[Point]): A list of trajectory points, where each point is an instance of the Point class, 
-          potentially containing GPS coordinates or other spatial data points.
+          containing GPS coordinates.
 
         Steps:
         1. Initializes a Trajectory object and sets its points.
@@ -70,6 +70,19 @@ class CleanTraj:
 
     # This is slow as FUUUUUUUUCK
     def incremental_refine(self, safe_area : SafeArea ,point: Point, initialization_point):
+        """
+        Incrementally refines the classification of a point as noisy or clear by comparing its distance to the nearest 
+        safe area neighbor against the safe area's radius.
+
+        Parameters:
+        - safe_area (SafeArea): The safe area to compare against.
+        - point (Point): The point being evaluated.
+        - initialization_point (Point): A reference point used for distance calculations.
+
+        Side effects:
+        - Updates the confidence level in a safe area based on the minimum distance.
+        - Potentially adds the point to the noisy_points set if it is determined to be outside the safe area's radius.
+        """
         (anchor, min_dist) = DistanceCalculator.find_nearest_neighbor_from_candidates(point, set[safe_area], initialization_point) 
         safe_area.update_confidence(min_dist, point)
         if ((min_dist > (safe_area.radius))):
@@ -78,10 +91,10 @@ class CleanTraj:
 
     # this might not be smart
     def update_safe_areas(self):
-        for safe_area in self.safe_areas:
-            if safe_area.PointsInSafeArea is not None:
-                for point in safe_area.PointsInSafeArea:
-                    self.incremental_refine(safe_area, point, self.gridsystem.initialization_point)
+        for k,v in self.gridsystem.safe_areas.items():
+            if v.PointsInSafeArea is not None:
+                for point in v.PointsInSafeArea:
+                    self.incremental_refine(v, point, self.gridsystem.initialization_point)
 
 
     # noise set save in DB?
