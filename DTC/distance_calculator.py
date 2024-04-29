@@ -53,6 +53,21 @@ class DistanceCalculator():
     
     @staticmethod
     def find_nearest_neighbor_from_candidates(point, candidates: set, initialization_point: tuple) -> tuple[tuple[float, float], float]:
+        """
+    Find the nearest neighbor of a given point from a set of candidate points.
+
+    Parameters:
+        point (Union[Point, Tuple[float, float]]): The point for which to find the nearest neighbor. 
+                                                     This can be either a Point object or a tuple of floats representing coordinates in the grid system.
+        candidates (Set[Tuple[float, float]]): A set of candidate points from which to search for the nearest neighbor.
+        initialization_point (Tuple[float, float]): A tuple representing the initialization point used for calculations.
+
+    Returns:
+        Tuple[Tuple[float, float], float]: A tuple containing the nearest neighbor point and the distance to it.
+
+    Note:
+        The type of point can be either a Point object or a tuple of floats representing coordinates.
+    """
         min_dist = float("inf")
         nearest_anchor: Optional[tuple[float, float]] = None
         if type(point) == Point:
