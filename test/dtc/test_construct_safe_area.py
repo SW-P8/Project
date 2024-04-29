@@ -1,10 +1,9 @@
 import pytest
-from datetime import datetime, timedelta
 from DTC.construct_safe_area import ConstructSafeArea, SafeArea
 from DTC.distance_calculator import DistanceCalculator
-from DTC.point import Point
 from DTC.trajectory import Trajectory, TrajectoryPointCloud
 from DTC.gridsystem import GridSystem
+from scipy.spatial import KDTree
 
 class TestConstructSafeArea():
     @pytest.fixture
@@ -83,14 +82,16 @@ class TestConstructSafeArea():
 
     def test_find_candidate_nearest_neighbors_returns_correctly_with_single_anchor(self):
         route_skeleton = {(2, 2)}
+        route_skeleton_list = list(route_skeleton)
+        route_skeleton_kd_tree = KDTree(route_skeleton_list)
 
         c1 = (1.5, 1.5)
         c2 = (2.5, 2.5)
         c3 = (3.5, 3.5)
 
-        cnn1 = ConstructSafeArea._find_candidate_nearest_neighbors(route_skeleton, c1)
-        cnn2 = ConstructSafeArea._find_candidate_nearest_neighbors(route_skeleton, c2)
-        cnn3 = ConstructSafeArea._find_candidate_nearest_neighbors(route_skeleton, c3)
+        cnn1 = ConstructSafeArea._find_candidate_nearest_neighbors(route_skeleton_list, route_skeleton_kd_tree, c1)
+        cnn2 = ConstructSafeArea._find_candidate_nearest_neighbors(route_skeleton_list, route_skeleton_kd_tree, c2)
+        cnn3 = ConstructSafeArea._find_candidate_nearest_neighbors(route_skeleton_list, route_skeleton_kd_tree, c3)
 
         assert cnn1 == {(2, 2)}
         assert cnn2 == {(2, 2)}
@@ -98,14 +99,16 @@ class TestConstructSafeArea():
 
     def test_find_candidate_nearest_neighbors_returns_correctly_with_multiple_anchors(self):
         route_skeleton = {(2, 2), (2.5, 2.5), (3, 3), (4, 4)}
+        route_skeleton_list = list(route_skeleton)
+        route_skeleton_kd_tree = KDTree(route_skeleton_list)
 
         c1 = (1.5, 1.5)
         c2 = (2.5, 2.5)
         c3 = (3.5, 3.5)
         
-        cnn1 = ConstructSafeArea._find_candidate_nearest_neighbors(route_skeleton, c1)
-        cnn2 = ConstructSafeArea._find_candidate_nearest_neighbors(route_skeleton, c2)
-        cnn3 = ConstructSafeArea._find_candidate_nearest_neighbors(route_skeleton, c3)
+        cnn1 = ConstructSafeArea._find_candidate_nearest_neighbors(route_skeleton_list, route_skeleton_kd_tree, c1)
+        cnn2 = ConstructSafeArea._find_candidate_nearest_neighbors(route_skeleton_list, route_skeleton_kd_tree, c2)
+        cnn3 = ConstructSafeArea._find_candidate_nearest_neighbors(route_skeleton_list, route_skeleton_kd_tree, c3)
 
         assert cnn1 == {(2, 2), (2.5, 2.5)}
         assert cnn2 == {(2, 2), (2.5, 2.5), (3, 3)}
