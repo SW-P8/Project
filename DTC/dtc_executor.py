@@ -23,6 +23,8 @@ class DTCExecutor:
         gs.extract_route_skeleton()
         gs.construct_safe_areas()
 
+        #TODO: Implement online step
+
         return gs
     
     def create_point_cloud_with_n_points(self, n: int):

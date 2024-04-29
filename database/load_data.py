@@ -38,7 +38,7 @@ def load_data_from_csv(db: SimpleConnectionPool, limit=0):
 
             if not df.empty:
                 buffer = StringIO()
-                __transform_data(df, trajectory_id).to_csv(buffer, index=False, sep=',')
+                _transform_data(df, trajectory_id).to_csv(buffer, index=False, sep=',')
                 buffer.seek(0)
 
                 cursor.copy_expert(COPY_STATEMENT, buffer)
@@ -53,17 +53,37 @@ def load_data_from_csv(db: SimpleConnectionPool, limit=0):
 def __get_numeric_part(file_name) -> int:
     return int(file_name.split('/')[-1].split('.')[0])
 
-def __transform_data(df: pd.DataFrame, trajectory_id: int, inner_city: bool = False) -> pd.DataFrame:
-    if inner_city:
-        min_long = 116.342222
-        max_long = 116.436389
-        min_lat = 39.866389
-        max_lat = 39.983056
-    else:
-        min_long = 115.42
-        max_long = 117.51
-        min_lat = 39.44
-        max_lat = 41.06
+def _transform_data(df: pd.DataFrame, trajectory_id: int, area: str = "full") -> pd.DataFrame:
+    """
+    Transform the given DataFrame based on specified geographical area.
+
+    Parameters:
+        df (pd.DataFrame): The DataFrame containing trajectory data.
+        trajectory_id (int): The identifier for the trajectory.
+        area (str): The geographical area to consider for transformation. Options are "inner", "city", or "full". Defaults to "full".
+
+    Returns:
+        pd.DataFrame: The transformed DataFrame.
+    """
+    min_long = 115.42
+    max_long = 117.51
+    min_lat = 39.44
+    max_lat = 41.06
+
+    match(area):
+        case "inner":
+            min_long = 116.342222
+            max_long = 116.436389
+            min_lat = 39.866389
+            max_lat = 39.983056
+        case "city":
+            min_long = 116.2031
+            max_long = 116.5334
+            min_lat = 39.7513
+            max_lat = 40.0245
+        case _:
+            pass
+            
 
     mask = ~(
         (df['longitude'] < min_long) |

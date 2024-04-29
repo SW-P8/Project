@@ -1,6 +1,8 @@
 import pytest
-from DTC.construct_safe_area import ConstructSafeArea
+from datetime import datetime, timedelta
+from DTC.construct_safe_area import ConstructSafeArea, SafeArea
 from DTC.distance_calculator import DistanceCalculator
+from DTC.point import Point
 from DTC.trajectory import Trajectory, TrajectoryPointCloud
 from DTC.gridsystem import GridSystem
 
