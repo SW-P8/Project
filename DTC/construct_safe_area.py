@@ -107,6 +107,8 @@ class SafeArea:
         self.cardinality_squish = cardinality_squish
         self.max_confidence_change = max_confidence_change
 
+    PointsInSafeAres = []
+
     def construct(self):
         """
         Constructs the SafeArea by calculating its radius.

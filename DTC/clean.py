@@ -1,4 +1,5 @@
 from DTC import dtc_executor, gridsystem, trajectory, noise_correction,distance_calculator
+from DTC.construct_safe_area import SafeArea, Point
 from database.save_data import save_data
 from database.db import init_db
 from DTC.distance_calculator import DistanceCalculator
@@ -12,7 +13,9 @@ class CleanTraj:
 
     def __init__(self, gridsystem : gridsystem.GridSystem) -> None:
         self.gridsystem = gridsystem
-
+        self.safe_areas = self.gridsystem.safe_areas
+    
+    noisy_points = set()
 
     def clean(self, points: list):
         """
@@ -46,20 +49,27 @@ class CleanTraj:
         for point in points:
             point = distance_calc.calculate_exact_index_for_point(point, self.gridsystem.initialization_point)
         noise_corrector = noise_correction.NoiseCorrection(self.gridsystem)
-        points_sorted = noise_corrector.noise_detection(traj)
+        noise_corrector.noise_detection(traj)
         
-        noisy_points = [x for xs, _ in points_sorted for x in xs]
-        clear_points = [y for _, ys in points_sorted for y in ys]
 
-        noisy_points = self.update_safe_areas(noisy_points, self.gridsystem) 
-        self.add_noisy_points_to_noise_set(noisy_points) # - noisy_points should hold coordinates of closest safe_area 
+        self.update_safe_areas() 
+        #self.add_noisy_points_to_noise_set(noisy_points) # - noisy_points should hold coordinates of closest safe_area 
 
+
+    # This is slow as FUUUUUUUUCK
+    def incremental_refine(self, safe_area : SafeArea ,point: Point, initialization_point):
+        (anchor, min_dist) = DistanceCalculator.find_nearest_neighbor_from_candidates(point, set[safe_area], initialization_point) 
+        safe_area.update_confidence(min_dist, point)
+        if ((min_dist > (safe_area.radius))):
+            self.noisy_points.add(point)
+    
 
     # this might not be smart
-    def update_safe_areas(self, traj, safe_areas):
-        pass
-        #noise = call_lasses_insert_function(traj, safe_areas) #- this should maybe return points outside SA before cleaning them 
-        #recalculate_safe_aread(noise, safe_areas) # magic function arthur cook
+    def update_safe_areas(self):
+        for safe_area in self.safe_areas:
+            if safe_area.PointsInSafeArea is not None:
+                for point in safe_area.PointsInSafeArea:
+                    self.incremental_refine(safe_area, point, self.gridsystem.initialization_point)
 
 
     # noise set save in DB?
