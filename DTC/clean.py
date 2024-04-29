@@ -1,21 +1,29 @@
 from _typeshed import NoneType
 import argparse
-from DTC import dtc_executor, gridsystem, trajectory
+from DTC import dtc_executor, gridsystem, trajectory, noise_correction,distance_calculator
 from database.save_data import save_data
 from database.db import init_db
+from DTC.distance_calculator import DistanceCalculator
 
 class CleanTraj:
 
-    def __init__(self) -> None:
-        pass
-    # Evt kør på en tråd for sig selv konstant
+    def __init__(self, gridsystem : gridsystem.GridSystem) -> None:
+        self.gridsystem = gridsystem
+
+
     def clean(self, points, safe_areas):
         traj = trajectory.Trajectory()
-        traj.cls_input_list(points)
-        traj_points = trajectory.TrajectoryPointCloud()
-        traj_points.add_trajectory(traj)
-        grid = gridsystem.GridSystem(points)
-        noisy_points = self.update_safe_areas(grid, safe_areas) 
+        traj.points = points
+        distance_calc = distance_calculator.DistanceCalculator()
+        for point in points:
+            point = distance_calc.calculate_exact_index_for_point(point, self.gridsystem.initialization_point)
+        noise_corrector = noise_correction.NoiseCorrection(self.gridsystem)
+        points_sorted = noise_corrector.noise_detection(traj)
+        
+        noisy_points = [x for xs, _ in points_sorted for x in xs]
+        clear_points = [y for _, ys in points_sorted for y in ys]
+
+        noisy_points = self.update_safe_areas(noisy_points, self.gridsystem) 
         self.add_noisy_points_to_noise_set(noisy_points) # - noisy_points should hold coordinates of closest safe_area 
 
 
