@@ -8,7 +8,7 @@ from DTC.construct_safe_area import ConstructSafeArea
 
 # Region -- Arrange Data
 points = [
-    (3.1, 3.1),
+    (3.1, 3.3),
     (3.8, 3.8),
     (4.5, 4.2),
     (4.5, 4.8),
@@ -42,23 +42,10 @@ main_route = ConstructMainRoute.extract_main_route_with_density_center(grid_syst
 route_skeleton = RouteSkeleton.extract_route_skeleton(ConstructMainRoute.extract_main_route(grid_system),1, 1, 1)
 candidates, historic_mindist = ConstructSafeArea.find_candidate_nearest_neighbors_with_historic_mindist(route_skeleton, (5, 5))
 # Region -- Insert data into figures
-fig_dc, ax_dc = plt.subplots()
-fig_mr, ax_mr = plt.subplots()
+fig_cmr, ax_cmr = plt.subplots()
 fig_cnn, ax_cnn = plt.subplots()
 
-# Density center figure
-x, y = density_centers.pop((5, 5))
-ax_dc.scatter(*zip(*points), color='g', label='Point')
-ax_dc.scatter(*zip(*density_centers.values()), color='orange',
-               label='Density center for other cells')
-ax_dc.scatter(x, y, color='red', label='Density center for current cell')
-ax_dc.add_patch(plt.Rectangle((5, 5), 1, 1, color='green',
-                               alpha=0.375, label="Current cell"))
-ax_dc.add_patch(plt.Rectangle((5 - DistanceCalculator.NEIGHBORHOOD_SIZE // 2, 5 - DistanceCalculator.NEIGHBORHOOD_SIZE // 2),
-                               DistanceCalculator.NEIGHBORHOOD_SIZE, DistanceCalculator.NEIGHBORHOOD_SIZE,
-                               color='green', alpha=0.1, fill=True, linewidth=2, label="Neighborhood"))
-
-# Main route figure
+# Construct Main route figure
 first_active = True
 first_inactive = True
 for cell, density_center, active in main_route:
@@ -68,14 +55,17 @@ for cell, density_center, active in main_route:
     label = ('Main Route' if first_active and active else
             ('Not included in main route' if first_inactive and not active else None))
     
-    ax_mr.add_patch(plt.Rectangle(cell, 1, 1, color=color, alpha=0.375, label=label))
-    ax_mr.scatter(x_d, y_d, color=color)
-    ax_mr.plot([x_c, x_d], [y_c, y_d], color=color, zorder=0)
-    
+    ax_cmr.add_patch(plt.Rectangle(cell, 1, 1, color=color, alpha=0.375, label=label))
+    ax_cmr.plot([x_c, x_d], [y_c, y_d], linestyle='--', dashes=(2, 1), linewidth=1, color=color)
+
     if first_active and active:
         first_active = False
     if first_inactive and not active:
         first_inactive = False
+
+ax_cmr.scatter(*zip(*points), color='g', label='Point')
+ax_cmr.scatter(*zip(*density_centers.values()), color='orange',
+               marker='D', label='Density center')
 
 # Candidate Nearest Neighbor Figure
 ax_cnn.add_patch(plt.Rectangle((5, 5), 1, 1, color='green', alpha=0.375, label='cell'))
@@ -89,7 +79,7 @@ for dist in historic_mindist:
     ax_cnn.add_patch(plt.Circle((5.5, 5.5), dist, color ='green', fill=False))
 
 # Region -- Figure configurations
-for ax in [ax_dc, ax_mr, ax_cnn]:
+for ax in [ax_cmr, ax_cnn]:
     ax.set_xticks(np.arange(0, 100, 1))
     ax.set_yticks(np.arange(0, 100, 1))
     ax.grid()
