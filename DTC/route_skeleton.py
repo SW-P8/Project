@@ -1,15 +1,16 @@
-from DTC.distance_calculator import DistanceCalculator
 from collections import defaultdict
-from typing import Iterator
-import multiprocessing as mp
-from math import dist, floor
-from DTC.collection_utils import CollectionUtils
+from math import ceil
 from copy import deepcopy
+from sklearn.cluster import DBSCAN
+from scipy.spatial import KDTree
+import numpy as np
+import multiprocessing as mp
+from DTC.collection_utils import CollectionUtils
 
 class RouteSkeleton:
     @staticmethod
     def extract_route_skeleton(main_route: set, smooth_radius: int, filtering_list_radius: int, distance_interval: int):
-        min_pts = 0.01 * len(main_route)
+        min_pts = ceil(0.01 * len(main_route))
         smoothed_main_route = RouteSkeleton.smooth_main_route(main_route, smooth_radius)
         contracted_main_route = RouteSkeleton.graph_based_filter(smoothed_main_route, filtering_list_radius, min_pts)
         return RouteSkeleton.filter_sparse_points(contracted_main_route, distance_interval)
@@ -42,58 +43,38 @@ class RouteSkeleton:
     
     @staticmethod
     def smooth_sub_main_route(sub_main_route: set, sub_main_route_with_padding: set, radius: int, send_end):
+        cell_centers = [(x + 0.5, y + 0.5) for (x,y) in sub_main_route]
+        cell_centers_with_padding = [(x + 0.5, y + 0.5) for (x,y) in sub_main_route_with_padding]
+        kd_tree = KDTree(cell_centers_with_padding)
         sub_smoothed_main_route = set()
-        for (x1, y1) in sub_main_route:
-            x_sum = 0
-            y_sum = 0
-            count = 0
-            for i in range(x1 - radius, x1 + radius + 1):
-                for j in range(y1 - radius, y1 + radius + 1):
-                    if (i,j) in sub_main_route_with_padding and DistanceCalculator.calculate_euclidian_distance_between_cells((x1, y1), (i, j)) <= radius:
-                        x_sum += i + 0.5
-                        y_sum += j + 0.5
-                        count += 1
+        
+        for cell_center in cell_centers:
+            indices = kd_tree.query_ball_point(cell_center, radius)
+            neighbour_set = {tuple(cell_centers_with_padding[i]) for i in indices}
+            avg_point = tuple(round(sum(x)/len(x), 2) for x in zip(*neighbour_set))
+            sub_smoothed_main_route.add(avg_point)
 
-            if x_sum != 0:
-                x_sum /= count
-
-            if y_sum != 0:
-                y_sum /= count
-            x_sum = round(x_sum, 2)
-            y_sum = round(y_sum, 2)
-
-            sub_smoothed_main_route.add((x_sum, y_sum))
         send_end.send(sub_smoothed_main_route)
 
     @staticmethod
     def graph_based_filter(data: set, epsilon: float, min_pts) -> set:
-        visited = set()
-        clusters = set()
-        
-        def expand_cluster(point: tuple, cluster: set, visited):
-            cluster.add(point)
-            visited.add(point)
-            neighbors = {p for p in data if p not in visited and DistanceCalculator.calculate_euclidian_distance_between_cells(point, p) <= epsilon}
-            for neighbor in neighbors:
-                expand_cluster(neighbor, cluster, visited)
-        
-        for point in data:
-            if point not in visited:
-                cluster = set()
-                expand_cluster(point, cluster, visited)
-                if len(cluster) >= min_pts:
-                    clusters = clusters.union(cluster)
-        
-        return clusters
+        main_route = np.array(list(data))
+        dbscan = DBSCAN(eps=epsilon, min_samples=min_pts, metric="euclidean")
+        dbscan.fit(main_route)
+        filtered_main_route = main_route[dbscan.labels_ != -1].T
+        return set(zip(filtered_main_route[0], filtered_main_route[1]))
 
     @staticmethod
     def filter_sparse_points(data: set, distance_threshold):
-        points = deepcopy(data)
-        filtered_points = set()
+        points = list(deepcopy(data))
+        kd_tree = KDTree(points)
+        filtered_points = set() # Track points to remove
+
         for source in points:
             if source not in filtered_points:
-                for target in points:
-                    if source != target and DistanceCalculator.calculate_euclidian_distance_between_cells(source, target) < distance_threshold:
-                        filtered_points.add(target)
-            points.difference_update(filtered_points)
-        return points
+                indices = kd_tree.query_ball_point(source, distance_threshold - 0.01)
+                local_filtered = {tuple(points[i]) for i in indices if points[i] != source}
+                filtered_points.update(local_filtered)
+
+        # Update the points list by removing filtered points
+        return {point for point in points if tuple(point) not in filtered_points}

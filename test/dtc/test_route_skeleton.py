@@ -1,6 +1,6 @@
 from DTC.route_skeleton import RouteSkeleton
 from collections import defaultdict
-from math import floor
+from math import ceil
 from copy import deepcopy
 
 class TestRouteSkeleton():
@@ -43,7 +43,7 @@ class TestRouteSkeleton():
     def test_graph_based_filter_returns_correctly_with_single_element(self):
         # Arrange
         smr = {(2.5, 3.5)}
-        min_pts = floor(0.02 * len(smr))
+        min_pts = ceil(0.02 * len(smr))
         expected = smr
 
         # Act
@@ -62,7 +62,7 @@ class TestRouteSkeleton():
         expected = deepcopy(smr)
 
         smr.add((23, 3.5)) #add cell more than radius prime distance from others  
-        min_pts = floor(0.02 * len(smr)) #minimum of 2% of dataset size, this is an arbritrary value
+        min_pts = ceil(0.02 * len(smr)) #minimum of 2% of dataset size, this is an arbritrary value
 
         # Act
         result = RouteSkeleton.graph_based_filter(smr, 10, min_pts)
@@ -80,8 +80,9 @@ class TestRouteSkeleton():
         # Add two cell more than radius prime distance from others (should be enough to not be filtered out)
         smr.add((23, 3.5))        
         smr.add((23.1, 3.5))
+        smr.add((23.2, 3.5))
         
-        min_pts = floor(0.02 * len(smr))
+        min_pts = ceil(0.02 * len(smr))
         expected = smr
         # Act
         result = RouteSkeleton.graph_based_filter(smr, 20, min_pts)
