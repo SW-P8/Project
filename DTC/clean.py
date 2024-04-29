@@ -1,17 +1,45 @@
-from _typeshed import NoneType
-import argparse
 from DTC import dtc_executor, gridsystem, trajectory, noise_correction,distance_calculator
 from database.save_data import save_data
 from database.db import init_db
 from DTC.distance_calculator import DistanceCalculator
 
 class CleanTraj:
+    # TODO:
+    # Tests should include - create a grid system based on a subset of the data-set t-drive
+    # Take a trajectory from t drive non-cleaned and use as input here
+    # Mock data to test each method individually, 
+    # Merge update_safe_areas into what claes and arthur is doing
 
     def __init__(self, gridsystem : gridsystem.GridSystem) -> None:
         self.gridsystem = gridsystem
 
 
-    def clean(self, points, safe_areas):
+    def clean(self, points: list):
+        """
+        Processes a list of points to identify and corrects noise, refining the trajectory.
+
+        This method takes a list of points representing a trajectory, calculates their exact indices in relation to a
+        defined grid system's initialization point, and applies noise correction techniques. The goal is to distinguish
+        between noisy points and clear points, updating the trajectory accordingly.
+
+        Parameters:
+        - points (list): A list of points (e.g., GPS coordinates or spatial data points) that make up a trajectory.
+
+        Steps:
+        1. Initializes a Trajectory object and sets its points.
+        2. Uses a DistanceCalculator to refine the position of each point relative to the grid system's initial point.
+        3. Applies a NoiseCorrection process to detect noisy points within the trajectory.
+        4. Separates the points into noisy and clear categories.
+        5. Updates the noisy points based on their proximity to safe areas defined within the grid system.
+        6. Records the noisy points in a specific set for further handling or analysis.
+
+        Returns:
+        None. This method modifies the trajectory's points in place and handles the classification of points internally.
+
+        Side effects:
+        - Modifies the internal state of the trajectory by updating its points attribute.
+        - Adjusts the set of noisy points within the class based on proximity to safe areas.
+        """
         traj = trajectory.Trajectory()
         traj.points = points
         distance_calc = distance_calculator.DistanceCalculator()
@@ -38,23 +66,10 @@ class CleanTraj:
     # load when supposed to be used?
     def add_noisy_points_to_noise_set(self, noisy_points):
         conn = init_db()
-        save_data(None, conn, noisy_point=True, points=noisy_points)
+        save_data(self.gridsystem, conn, noisy_point=True, points=noisy_points)
 
         # could ret
 
-    # argparse for input - listen for input
-    # spin up a thread cleaning traj
-    # lock gs with mutex when R/W operations are performed
-    # argparse should take safe_areas and points as input
-    def clean_loop(self, *args, **kwargs):
-        sigterm = False
-        while(not sigterm):
-            if 'sigterm' in kwargs:
-                sigterm = True
-            if 'trajectory' in kwargs and 'safe_areas' in kwargs:
-                self.clean(kwargs['trajectory'], kwargs['safe_areas'])
-            else:
-                return "either trajectory or safe_areas are wrong"
 
 
     
