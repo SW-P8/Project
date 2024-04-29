@@ -95,5 +95,5 @@ class RouteSkeleton:
                 for target in points:
                     if source != target and DistanceCalculator.calculate_euclidian_distance_between_cells(source, target) < distance_threshold:
                         filtered_points.add(target)
-        points.difference_update(filtered_points)
+            points.difference_update(filtered_points)
         return points

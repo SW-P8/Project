@@ -56,7 +56,7 @@ class GridSystem:
                 floored_index = (floor(x), floor(y))
                 sub_grid[floored_index].append(point)
         
-        send_end.send(sub_grid)   
+        send_end.send(sub_grid)
 
     def extract_main_route(self, distance_scale: float = 0.2):
         self.main_route = ConstructMainRoute.extract_main_route(self.grid, distance_scale)
