@@ -61,11 +61,9 @@ class TestGridsystem():
     def test_grid_is_build_correctly(self, two_point_grid):
         assert two_point_grid.grid.keys() == {(3, 3), (7, 7)}
 
-        assert two_point_grid.pc.trajectories[0].points[0].get_coordinates() == two_point_grid.grid[(3, 3)][0].get_coordinates()
-        assert two_point_grid.pc.trajectories[0].points[0].timestamp == two_point_grid.grid[(3, 3)][0].timestamp
+        assert (3, 3) == two_point_grid.grid[(3, 3)][0]
 
-        assert two_point_grid.pc.trajectories[0].points[1].get_coordinates() == two_point_grid.grid[(7, 7)][0].get_coordinates()
-        assert two_point_grid.pc.trajectories[0].points[1].timestamp == two_point_grid.grid[(7, 7)][0].timestamp
+        assert (7, 7) == two_point_grid.grid[(7, 7)][0]
 
     def test_extract_main_route_returns_correctly_with_single_point(self, single_point_grid):
         single_point_grid.extract_main_route()
