@@ -10,7 +10,7 @@ from DTC.collection_utils import CollectionUtils
 class RouteSkeleton:
     @staticmethod
     def extract_route_skeleton(main_route: set, smooth_radius: int, filtering_list_radius: int, distance_interval: int):
-        min_pts = ceil(0.01 * len(main_route))
+        min_pts = ceil(0.0001 * len(main_route))
         smoothed_main_route = RouteSkeleton.smooth_main_route(main_route, smooth_radius)
         contracted_main_route = RouteSkeleton.graph_based_filter(smoothed_main_route, filtering_list_radius, min_pts)
         return RouteSkeleton.filter_sparse_points(contracted_main_route, distance_interval)
@@ -59,9 +59,6 @@ class RouteSkeleton:
 
     @staticmethod
     def graph_based_filter(data: set, epsilon: float, min_pts) -> set:
-        print(len(data))
-        print(min_pts)
-        print(epsilon)
         main_route = np.array(list(data))
         dbscan = DBSCAN(eps=epsilon, min_samples=min_pts, metric="euclidean")
         dbscan.fit(main_route)
@@ -70,6 +67,7 @@ class RouteSkeleton:
 
     @staticmethod
     def filter_sparse_points(data: set, distance_threshold):
+        print("Filtered SMR: " + str(len(data)))
         points = list(deepcopy(data))
         kd_tree = KDTree(points)
         filtered_points = set() # Track points to remove
