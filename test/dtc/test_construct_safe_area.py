@@ -1,8 +1,9 @@
 import pytest
-from DTC.construct_safe_area import ConstructSafeArea
+from DTC.construct_safe_area import ConstructSafeArea, SafeArea
 from DTC.distance_calculator import DistanceCalculator
 from DTC.trajectory import Trajectory, TrajectoryPointCloud
 from DTC.gridsystem import GridSystem
+from scipy.spatial import KDTree
 
 class TestConstructSafeArea():
     @pytest.fixture
@@ -33,11 +34,11 @@ class TestConstructSafeArea():
         expected_d2 = DistanceCalculator.calculate_euclidian_distance_between_cells((7, 7), (3, 3))
         
         (p1, d1), (p2, d2) = cs[(3, 3)]
-        coordinates_with_dist = {(two_point_grid.pc.trajectories[0].points[0].get_coordinates(), expected_d1), (two_point_grid.pc.trajectories[0].points[1].get_coordinates(), expected_d2)}
+        coordinates_with_dist = {((3, 3), expected_d1), ((7, 7), expected_d2)}
 
         assert len(cs) == 1
-        assert (p1.get_coordinates(), d1) in coordinates_with_dist
-        assert (p2.get_coordinates(), d2) in coordinates_with_dist
+        assert (p1, d1) in coordinates_with_dist
+        assert (p2, d2) in coordinates_with_dist
 
     def test_create_cover_sets_returns_correctly_with_two_anchors(self, two_point_grid):
         two_point_grid.route_skeleton = {(3, 3), (5, 6)}
@@ -49,12 +50,10 @@ class TestConstructSafeArea():
         p2, d2 = list(cs[(5, 6)])[0]
 
         assert len(cs) == 2
-        assert p1.get_coordinates() == two_point_grid.pc.trajectories[0].points[0].get_coordinates()
-        assert p1.timestamp == two_point_grid.pc.trajectories[0].points[0].timestamp
+        assert p1 == (3, 3)
         assert d1 == expected_d1
 
-        assert p2.get_coordinates() == two_point_grid.pc.trajectories[0].points[1].get_coordinates()
-        assert p2.timestamp == two_point_grid.pc.trajectories[0].points[1].timestamp
+        assert p2 == (7, 7)
         assert d2 == expected_d2
 
 
@@ -72,12 +71,10 @@ class TestConstructSafeArea():
 
         # Length is only gonna be 2 as defaultdict is utilized and (3, 3), (7, 7) does not have any points added
         assert len(cs) == 2
-        assert p1.get_coordinates() == two_point_grid.pc.trajectories[0].points[0].get_coordinates()
-        assert p1.timestamp == two_point_grid.pc.trajectories[0].points[0].timestamp
+        assert p1 == (3, 3)
         assert d1 == expected_d1
 
-        assert p2.get_coordinates() == two_point_grid.pc.trajectories[0].points[1].get_coordinates()
-        assert p2.timestamp == two_point_grid.pc.trajectories[0].points[1].timestamp
+        assert p2 == (7, 7)
         assert d2 == expected_d2
         assert cs[(2, 3)] == set()
         assert cs[(5, 6)] == set()
@@ -85,14 +82,16 @@ class TestConstructSafeArea():
 
     def test_find_candidate_nearest_neighbors_returns_correctly_with_single_anchor(self):
         route_skeleton = {(2, 2)}
+        route_skeleton_list = list(route_skeleton)
+        route_skeleton_kd_tree = KDTree(route_skeleton_list)
 
         c1 = (1.5, 1.5)
         c2 = (2.5, 2.5)
         c3 = (3.5, 3.5)
 
-        cnn1 = ConstructSafeArea._find_candidate_nearest_neighbors(route_skeleton, c1)
-        cnn2 = ConstructSafeArea._find_candidate_nearest_neighbors(route_skeleton, c2)
-        cnn3 = ConstructSafeArea._find_candidate_nearest_neighbors(route_skeleton, c3)
+        cnn1 = ConstructSafeArea._find_candidate_nearest_neighbors(route_skeleton_list, route_skeleton_kd_tree, c1)
+        cnn2 = ConstructSafeArea._find_candidate_nearest_neighbors(route_skeleton_list, route_skeleton_kd_tree, c2)
+        cnn3 = ConstructSafeArea._find_candidate_nearest_neighbors(route_skeleton_list, route_skeleton_kd_tree, c3)
 
         assert cnn1 == {(2, 2)}
         assert cnn2 == {(2, 2)}
@@ -100,14 +99,16 @@ class TestConstructSafeArea():
 
     def test_find_candidate_nearest_neighbors_returns_correctly_with_multiple_anchors(self):
         route_skeleton = {(2, 2), (2.5, 2.5), (3, 3), (4, 4)}
+        route_skeleton_list = list(route_skeleton)
+        route_skeleton_kd_tree = KDTree(route_skeleton_list)
 
         c1 = (1.5, 1.5)
         c2 = (2.5, 2.5)
         c3 = (3.5, 3.5)
         
-        cnn1 = ConstructSafeArea._find_candidate_nearest_neighbors(route_skeleton, c1)
-        cnn2 = ConstructSafeArea._find_candidate_nearest_neighbors(route_skeleton, c2)
-        cnn3 = ConstructSafeArea._find_candidate_nearest_neighbors(route_skeleton, c3)
+        cnn1 = ConstructSafeArea._find_candidate_nearest_neighbors(route_skeleton_list, route_skeleton_kd_tree, c1)
+        cnn2 = ConstructSafeArea._find_candidate_nearest_neighbors(route_skeleton_list, route_skeleton_kd_tree, c2)
+        cnn3 = ConstructSafeArea._find_candidate_nearest_neighbors(route_skeleton_list, route_skeleton_kd_tree, c3)
 
         assert cnn1 == {(2, 2), (2.5, 2.5)}
         assert cnn2 == {(2, 2), (2.5, 2.5), (3, 3)}
