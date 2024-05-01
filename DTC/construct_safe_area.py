@@ -93,7 +93,7 @@ class SafeArea:
         self.cover_set = anchor_cover_set
         self.decrease_factor = decrease_factor
         self.radius = 0
-        self.cardinality = 0
+        self.cardinality = len(anchor_cover_set)
         self.confidence = 1.0
         self.confidence_change_factor = confidence_change
         self.decay_factor = 1 / (60*60*24) # Set as the fraction of a day 1 second represents. Done as TimeDelta is given in seconds.
@@ -133,7 +133,6 @@ class SafeArea:
             filtered_cover_set = {(p, d) for (p, d) in filtered_cover_set if d <= radius}
             removed_count = cover_set_size - len(filtered_cover_set)
 
-        self.cardinality = len(filtered_cover_set)
         self.radius = radius
 
     def get_current_confidence(self, timestamp: datetime) -> tuple[float, datetime]:
