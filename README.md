@@ -15,6 +15,10 @@ source .venv/bin/activate
 ```bash
 pip install -r requirements.txt
 ```
+4. Run setuptools
+```bash
+pip install -e .
+```
 
 # Modify Requirements
 
@@ -28,6 +32,8 @@ pip freeze > requirements.txt
 Make sure you have a postgresql server running on localhost.
 If you are getting authentication failure then check that password and user matches
 [Check this stackoverflow post to debug](https://stackoverflow.com/questions/18664074/getting-error-peer-authentication-failed-for-user-postgres-when-trying-to-ge)
+## Fresh db
+To run the application with a fresh database, `python main.py --fresh-db`
 
 # Benchmarking
 Benchmarking is an addition to Pytest, meaning it is only used in context of Pytest tests.
