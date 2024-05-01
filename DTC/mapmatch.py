@@ -18,7 +18,7 @@ def run_mapmatch(n_points:int):
             json_data = json.load(rskinfile)
     data = [transform(eval(x)) for x in json_data]
     df = pd.DataFrame(data, columns=['longitude', 'latitude'])
-    trace = Trace.from_dataframe(df.iloc[:1000])
+    trace = Trace.from_dataframe(df.iloc[:n_points])
     # generate a geofence polygon that surrounds the trace; units are in meters;
     # this is used to query OSM for a small map that we can match to
     geofence = Geofence.from_trace(trace, padding=1e3)
@@ -31,7 +31,7 @@ def run_mapmatch(n_points:int):
     matches = matcher.match_trace(trace)
 
     result_df = matches.matches_to_dataframe()
-    print(result_df.columns)
+    print(result_df.head())
 
     plot_matches(matches.matches).show_in_browser()
 
