@@ -57,7 +57,8 @@ class CleanTraj:
         - Adjusts the set of noisy points within the class based on proximity to safe areas.
         """
         traj = trajectory.Trajectory()
-        traj.points = points
+        for point in points:
+            traj.add_point(point.longitude, point.latitude)
         distance_calc = distance_calculator.DistanceCalculator()
         for point in points:
             point = distance_calc.calculate_exact_index_for_point(point, self.gridsystem.initialization_point)
