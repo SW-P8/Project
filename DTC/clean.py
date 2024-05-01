@@ -88,7 +88,7 @@ class CleanTraj:
         - Potentially adds the point to the noisy_points set if it is determined to be outside the safe area's radius.
         """
 
-        (anchor, min_dist) = DistanceCalculator.find_nearest_neighbor_from_candidates(point, self.gridsystem.safe_areas, initialization_point) 
+        (anchor, min_dist) = DistanceCalculator.find_nearest_neighbor_from_candidates(point, self.gridsystem.safe_areas.keys(), initialization_point) 
         safe_area.update_confidence(min_dist, point)
         if ((min_dist > (safe_area.radius))):
             self.noisy_points.add(point)
