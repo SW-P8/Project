@@ -72,7 +72,7 @@ class CleanTraj:
 
 
     # This is slow as FUUUUUUUUCK
-    def incremental_refine(self, safe_area : SafeArea,point: Point, initialization_point):
+    def incremental_refine(self,safe_area ,point: Point, initialization_point):
         """
         Incrementally refines the classification of a point as noisy or clear by comparing its distance to the nearest 
         safe area neighbor against the safe area's radius.
@@ -87,7 +87,7 @@ class CleanTraj:
         - Potentially adds the point to the noisy_points set if it is determined to be outside the safe area's radius.
         """
 
-        (anchor, min_dist) = DistanceCalculator.find_nearest_neighbor_from_candidates(point, safe_area.center, initialization_point) 
+        (anchor, min_dist) = DistanceCalculator.find_nearest_neighbor_from_candidates(point, safe_area.cover_set, initialization_point) 
         safe_area.update_confidence(min_dist, point)
         if ((min_dist > (safe_area.radius))):
             self.noisy_points.add(point)
@@ -98,7 +98,7 @@ class CleanTraj:
         for k,v in self.gridsystem.safe_areas.items():
             if v.PointsInSafeArea is not None:
                 for point in v.PointsInSafeArea:
-                    self.incremental_refine(v, {point}, self.gridsystem.initialization_point)
+                    self.incremental_refine(v, point, self.gridsystem.initialization_point)
 
 
     # noise set save in DB?

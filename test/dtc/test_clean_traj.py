@@ -1,5 +1,4 @@
 import pytest
-from unittest.mock import Mock, patch
 from DTC import gridsystem, trajectory
 from DTC.trajectory import TrajectoryPointCloud, Trajectory
 from DTC.distance_calculator import DistanceCalculator
@@ -52,7 +51,7 @@ class TestCleanTraj:
         
 
     def test_incremental_refine(self, grid_system):
-        point = Point(0.001, 51.501)
+        point = Point(0.1, 11.0)
         safe_area = SafeArea({(0,1),(1,1),(0,1)}, anchor=(0, 0), decrease_factor=0.1)
         safe_area.radius = 30
         clean_traj = CleanTraj(grid_system)
