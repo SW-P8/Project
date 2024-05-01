@@ -13,13 +13,16 @@ from DTC.collection_utils import CollectionUtils
 class GridSystem:
     def __init__(self, pc: TrajectoryPointCloud) -> None:
         self.pc = pc
-        self.initialization_point = pc.get_shifted_min()
         self.grid = defaultdict(list)
         self.main_route = set()
         self.route_skeleton = set()
         self.safe_areas = defaultdict(set)
 
-    def create_grid_system(self):
+    def create_grid_system(self, initialization_point = (0,0)):
+        if initialization_point == (0,0):
+            self.initialization_point = self.pc.get_shifted_min()
+        else:
+            self.initialization_point = initialization_point
         process_count = mp.cpu_count()
         splits = CollectionUtils.split(self.pc.trajectories, process_count)
         tasks = []
