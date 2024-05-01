@@ -93,7 +93,6 @@ class CleanTraj:
             self.noisy_points.add(point)
     
 
-    # this might not be smart
     def update_safe_areas(self):
         for k,v in self.gridsystem.safe_areas.items():
             if v.PointsInSafeArea is not None:
@@ -101,13 +100,7 @@ class CleanTraj:
                     self.incremental_refine(v, point, self.gridsystem.initialization_point)
 
 
-    # noise set save in DB?
-    # load when supposed to be used?
-    def add_noisy_points_to_noise_set(self, noisy_points):
-        conn = init_db()
-        save_data(self.gridsystem, conn, noisy_point=True, points=noisy_points)
 
-        # could ret
 
 
 
