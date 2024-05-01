@@ -1,5 +1,6 @@
 from DTC import dtc_executor, gridsystem, trajectory, noise_correction,distance_calculator
-from DTC.construct_safe_area import SafeArea, Point
+from DTC.construct_safe_area import SafeArea
+from DTC.point import Point
 from database.save_data import save_data
 from database.db import init_db
 from DTC.distance_calculator import DistanceCalculator
@@ -61,15 +62,17 @@ class CleanTraj:
         for point in points:
             point = distance_calc.calculate_exact_index_for_point(point, self.gridsystem.initialization_point)
         noise_corrector = noise_correction.NoiseCorrection(self.gridsystem)
-        noise_corrector.noise_detection(traj)
-        
+        try:
+            noise_corrector.noise_detection(traj)
+        except KeyError as e:
+            print(f"Key error detected: {e}")
+            return  # or continue based on your application's needs
 
         self.update_safe_areas() 
-        #self.add_noisy_points_to_noise_set(noisy_points) # - noisy_points should hold coordinates of closest safe_area 
 
 
     # This is slow as FUUUUUUUUCK
-    def incremental_refine(self, safe_area : SafeArea ,point: Point, initialization_point):
+    def incremental_refine(self, safe_area : SafeArea,point: Point, initialization_point):
         """
         Incrementally refines the classification of a point as noisy or clear by comparing its distance to the nearest 
         safe area neighbor against the safe area's radius.
@@ -83,7 +86,8 @@ class CleanTraj:
         - Updates the confidence level in a safe area based on the minimum distance.
         - Potentially adds the point to the noisy_points set if it is determined to be outside the safe area's radius.
         """
-        (anchor, min_dist) = DistanceCalculator.find_nearest_neighbor_from_candidates(point, set[safe_area], initialization_point) 
+
+        (anchor, min_dist) = DistanceCalculator.find_nearest_neighbor_from_candidates(point, safe_area.center, initialization_point) 
         safe_area.update_confidence(min_dist, point)
         if ((min_dist > (safe_area.radius))):
             self.noisy_points.add(point)
@@ -94,7 +98,7 @@ class CleanTraj:
         for k,v in self.gridsystem.safe_areas.items():
             if v.PointsInSafeArea is not None:
                 for point in v.PointsInSafeArea:
-                    self.incremental_refine(v, point, self.gridsystem.initialization_point)
+                    self.incremental_refine(v, {point}, self.gridsystem.initialization_point)
 
 
     # noise set save in DB?

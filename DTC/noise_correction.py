@@ -9,13 +9,11 @@ class NoiseCorrection:
 
     # TODO decide how to handle if p-1 or p+1 is also noise, such that we do not correct noise with noise.
     def noise_detection(self, trajectory: Trajectory):
-        noisy_points = []
-        clear_points = []
         for i, point in enumerate(trajectory.points):
             nearest_anchor, dist = DistanceCalculator.find_nearest_neighbor_from_candidates(point, self.gridsystem.route_skeleton, self.gridsystem.initialization_point)
-            for sa in self.gridsystem.safe_areas:
-                if sa.anchor == nearest_anchor:
-                   sa.PointsInSafeArea.append(point)
+            for k, v in self.gridsystem.safe_areas.items():
+                if v.center == nearest_anchor:
+                   v.PointsInSafeArea.append(point)
             
             if dist >= self.gridsystem.safe_areas[nearest_anchor].radius:
                 # Ensures that we do not try to clean first or last element. Should be improved!
