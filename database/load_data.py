@@ -13,7 +13,7 @@ BBB_MAX_LONG = 117.51
 BBB_MIN_LAT = 39.44
 BBB_MAX_LAT = 41.06
 
-CSV_DIR = "taxi_log_2008_by_id/"
+CSV_DIR = "data/taxi_log_2008_by_id/"
 COPY_STATEMENT = """
     COPY TaxiData(taxi_id, date_time, longitude, latitude, trajectory_id)
     FROM STDIN
