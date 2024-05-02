@@ -71,11 +71,27 @@ class ConstructSafeArea:
 
     @staticmethod
     def _find_candidate_nearest_neighbors(route_skeleton_list: list, route_skeleton_kd_tree: KDTree, cell: tuple) -> dict:
-        distance_to_corner_of_cell = sqrt(0.5 ** 2 + 0.5 ** 2)
-
+        distance_to_corner_of_cell = sqrt(0.5 ** 2 + 0.5 ** 2)        
         min_dist, _ = route_skeleton_kd_tree.query(cell)
         candidate_indices = route_skeleton_kd_tree.query_ball_point(cell, min_dist + distance_to_corner_of_cell)
         return [route_skeleton_list[i] for i in candidate_indices]
+    
+    @staticmethod
+    def find_candidate_nearest_neighbors_with_historic_mindist(route_skeleton: set, cell: tuple) -> dict:
+        historic_mindist = list()
+        min_dist = float("inf")
+        candidates = set()
+        distance_to_corner_of_cell = sqrt(0.5 ** 2 + 0.5 ** 2)
+        for anchor in route_skeleton:
+            print(anchor)
+            dist = DistanceCalculator.calculate_euclidian_distance_between_cells(cell, anchor)
+            if dist <= min_dist + distance_to_corner_of_cell:
+                if dist < min_dist:
+                    print(dist)
+                    min_dist = dist
+                    historic_mindist.append(dist)
+                candidates.add((anchor, dist))
+        return ({a for a, d in candidates if d <= min_dist + distance_to_corner_of_cell}, historic_mindist)
 
 class SafeArea:
     def __init__(self, anchor_cover_set, anchor: tuple[float, float], decrease_factor: float, confidence_change: float = 0.01, normalisation_factor: int = 100000, cardinality_squish: float = 0.1, max_confidence_change: float = 0.1) -> None:
