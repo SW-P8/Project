@@ -8,7 +8,6 @@ from scipy.spatial import KDTree
 def update_safe_area(safe_area: SafeArea, safe_areas: dict, initialization_point, old_smoothed_main_route: dict):
     safe_areas.pop(safe_area)
     point_cloud = create_trajectory_point_cloud(safe_area.get_point_cloud())
-    route_skeleton = RouteSkeleton()
 
     grid_system = build_grid_system(point_cloud, initialization_point)
     
@@ -16,7 +15,7 @@ def update_safe_area(safe_area: SafeArea, safe_areas: dict, initialization_point
 
     graphed_main_route = filter_smoothed_main_route(merged_smoothed_main_route, new_smoothed_main_route, len(old_smoothed_main_route))
 
-    route_skeleton_ancors = route_skeleton.filter_sparse_points(graphed_main_route, 20) # 20 is the radius points cannot be within eachother.
+    route_skeleton_ancors = RouteSkeleton.filter_sparse_points(graphed_main_route, 20) # 20 is the radius points cannot be within eachother.
     new_safe_areas = ConstructSafeArea.construct_safe_areas(route_skeleton_ancors, grid_system, 0.01, initialization_point) # 0.01 is the decrease factor used other places in the code base
     
     return new_safe_areas()
