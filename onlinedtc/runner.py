@@ -1,11 +1,9 @@
 from DTC.trajectory import TrajectoryPointCloud
 from DTC.gridsystem import GridSystem
-from DTC.construct_main_route import ConstructMainRoute
 from DTC.route_skeleton import RouteSkeleton
 from DTC.construct_safe_area import ConstructSafeArea, SafeArea
-from scipy.spatial import KDTree
 
-def update_safe_area(safe_area: SafeArea, safe_areas: dict, initialization_point, old_smoothed_main_route: dict):
+def update_safe_area(safe_area: SafeArea, safe_areas: dict, initialization_point, old_smoothed_main_route: set):
     safe_areas.pop(safe_area)
     point_cloud = create_trajectory_point_cloud(safe_area.get_point_cloud())
 
@@ -18,7 +16,7 @@ def update_safe_area(safe_area: SafeArea, safe_areas: dict, initialization_point
     route_skeleton_ancors = RouteSkeleton.filter_sparse_points(graphed_main_route, 20) # 20 is the radius points cannot be within eachother.
     new_safe_areas = ConstructSafeArea.construct_safe_areas(route_skeleton_ancors, grid_system, 0.01, initialization_point) # 0.01 is the decrease factor used other places in the code base
     
-    return new_safe_areas()
+    return new_safe_areas
 
 def create_trajectory_point_cloud(start_trajectory):
     point_cloud = TrajectoryPointCloud()
@@ -34,7 +32,7 @@ def build_grid_system(point_cloud: TrajectoryPointCloud, initialization_point):
 
 def smooth_new_main_route(main_route:set, smoothed_main_route: set):
     new_smoothed_main_route = RouteSkeleton.smooth_main_route(main_route, 20) # TODO: Why this number
-    merged_smoothed_main_route = smoothed_main_route | new_smoothed_main_route
+    merged_smoothed_main_route = smoothed_main_route.union(new_smoothed_main_route)
 
     return new_smoothed_main_route, merged_smoothed_main_route
 
