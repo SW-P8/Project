@@ -20,11 +20,9 @@ def update_safe_area(safe_area: SafeArea, safe_areas: dict, initialization_point
     
     return new_safe_areas()
 
-def create_trajectory_point_cloud(start_trajectory, neighbor_set):
+def create_trajectory_point_cloud(start_trajectory):
     point_cloud = TrajectoryPointCloud()
     point_cloud.add_trajectory(start_trajectory)
-    for neighbor in neighbor_set:
-        point_cloud.add_trajectory(neighbor.get_point_cloud())
     return point_cloud
 
 def build_grid_system(point_cloud: TrajectoryPointCloud, initialization_point):
