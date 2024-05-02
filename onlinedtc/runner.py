@@ -32,13 +32,13 @@ def build_grid_system(point_cloud: TrajectoryPointCloud, initialization_point):
     
     return grid_system
 
-def smooth_new_main_route(main_route:set, smoothed_main_route: dict):
-    new_smoothed_main_route = RouteSkeleton.smooth_main_route(main_route)
+def smooth_new_main_route(main_route:set, smoothed_main_route: set):
+    new_smoothed_main_route = RouteSkeleton.smooth_main_route(main_route, 20) # TODO: Why this number
     merged_smoothed_main_route = smoothed_main_route | new_smoothed_main_route
 
     return new_smoothed_main_route, merged_smoothed_main_route
 
-def filter_smoothed_main_route(merged_smoothed_main_route: dict, new_smoothed_main_route: dict, min_pts):
+def filter_smoothed_main_route(merged_smoothed_main_route: set, new_smoothed_main_route: set, min_pts):
     graphed_main_route = RouteSkeleton.graph_based_filter(merged_smoothed_main_route, 20, min_pts)
     
     return graphed_main_route.intersection(set(new_smoothed_main_route))
