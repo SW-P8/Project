@@ -28,7 +28,21 @@ class TestConstructSafeArea():
 
     def test_create_cover_sets_returns_correctly_with_single_anchor(self, two_point_grid):
         two_point_grid.route_skeleton = {(3, 3)}
-        cs = ConstructSafeArea._create_cover_sets(two_point_grid.route_skeleton, two_point_grid.grid, two_point_grid.initialization_point)
+        cs = ConstructSafeArea._create_cover_sets(two_point_grid.route_skeleton, two_point_grid.grid, True)
+
+        expected_d1 = DistanceCalculator.calculate_euclidian_distance_between_cells((3, 3), (3, 3))
+        expected_d2 = DistanceCalculator.calculate_euclidian_distance_between_cells((7, 7), (3, 3))
+        
+        (p1, d1), (p2, d2) = cs[(3, 3)]
+        coordinates_with_dist = {((3, 3), expected_d1), ((7, 7), expected_d2)}
+
+        assert len(cs) == 1
+        assert (p1, d1) in coordinates_with_dist
+        assert (p2, d2) in coordinates_with_dist
+
+    def test_create_cover_sets_returns_correctly_with_single_anchor_and_no_relaxed_nn(self, two_point_grid):
+        two_point_grid.route_skeleton = {(3, 3)}
+        cs = ConstructSafeArea._create_cover_sets(two_point_grid.route_skeleton, two_point_grid.grid, False)
 
         expected_d1 = DistanceCalculator.calculate_euclidian_distance_between_cells((3, 3), (3, 3))
         expected_d2 = DistanceCalculator.calculate_euclidian_distance_between_cells((7, 7), (3, 3))
@@ -42,7 +56,7 @@ class TestConstructSafeArea():
 
     def test_create_cover_sets_returns_correctly_with_two_anchors(self, two_point_grid):
         two_point_grid.route_skeleton = {(3, 3), (5, 6)}
-        cs = ConstructSafeArea._create_cover_sets(two_point_grid.route_skeleton, two_point_grid.grid, two_point_grid.initialization_point)
+        cs = ConstructSafeArea._create_cover_sets(two_point_grid.route_skeleton, two_point_grid.grid, True)
 
         expected_d1 = DistanceCalculator.calculate_euclidian_distance_between_cells((3, 3), (3, 3))
         expected_d2 = DistanceCalculator.calculate_euclidian_distance_between_cells((7, 7), (5, 6))
@@ -61,7 +75,7 @@ class TestConstructSafeArea():
 
     def test_create_cover_sets_returns_correctly_with_multiple_anchors(self, two_point_grid):
         two_point_grid.route_skeleton = {(2, 3), (3, 3), (5, 6), (7, 7)}
-        cs = ConstructSafeArea._create_cover_sets(two_point_grid.route_skeleton, two_point_grid.grid, two_point_grid.initialization_point)
+        cs = ConstructSafeArea._create_cover_sets(two_point_grid.route_skeleton, two_point_grid.grid, True)
 
         expected_d1 = DistanceCalculator.calculate_euclidian_distance_between_cells((3, 3), (3, 3))
         expected_d2 = DistanceCalculator.calculate_euclidian_distance_between_cells((7, 7), (7, 7))
@@ -93,9 +107,9 @@ class TestConstructSafeArea():
         cnn2 = ConstructSafeArea._find_candidate_nearest_neighbors(route_skeleton_list, route_skeleton_kd_tree, c2)
         cnn3 = ConstructSafeArea._find_candidate_nearest_neighbors(route_skeleton_list, route_skeleton_kd_tree, c3)
 
-        assert cnn1 == {(2, 2)}
-        assert cnn2 == {(2, 2)}
-        assert cnn3 == {(2, 2)}
+        assert cnn1 == [(2, 2)]
+        assert cnn2 == [(2, 2)]
+        assert cnn3 == [(2, 2)]
 
     def test_find_candidate_nearest_neighbors_returns_correctly_with_multiple_anchors(self):
         route_skeleton = {(2, 2), (2.5, 2.5), (3, 3), (4, 4)}
@@ -110,7 +124,7 @@ class TestConstructSafeArea():
         cnn2 = ConstructSafeArea._find_candidate_nearest_neighbors(route_skeleton_list, route_skeleton_kd_tree, c2)
         cnn3 = ConstructSafeArea._find_candidate_nearest_neighbors(route_skeleton_list, route_skeleton_kd_tree, c3)
 
-        assert cnn1 == {(2, 2), (2.5, 2.5)}
-        assert cnn2 == {(2, 2), (2.5, 2.5), (3, 3)}
-        assert cnn3 == {(2.5, 2.5), (3, 3), (4, 4)}
+        assert set(cnn1) == {(2, 2), (2.5, 2.5)}
+        assert set(cnn2) == {(2, 2), (2.5, 2.5), (3, 3)}
+        assert set(cnn3) == {(2.5, 2.5), (3, 3), (4, 4)}
 
