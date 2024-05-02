@@ -60,7 +60,6 @@ class CleanTraj:
 
         distance_calc = distance_calculator.DistanceCalculator()
         for point in points:
-            point = distance_calc.calculate_exact_index_for_point(point, self.gridsystem.initialization_point)
             traj.add_point(point.longitude, point.latitude)
         
         noise_corrector = noise_correction.NoiseCorrection(self.gridsystem)
