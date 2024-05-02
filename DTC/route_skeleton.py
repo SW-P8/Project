@@ -39,7 +39,6 @@ class RouteSkeleton:
             sub_smoothed_main_route = pipe_list[i].recv()
             task.join()
             smoothed_main_route = smoothed_main_route.union(sub_smoothed_main_route)
-        print("Smoothed main route extracted: " + str(len(smoothed_main_route)))
         return smoothed_main_route
     
     @staticmethod
@@ -67,7 +66,6 @@ class RouteSkeleton:
 
     @staticmethod
     def filter_sparse_points(data: set, distance_threshold):
-        print("Filtered SMR: " + str(len(data)))
         points = list(deepcopy(data))
         kd_tree = KDTree(points)
         filtered_points = set() # Track points to remove

@@ -1,6 +1,6 @@
 from operator import itemgetter
 from datetime import datetime
-from math import sqrt, tanh, floor
+from math import sqrt, tanh
 from DTC.distance_calculator import DistanceCalculator
 import numpy as np
 from collections import defaultdict
@@ -12,8 +12,8 @@ from scipy.spatial import KDTree
 
 class ConstructSafeArea:
     @staticmethod
-    def construct_safe_areas(route_skeleton: set, grid: dict, decrease_factor: float, initialization_point) -> dict:
-        cs = ConstructSafeArea._create_cover_sets(route_skeleton, grid, initialization_point)
+    def construct_safe_areas(route_skeleton: set, grid: dict, decrease_factor: float, find_relaxed_nn: bool = True) -> dict:
+        cs = ConstructSafeArea._create_cover_sets(route_skeleton, grid, find_relaxed_nn)
 
         safe_areas = dict()
 
@@ -23,10 +23,7 @@ class ConstructSafeArea:
         return safe_areas
 
     @staticmethod
-    def _create_cover_sets(route_skeleton: set, grid: dict, initialization_point: tuple, find_candidate_algorithm = None) -> dict:
-        if find_candidate_algorithm is None:
-            find_candidate_algorithm = ConstructSafeArea._find_candidate_nearest_neighbors
-        
+    def _create_cover_sets(route_skeleton: set, grid: dict, find_relaxed_nn: bool) -> dict:    
         process_count = mp.cpu_count()
         sub_grid_keys = CollectionUtils.split(grid.keys(), process_count)
         tasks = []
@@ -36,7 +33,7 @@ class ConstructSafeArea:
             if split != []:
                 recv_end, send_end = mp.Pipe(False)
                 sub_grid = CollectionUtils.get_sub_dict_from_subset_of_keys(grid, split)
-                task = mp.Process(target=ConstructSafeArea.create_cover_sets_sub_grid, args=(route_skeleton, sub_grid, initialization_point, find_candidate_algorithm, send_end))
+                task = mp.Process(target=ConstructSafeArea.create_cover_sets_sub_grid, args=(route_skeleton, sub_grid, find_relaxed_nn, send_end))
                 tasks.append(task)
                 pipe_list.append(recv_end)
                 task.start()
@@ -52,17 +49,23 @@ class ConstructSafeArea:
         return merged_dict
 
     @staticmethod
-    def create_cover_sets_sub_grid(route_skeleton: set, grid: dict, initialization_point: tuple, find_candidate_algorithm, send_end):
+    def create_cover_sets_sub_grid(route_skeleton: set, grid: dict, find_relaxed_nn: bool, send_end):
         cs = defaultdict(set)
         route_skeleton_list = list(route_skeleton)
         route_skeleton_kd_tree = KDTree(route_skeleton_list)
 
         # Assign points to their nearest anchor
-        for (x, y) in grid.keys():
-            candidates = find_candidate_algorithm(route_skeleton_list, route_skeleton_kd_tree, (x + 0.5, y + 0.5))
-            for point in grid[(x, y)]:
-                (anchor, dist) = DistanceCalculator.find_nearest_neighbor_from_candidates(point, candidates, initialization_point)
-                cs[anchor].add((point, dist))
+        if find_relaxed_nn:
+            for (x, y) in grid.keys():
+                candidates = ConstructSafeArea._find_candidate_nearest_neighbors(route_skeleton_list, route_skeleton_kd_tree, (x + 0.5, y + 0.5))
+                for point in grid[(x, y)]:
+                    (anchor, dist) = DistanceCalculator.find_nearest_neighbor_from_candidates(point, candidates, None)
+                    cs[anchor].add((point, dist))
+        else:
+            for (x, y) in grid.keys():
+                for point in grid[(x, y)]:
+                    (anchor, dist) = DistanceCalculator.find_nearest_neighbour_from_candidates_with_kd_tree(point, route_skeleton_list, route_skeleton_kd_tree)
+                    cs[anchor].add((point, dist))
 
         send_end.send(cs)
 
@@ -72,7 +75,7 @@ class ConstructSafeArea:
 
         min_dist, _ = route_skeleton_kd_tree.query(cell)
         candidate_indices = route_skeleton_kd_tree.query_ball_point(cell, min_dist + distance_to_corner_of_cell)
-        return {route_skeleton_list[i] for i in candidate_indices}
+        return [route_skeleton_list[i] for i in candidate_indices]
 
 class SafeArea:
     def __init__(self, anchor_cover_set, anchor: tuple[float, float], decrease_factor: float, confidence_change: float = 0.01, normalisation_factor: int = 100000, cardinality_squish: float = 0.1, max_confidence_change: float = 0.1) -> None:

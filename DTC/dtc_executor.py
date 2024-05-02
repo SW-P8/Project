@@ -29,7 +29,6 @@ class DTCExecutor:
     
     def create_point_cloud_with_n_points(self, n: int, city: bool = False):
         records = self.tdrive_handler.read_n_records_inside_bbb(n, city)
-        print(len(records))
         tid_of_existing_trajectory = 1
         trajectory = Trajectory()
         pc = TrajectoryPointCloud()
