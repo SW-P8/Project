@@ -108,5 +108,38 @@ def test_smooth_new_main_route_with_no_new_data():
     assert set() == result_1
     assert smoothed_main_route == result_2 #No data, so no change.
 
-def test_filter_smooth_main_route():
-    pass
+def test_filter_smooth_main_route_no_filtering():
+    # Arrange
+    new_smooth_main_route = {(0, 1), (1, 1), (2, 1), (2, 2)}
+    merged_smooth_main_route = {(0, 1), (1, 1), (2, 1), (2, 2)}
+    min_pts = 1
+
+    # Act
+    result = filter_smoothed_main_route(merged_smooth_main_route, new_smooth_main_route, min_pts)
+    
+    # Assert
+    assert {(0, 1), (1, 1), (2, 1), (2, 2)} == result # All points in merged are included, so all points should be returned.
+
+def test_filter_smooth_main_route_return_whole_new_route():
+    # Arrange
+    new_smooth_main_route = {(1, 1), (2, 1)}
+    merged_smooth_main_route = {(0, 1), (1, 1), (2, 1), (2, 2)}
+    min_pts = 1
+
+    # Act
+    result = filter_smoothed_main_route(merged_smooth_main_route, new_smooth_main_route, min_pts)
+
+    # Assert
+    assert {(1, 1), (2, 1)} == result # All points in merged are included, so all points should be returned.
+
+def test_filter_smooth_main_route_return_partial_new_route():
+    # Arrange
+    new_smooth_main_route = {(1, 1), (2, 1), (30, 30)}
+    merged_smooth_main_route = {(0, 1), (1, 1), (2, 1), (2, 2)}
+    min_pts = 2
+
+    # Act
+    result = filter_smoothed_main_route(merged_smooth_main_route, new_smooth_main_route, min_pts)
+
+    # Assert
+    assert {(1, 1), (2, 1)} == result # (30, 30) should be filteres as an outlier
