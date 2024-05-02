@@ -10,15 +10,15 @@ import json
 
 def transform(point):
     return DistanceCalculator.convert_cell_to_point(
-        (115.41989767769675, 39.43983985835822), point)
-
+        (116.20287663548845, 39.75112986803514), point)
 
 def run_mapmatch(n_points:int):
-    with open("data/Full area/Alle punkter/AllRSK.json", "r") as rskinfile:
+    with open("data/City area/All/AllcityRSK.json", "r") as rskinfile:
             json_data = json.load(rskinfile)
     data = [transform(eval(x)) for x in json_data]
     df = pd.DataFrame(data, columns=['longitude', 'latitude'])
-    trace = Trace.from_dataframe(df.iloc[:n_points])
+    
+    trace = Trace.from_dataframe(df.iloc[:2500])
     # generate a geofence polygon that surrounds the trace; units are in meters;
     # this is used to query OSM for a small map that we can match to
     geofence = Geofence.from_trace(trace, padding=1e3)
