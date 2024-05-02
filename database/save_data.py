@@ -2,12 +2,6 @@ import psycopg2
 from psycopg2.pool import SimpleConnectionPool
 from DTC.gridsystem import GridSystem
 
-#warnings.simplefilter(action='ignore', category=UserWarning)
-
-
-
-
-        
 
 def insert_safe_areas(model_id, safe_areas, cursor, conn):
     """
@@ -61,7 +55,7 @@ def insert_long_lat(min_longitude, min_latitude, conn, cursor):
     return model_id
 
 
-def save_data(gs: GridSystem, db: SimpleConnectionPool,  points=None):
+def save_data(gs: GridSystem, db: SimpleConnectionPool):
     """
     Saves data related to a GridSystem instance into the database using a connection pool.
 
