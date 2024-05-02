@@ -5,46 +5,21 @@ from DTC.route_skeleton import RouteSkeleton
 from DTC.construct_safe_area import ConstructSafeArea, SafeArea
 from scipy.spatial import KDTree
 
-def update_safe_area(safe_area: SafeArea, safe_areas: KDTree, initialization_point, old_smooth_main_route):
-    neighbor_set = reverse_nearest_neigbor(safe_area.center, safe_areas)
-    point_cloud = create_trajectory_point_cloud(safe_area.get_point_cloud, neighbor_set)
-    grid_system = GridSystem(point_cloud)
-    grid_system.create_grid_system(initialization_point)
-    grid_system.extract_main_route()
-    smoothed_main_route = RouteSkeleton.smooth_main_route(grid_system.main_route, 20)
-    while check_overlap_for_main_routes(old_smooth_main_route, smoothed_main_route) < 50: # TODO: This needs to be checked differently, perhaps if possible do a scan of the area around the neighborset??? idk
-        iteration = 2
-        neighbor_set = reverse_nearest_neigbor(safe_area, safe_areas, iteration)
-        point_cloud = TrajectoryPointCloud()
-        point_cloud.add_trajectory(safe_area.get_point_cloud())
-        for neighbor in neighbor_set:
-            point_cloud.add_trajectory(neighbor.get_point_cloud())
-        grid_system = GridSystem(point_cloud)
-        grid_system.create_grid_system(initialization_point)
-        smoothed_main_route = RouteSkeleton.smooth_main_route(grid_system.main_route, 20)
+def update_safe_area(safe_area: SafeArea, safe_areas: dict, initialization_point, old_smoothed_main_route: dict):
+    safe_areas.pop(safe_area)
+    point_cloud = create_trajectory_point_cloud(safe_area.get_point_cloud())
+    route_skeleton = RouteSkeleton()
+
+    grid_system = build_grid_system(point_cloud, initialization_point)
     
+    new_smoothed_main_route, merged_smoothed_main_route = smooth_new_main_route(grid_system.main_route, old_smoothed_main_route)
 
+    graphed_main_route = filter_smoothed_main_route(merged_smoothed_main_route, new_smoothed_main_route, len(old_smoothed_main_route))
 
-
-    pass
-
-
-def reverse_nearest_neigbor(point, kd_tree: KDTree, n: int = 1):
-    nearest_neighbor_index = kd_tree.query([point], k=1)[1][0]
-
-    points = kd_tree.data
-    candidate_points = points[:nearest_neighbor_index] + points[:nearest_neighbor_index +1:]
-
-    reverse_nearest_index = KDTree(candidate_points).query([points[nearest_neighbor_index]], k=n)[1][0]
-
-    return points[nearest_neighbor_index], candidate_points[reverse_nearest_index]
-
-def check_overlap_for_main_routes(original_main_route: set, new_main_route: set):
-    if original_main_route == set() or new_main_route == set():
-        return 0
+    route_skeleton_ancors = route_skeleton.filter_sparse_points(graphed_main_route, 20) # 20 is the radius points cannot be within eachother.
+    new_safe_areas = ConstructSafeArea.construct_safe_areas(route_skeleton_ancors, grid_system, 0.01, initialization_point) # 0.01 is the decrease factor used other places in the code base
     
-    overlap = original_main_route.intersection(new_main_route)
-    return (len(overlap) / len(new_main_route)) * 100
+    return new_safe_areas()
 
 def create_trajectory_point_cloud(start_trajectory, neighbor_set):
     point_cloud = TrajectoryPointCloud()
@@ -52,3 +27,21 @@ def create_trajectory_point_cloud(start_trajectory, neighbor_set):
     for neighbor in neighbor_set:
         point_cloud.add_trajectory(neighbor.get_point_cloud())
     return point_cloud
+
+def build_grid_system(point_cloud: TrajectoryPointCloud, initialization_point):
+    grid_system = GridSystem(point_cloud)
+    grid_system.create_grid_system(initialization_point)
+    grid_system.extract_main_route()
+    
+    return grid_system
+
+def smooth_new_main_route(main_route:set, smoothed_main_route: dict):
+    new_smoothed_main_route = RouteSkeleton.smooth_main_route(main_route)
+    merged_smoothed_main_route = smoothed_main_route | new_smoothed_main_route
+
+    return new_smoothed_main_route, merged_smoothed_main_route
+
+def filter_smoothed_main_route(merged_smoothed_main_route: dict, new_smoothed_main_route: dict, min_pts):
+    graphed_main_route = RouteSkeleton.graph_based_filter(merged_smoothed_main_route, 20, min_pts)
+    
+    return graphed_main_route.intersection(set(new_smoothed_main_route))
