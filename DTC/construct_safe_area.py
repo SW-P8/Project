@@ -8,6 +8,7 @@ import multiprocessing as mp
 from DTC.distance_calculator import DistanceCalculator
 from DTC.collection_utils import CollectionUtils
 from DTC.point import Point
+from scipy.spatial import KDTree
 
 class ConstructSafeArea:
     @staticmethod
@@ -53,10 +54,12 @@ class ConstructSafeArea:
     @staticmethod
     def create_cover_sets_sub_grid(route_skeleton: set, grid: dict, initialization_point: tuple, find_candidate_algorithm, send_end):
         cs = defaultdict(set)
+        route_skeleton_list = list(route_skeleton)
+        route_skeleton_kd_tree = KDTree(route_skeleton_list)
 
         # Assign points to their nearest anchor
         for (x, y) in grid.keys():
-            candidates = find_candidate_algorithm(route_skeleton, (x + 0.5, y + 0.5))
+            candidates = find_candidate_algorithm(route_skeleton_list, route_skeleton_kd_tree, (x + 0.5, y + 0.5))
             for point in grid[(x, y)]:
                 (anchor, dist) = DistanceCalculator.find_nearest_neighbor_from_candidates(point, candidates, initialization_point)
                 cs[anchor].add((point, dist))
@@ -64,18 +67,11 @@ class ConstructSafeArea:
         send_end.send(cs)
 
     @staticmethod
-    def _find_candidate_nearest_neighbors(route_skeleton: set, cell: tuple) -> dict:
-        min_dist = float("inf")
-        candidates = set()
-        distance_to_corner_of_cell = sqrt(0.5 ** 2 + 0.5 ** 2)
-        
-        for anchor in route_skeleton:
-            dist = DistanceCalculator.calculate_euclidian_distance_between_cells(cell, anchor)
-            if dist <= min_dist + distance_to_corner_of_cell:
-                if dist < min_dist:
-                    min_dist = dist
-                candidates.add((anchor, dist))
-        return {a for a, d in candidates if d <= min_dist + distance_to_corner_of_cell}
+    def _find_candidate_nearest_neighbors(route_skeleton_list: list, route_skeleton_kd_tree: KDTree, cell: tuple) -> dict:
+        distance_to_corner_of_cell = sqrt(0.5 ** 2 + 0.5 ** 2)        
+        min_dist, _ = route_skeleton_kd_tree.query(cell)
+        candidate_indices = route_skeleton_kd_tree.query_ball_point(cell, min_dist + distance_to_corner_of_cell)
+        return {route_skeleton_list[i] for i in candidate_indices}
     
     @staticmethod
     def find_candidate_nearest_neighbors_with_historic_mindist(route_skeleton: set, cell: tuple) -> dict:
@@ -93,7 +89,6 @@ class ConstructSafeArea:
                     historic_mindist.append(dist)
                 candidates.add((anchor, dist))
         return ({a for a, d in candidates if d <= min_dist + distance_to_corner_of_cell}, historic_mindist)
-
 
 class SafeArea:
     def __init__(self, anchor_cover_set, anchor: tuple[float, float], decrease_factor: float, confidence_change: float = 0.01, normalisation_factor: int = 100000, cardinality_squish: float = 0.1, max_confidence_change: float = 0.1) -> None:
