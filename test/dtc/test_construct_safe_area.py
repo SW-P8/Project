@@ -3,6 +3,7 @@ from DTC.construct_safe_area import ConstructSafeArea, SafeArea
 from DTC.distance_calculator import DistanceCalculator
 from DTC.trajectory import Trajectory, TrajectoryPointCloud
 from DTC.gridsystem import GridSystem
+import DTC.json_read_write as json_read_write
 from scipy.spatial import KDTree
 
 class TestConstructSafeArea():
@@ -127,4 +128,22 @@ class TestConstructSafeArea():
         assert set(cnn1) == {(2, 2), (2.5, 2.5)}
         assert set(cnn2) == {(2, 2), (2.5, 2.5), (3, 3)}
         assert set(cnn3) == {(2.5, 2.5), (3, 3), (4, 4)}
+
+    def test_creation_from_cover_set_and_from_meta_data_are_equal(self):
+        safe_area_file = "safe_area_test.json"
+        cover_set = {((1, 1), 1), ((2, 1), 2)}
+        anchor = (0, 1)
+        decrease_factor = 0
+        safe_area_from_cover_set = SafeArea.from_cover_set(cover_set, anchor, decrease_factor)
+        safe_areas_from_cover_set = {anchor: safe_area_from_cover_set}
+
+        json_read_write.write_safe_areas_to_json(safe_area_file, safe_areas_from_cover_set)
+        safe_areas_from_json = json_read_write.read_safe_areas_from_json(safe_area_file)
+
+        safe_area_from_json = safe_areas_from_json[anchor]
+
+        assert safe_area_from_cover_set.__dict__ == safe_area_from_json.__dict__
+
+
+        
 
