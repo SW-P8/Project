@@ -2,6 +2,7 @@ from math import sqrt
 from DTC.point import Point
 from geopy import distance
 from typing import Optional
+from scipy.spatial import KDTree
 
 class DistanceCalculator():
     # Direction constants
@@ -52,10 +53,28 @@ class DistanceCalculator():
         return round(distance.distance((latitude1, longitude1), (latitude2, longitude2)).meters, 2)
     
     @staticmethod
-    def find_nearest_neighbor_from_candidates(point: Point, candidates: set, initialization_point: tuple) -> tuple[tuple[float, float], float]:
+    def find_nearest_neighbor_from_candidates(point, candidates: set, initialization_point: tuple) -> tuple[tuple[float, float], float]:
+        """
+    Find the nearest neighbor of a given point from a set of candidate points.
+
+    Parameters:
+        point (Union[Point, Tuple[float, float]]): The point for which to find the nearest neighbor. 
+                                                     This can be either a Point object or a tuple of floats representing coordinates in the grid system.
+        candidates (Set[Tuple[float, float]]): A set of candidate points from which to search for the nearest neighbor.
+        initialization_point (Tuple[float, float]): A tuple representing the initialization point used for calculations.
+
+    Returns:
+        Tuple[Tuple[float, float], float]: A tuple containing the nearest neighbor point and the distance to it.
+
+    Note:
+        The type of point can be either a Point object or a tuple of floats representing coordinates.
+    """
         min_dist = float("inf")
         nearest_anchor: Optional[tuple[float, float]] = None
-        (x, y) = DistanceCalculator.calculate_exact_index_for_point(point, initialization_point)
+        if type(point) == Point:
+            (x, y) = DistanceCalculator.calculate_exact_index_for_point(point, initialization_point)
+        else:
+            (x, y) = point
 
         for candidate in candidates:
             dist = DistanceCalculator.calculate_euclidian_distance_between_cells((x,y), candidate)
@@ -64,6 +83,11 @@ class DistanceCalculator():
                 min_dist = dist
 
         return (nearest_anchor, min_dist)
+    
+    @staticmethod
+    def find_nearest_neighbour_from_candidates_with_kd_tree(point, candidates: list, candidates_kd_tree: KDTree) -> tuple[tuple[float, float], float]:
+        min_dist, nn_index = candidates_kd_tree.query(point)
+        return (candidates[nn_index], min_dist)
 
     # Converts cell coordinate to long lat based on initialization_point
     @staticmethod

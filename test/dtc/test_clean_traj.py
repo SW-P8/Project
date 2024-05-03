@@ -62,7 +62,7 @@ class TestCleanTraj:
 
     def test_incremental_refine(self, grid_system):
         point = Point(0.1, 11.0)
-        safe_area = SafeArea({(0,1),(1,1),(0,1)}, anchor=(0, 0), decrease_factor=0.1)
+        safe_area = SafeArea((1,1), 10, 69, 0.1, 0.2, 2, 0.15)
         safe_area.radius = 30
         clean_traj = CleanTraj(grid_system.safe_areas, grid_system.route_skeleton, grid_system.initialization_point)
 
