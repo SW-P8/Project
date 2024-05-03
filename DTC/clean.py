@@ -26,7 +26,6 @@ class CleanTraj:
         self.initialization_point = init_point
         self.safe_areas = safe_areas
     
-    noisy_points = []
 
     def clean(self, points: list):
         """
@@ -86,8 +85,6 @@ class CleanTraj:
         if safe_area.timestamp == None:
             return 
         safe_area.update_confidence(min_dist, point)
-        if ((min_dist > (safe_area.radius))):
-            self.noisy_points.append(point)
     
 
     def update_safe_areas(self):

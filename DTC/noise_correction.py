@@ -13,9 +13,7 @@ class NoiseCorrection:
     def noise_detection(self, trajectory: Trajectory):
         for i, point in enumerate(trajectory.points):
             nearest_anchor, dist = DistanceCalculator.find_nearest_neighbor_from_candidates(point, self.route_skeleton, self.initialization_point)
-            for k, v in self.safe_areas.items():
-                if v.center == nearest_anchor:
-                   v.add_to_point_cloud(point)
+            self.safe_areas[nearest_anchor].add_to_point_cloud(point)
             if dist >= self.safe_areas[nearest_anchor].radius:
                 # Ensures that we do not try to clean first or last element. Should be improved!
                 if i != 0 and i != len(trajectory.points) - 1:

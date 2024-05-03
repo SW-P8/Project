@@ -55,7 +55,10 @@ class TestCleanTraj:
         clean_traj = CleanTraj(grid_system.safe_areas, grid_system.route_skeleton, grid_system.initialization_point)
 
         clean_traj.clean(points)
-        
+        points = []
+        for _, sa in clean_traj.safe_areas.items():
+            points.append(sa.get_point_cloud())
+        assert points is not None 
 
     def test_incremental_refine(self, grid_system):
         point = Point(0.1, 11.0)
