@@ -1,5 +1,6 @@
 import pytest
 from datetime import datetime
+import random 
 from DTC.gridsystem import GridSystem
 from DTC.trajectory import TrajectoryPointCloud, Trajectory
 from DTC.distance_calculator import DistanceCalculator
@@ -34,7 +35,7 @@ class TestCleanTraj:
         for _,safe_area in gs.safe_areas.items():
             safe_area.radius = 5
             safe_area.timestamp = datetime.now()
-            safe_area.cardinality = 69 + 420 
+            safe_area.cardinality = random.randint(1,12) 
         return gs
 
 
