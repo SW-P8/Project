@@ -5,7 +5,7 @@ from DTC.construct_safe_area import ConstructSafeArea, SafeArea
 
 
 def update_safe_area(safe_area: SafeArea, safe_areas: dict, initialization_point, old_smoothed_main_route: set):
-    safe_areas.pop(safe_area)
+    safe_areas.pop(safe_area.center)
     point_cloud = create_trajectory_point_cloud(safe_area.get_point_cloud())
 
     grid_system = build_grid_system(point_cloud, initialization_point)
@@ -21,7 +21,7 @@ def update_safe_area(safe_area: SafeArea, safe_areas: dict, initialization_point
         graphed_main_route, 20)
     # 0.01 is the decrease factor used other places in the code base
     new_safe_areas = ConstructSafeArea.construct_safe_areas(
-        route_skeleton_ancors, grid_system, 0.01, initialization_point)
+        route_skeleton_ancors, grid_system.grid, 0.01, initialization_point)
 
     return new_safe_areas
 

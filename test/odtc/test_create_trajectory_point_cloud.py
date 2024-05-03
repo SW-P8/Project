@@ -1,7 +1,8 @@
-from onlinedtc.runner import create_trajectory_point_cloud, build_grid_system
-from onlinedtc.runner import smooth_new_main_route, filter_smoothed_main_route
+from onlinedtc.runner import create_trajectory_point_cloud, build_grid_system, smooth_new_main_route, filter_smoothed_main_route, update_safe_area
 from DTC.trajectory import Trajectory, TrajectoryPointCloud
 from DTC.gridsystem import GridSystem
+from DTC.construct_safe_area import SafeArea
+from DTC.distance_calculator import DistanceCalculator
 import pytest
 # I am lazy, so no mocking will happen here >:(
 
@@ -162,3 +163,24 @@ def test_filter_smooth_main_route_return_partial_new_route():
     # Assert
     # (30, 30) should be filteres as an outlier
     assert {(1, 1), (2, 1)} == result
+
+
+def test_update_safe_area():
+    # Arrange
+    initialization_point = (1, 1)
+    old_smoothed_main_route = {(1, 1), (1, 1), (2, 1), (2, 2)}
+    anchor_cover_set = {(1, 1), (1, 1), (2, 1), (2, 2)}
+    safe_area = SafeArea(anchor_cover_set, (10, -0.5), 0.01)
+
+    for i in range(100):
+        safe_area.add_to_point_cloud(1 + 0.00001 * i, 1)
+    safe_areas = dict()
+    safe_areas[safe_area.center] = safe_area
+
+    # Act
+    result = update_safe_area(safe_area, safe_areas,
+                              initialization_point, old_smoothed_main_route)
+
+    # Assert
+    assert dict == type(result)
+    assert (10, -0.5) == result[(10.0, -0.5)].center
