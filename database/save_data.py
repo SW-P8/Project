@@ -2,7 +2,6 @@ import psycopg2
 from psycopg2.pool import SimpleConnectionPool
 from DTC.gridsystem import GridSystem
 
-#warnings.simplefilter(action='ignore', category=UserWarning)
 
 def insert_safe_areas(model_id, safe_areas, cursor, conn):
     """
@@ -20,7 +19,7 @@ def insert_safe_areas(model_id, safe_areas, cursor, conn):
     INSERT INTO DTC_model_safe_areas (model_id, anchor_x, anchor_y, radius)
     VALUES (%s, %s, %s, %s);
     """
-    params = [(model_id, value.center[0], value.center[1], value.radius) for _, value in safe_areas.items()]
+    params = [(model_id, value.anchor[0], value.anchor[1], value.radius) for _, value in safe_areas.items()]
     
     try:
         cursor.executemany(sql, params)
@@ -79,6 +78,7 @@ def save_data(gs: GridSystem, db: SimpleConnectionPool):
         cursor = conn.cursor()
         id = insert_long_lat(min_long_lat[0], min_long_lat[1], conn, cursor)
         insert_safe_areas(id, safe_areas, cursor, conn)
+
     except (Exception, psycopg2.DatabaseError) as error:
         print("error in main",error)
     finally:

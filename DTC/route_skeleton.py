@@ -10,7 +10,7 @@ from DTC.collection_utils import CollectionUtils
 class RouteSkeleton:
     @staticmethod
     def extract_route_skeleton(main_route: set, smooth_radius: int, filtering_list_radius: int, distance_interval: int):
-        min_pts = ceil(0.01 * len(main_route))
+        min_pts = ceil(0.0001 * len(main_route))
         smoothed_main_route = RouteSkeleton.smooth_main_route(main_route, smooth_radius)
         contracted_main_route = RouteSkeleton.graph_based_filter(smoothed_main_route, filtering_list_radius, min_pts)
         return RouteSkeleton.filter_sparse_points(contracted_main_route, distance_interval)
