@@ -8,7 +8,8 @@ import multiprocessing as mp
 from DTC.distance_calculator import DistanceCalculator
 from DTC.collection_utils import CollectionUtils
 from DTC.point import Point
-from scipy.spatial import KDTree
+from DTC.trajectory import Trajectory
+from scipy.spatial import KDTree 
 
 class ConstructSafeArea:
     @staticmethod
@@ -118,6 +119,18 @@ class SafeArea:
         self.cardinality_normalisation = normalisation_factor
         self.cardinality_squish = cardinality_squish
         self.max_confidence_change = max_confidence_change
+        
+
+    def add_to_point_cloud(self, Point):
+        self.PointsInSafeArea.append(Point)
+
+    def get_point_cloud(self):
+        return self.PointsInSafeArea
+
+    def empty_point_cloud(self):
+        self.PointsInSafeArea = []
+
+    PointsInSafeArea = []
 
     @classmethod
     def from_cover_set(cls, cover_set: set, anchor: tuple[float, float], decrease_factor: float, confidence_change: float = 0.01, normalisation_factor: int = 100000, cardinality_squish: float = 0.1, max_confidence_change: float = 0.1):

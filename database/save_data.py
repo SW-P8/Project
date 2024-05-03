@@ -2,7 +2,6 @@ import psycopg2
 from psycopg2.pool import SimpleConnectionPool
 from DTC.gridsystem import GridSystem
 
-#warnings.simplefilter(action='ignore', category=UserWarning)
 
 def insert_safe_areas(model_id, safe_areas, cursor, conn):
     """
@@ -79,6 +78,7 @@ def save_data(gs: GridSystem, db: SimpleConnectionPool):
         cursor = conn.cursor()
         id = insert_long_lat(min_long_lat[0], min_long_lat[1], conn, cursor)
         insert_safe_areas(id, safe_areas, cursor, conn)
+
     except (Exception, psycopg2.DatabaseError) as error:
         print("error in main",error)
     finally:
