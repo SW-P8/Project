@@ -81,21 +81,28 @@ class TaxiDataHandler:
                 cursor.execute(sql, (n,))
                 return cursor.fetchall()
             
-    def read_n_records_inside_bbb(self, n: int):
+    def read_records_inside_bbb(self, n: int = 0):
         """
         Retrieves n records from the TaxiData table which is contained inside the Beijing Bounding Box
 
         Args:
-            n: Integer, amount of records to retrieve
+            n: Integer, amount of records to retrieve. If not set, no limit is set
 
         Returns:
             List of tuples containing n records
         """
+        if n == 0:
+            sql = "SELECT * FROM TaxiData WHERE latitude > %s AND latitude < %s AND longitude < %s AND longitude > %s"
+        else:
+            sql = "SELECT * FROM TaxiData WHERE latitude > %s AND latitude < %s AND longitude < %s AND longitude > %s LIMIT %s"
 
-        sql = "SELECT * FROM TaxiData WHERE latitude > %s AND latitude < %s AND longitude < %s AND longitude > %s LIMIT %s"
         with self.__connection_pool.getconn() as conn:
             with conn.cursor() as cursor:
-                cursor.execute(sql, (BBB_MIN_LAT, BBB_MAX_LAT, BBB_MAX_LONG, BBB_MIN_LONG, n))
+                if n == 0:
+                    cursor.execute(sql, (BBB_MIN_LAT, BBB_MAX_LAT, BBB_MAX_LONG, BBB_MIN_LONG))
+                else:
+                    cursor.execute(sql, (BBB_MIN_LAT, BBB_MAX_LAT, BBB_MAX_LONG, BBB_MIN_LONG, n))
+
                 return cursor.fetchall()
 
 
