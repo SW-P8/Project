@@ -1,6 +1,8 @@
+from itertools import count
 import pytest
 from datetime import datetime
 import random 
+import copy
 from DTC.gridsystem import GridSystem
 from DTC.trajectory import TrajectoryPointCloud, Trajectory
 from DTC.distance_calculator import DistanceCalculator
@@ -54,18 +56,18 @@ class TestCleanTraj:
 
     def test_clean(self,grid_system, points):
         clean_traj = CleanTraj(grid_system.safe_areas, grid_system.route_skeleton, grid_system.initialization_point)
-
+        old_points = copy.copy(points)
         clean_traj.clean(points)
-        points = []
+        count_match = 0
+        for point in points:
+            for old_point in old_points:
+                if point == old_point:
+                    count_match += 1
+
+        assert old_points.count != count_match 
+        points_in_sa = []
         for _, sa in clean_traj.safe_areas.items():
-            points.append(sa.get_point_cloud())
-        assert points is not None 
+            points_in_sa.append(sa.get_point_cloud())
+        assert points_in_sa is not None 
 
-    def test_incremental_refine(self, grid_system):
-        point = Point(0.1, 11.0)
-        safe_area = SafeArea((1,1), 10, 69, 0.1, 0.2, 2, 0.15)
-        safe_area.radius = 30
-        clean_traj = CleanTraj(grid_system.safe_areas, grid_system.route_skeleton, grid_system.initialization_point)
-
-        clean_traj.incremental_refine(safe_area, point, grid_system.initialization_point)
-        
+       

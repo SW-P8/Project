@@ -127,7 +127,7 @@ class SafeArea:
     def get_point_cloud(self):
         return self.PointsInSafeArea
 
-    def remove_nearest_points(self):
+    def empty_point_cloud(self):
         self.PointsInSafeArea = []
 
     PointsInSafeArea = []
