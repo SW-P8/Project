@@ -39,9 +39,9 @@ class TestIncremental():
         cs2 = set()
         cs2.add((20,20))
 
-        gs.safe_areas[(3,3)] = SafeArea(cs1, (3,3), 0)
+        gs.safe_areas[(3,3)] = SafeArea.from_cover_set(cs1, (3,3), 0)
         gs.safe_areas[(3,3)].radius = 1
-        gs.safe_areas[(7,7)] = SafeArea(cs2, (7,7), 0)
+        gs.safe_areas[(7,7)] = SafeArea.from_cover_set(cs2, (7,7), 0)
         gs.safe_areas[(7,7)].radius = 1
 
         return gs

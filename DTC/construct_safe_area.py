@@ -18,7 +18,7 @@ class ConstructSafeArea:
         safe_areas = dict()
 
         for anchor in route_skeleton:
-            safe_areas[anchor] = SafeArea(cs[anchor], anchor, decrease_factor)
+            safe_areas[anchor] = SafeArea.from_cover_set(cs[anchor], anchor, decrease_factor)
 
         return safe_areas
 
@@ -94,65 +94,57 @@ class ConstructSafeArea:
         return ({a for a, d in candidates if d <= min_dist + distance_to_corner_of_cell}, historic_mindist)
 
 class SafeArea:
-    def __init__(self, anchor_cover_set, anchor: tuple[float, float], decrease_factor: float, confidence_change: float = 0.01, normalisation_factor: int = 100000, cardinality_squish: float = 0.1, max_confidence_change: float = 0.1) -> None:
+    def __init__(self, anchor: tuple[float, float], radius: float, cardinality: int, confidence_change, normalisation_factor, cardinality_squish, max_confidence_change) -> None:
         """
         Initializes a SafeArea instance.
 
         Parameters:
-            anchor_cover_set (set): The set of points covering the anchor area.
             anchor (tuple[float, float]): The center point of the anchor area.
-            decrease_factor (float): The factor by which to decrease the radius in each iteration.
+            radius (float) : The radius which in collaboration with the anchor makes up the safe area
+            cardinality (int) : The amount of points contained in the cover set of the safe area
             confidence_change (float): The minimum change in confidence for each update.
             cardinality_normalisation (int): The normalization factor for cardinality in confidence calculations.
             cardinality_squish (float): The squishing factor for cardinality in confidence calculations.
             max_confidence_change (float): The maximum allowed change in confidence for each update. A value between 0 and 1.
             decrease_factor (float): The decrease a safe-area must see to have removed 'outliers'
         """
-        self.center = anchor
-        self.cover_set = anchor_cover_set
-        self.decrease_factor = decrease_factor
-        self.radius = 0
-        self.cardinality = len(anchor_cover_set)
+        self.anchor = anchor
+        self.radius = radius
+        self.cardinality = cardinality
         self.confidence = 1.0
         self.confidence_change_factor = confidence_change
         self.decay_factor = 1 / (60*60*24) # Set as the fraction of a day 1 second represents. Done as TimeDelta is given in seconds.
-        self.timestamp = datetime.now() # Creation time.
-        self.construct()
+        self.timestamp =  None
         self.cardinality_normalisation = normalisation_factor
         self.cardinality_squish = cardinality_squish
         self.max_confidence_change = max_confidence_change
 
-    def construct(self):
-        """
-        Constructs the SafeArea by calculating its radius.
+    @classmethod
+    def from_cover_set(cls, cover_set: set, anchor: tuple[float, float], decrease_factor: float, confidence_change: float = 0.01, normalisation_factor: int = 100000, cardinality_squish: float = 0.1, max_confidence_change: float = 0.1):
+        radius = SafeArea.calculate_radius(cover_set, decrease_factor)
+        cardinality = len(cover_set)
+        return cls(anchor, radius, cardinality, confidence_change, normalisation_factor, cardinality_squish, max_confidence_change)
+    
+    @classmethod
+    def from_meta_data(cls, anchor: tuple[float, float], radius: float, cardinality: float, confidence_change: float = 0.01, normalisation_factor: int = 100000, cardinality_squish: float = 0.1, max_confidence_change: float = 0.1):
+        return cls(anchor, radius, cardinality, confidence_change, normalisation_factor, cardinality_squish, max_confidence_change)
 
-        Parameters:
-            anchor (tuple[float, float]): The center point of the anchor area.
-            decrease_factor (float): The factor by which to decrease the radius in each iteration.
-        """
-        self.calculate_radius()
        
-    def calculate_radius(self):
-        """
-        Calculates the radius of the Safe Area.
-
-        Parameters:
-            anchor (tuple[float, float]): The center point of the anchor area.
-            decrease_factor (float): The factor by which to decrease the radius in each iteration.
-        """
-        radius = max(self.cover_set, key=itemgetter(1), default=(0,0))[1]
+    @staticmethod   
+    def calculate_radius(cover_set: set, decrease_factor: float):
+        radius = max(cover_set, key=itemgetter(1), default=(0,0))[1]
         removed_count = 0
-        cover_set_size = len(self.cover_set)
-        removal_threshold = self.decrease_factor * cover_set_size
-        filtered_cover_set = {(p, d) for (p, d) in self.cover_set}
+        cover_set_size = len(cover_set)
+        removal_threshold = decrease_factor * cover_set_size
+        filtered_cover_set = {(p, d) for (p, d) in cover_set}
 
         #Refine radius of safe area radius
         while removed_count < removal_threshold:
-            radius *= (1 - self.decrease_factor)
+            radius *= (1 - decrease_factor)
             filtered_cover_set = {(p, d) for (p, d) in filtered_cover_set if d <= radius}
             removed_count = cover_set_size - len(filtered_cover_set)
 
-        self.radius = radius
+        return radius
 
     def get_current_confidence(self, timestamp: datetime) -> tuple[float, datetime]:
         """
