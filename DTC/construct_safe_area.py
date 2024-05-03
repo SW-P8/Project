@@ -103,6 +103,7 @@ class SafeArea:
         self.confidence_change_factor = confidence_change
         self.decay_factor = 1 / (60*60*24) # Set as the fraction of a day 1 second represents. Done as TimeDelta is given in seconds.
         self.timestamp = datetime.now() # Creation time.
+        self.construct()
         self.cardinality_normalisation = normalisation_factor
         self.cardinality_squish = cardinality_squish
         self.max_confidence_change = max_confidence_change
