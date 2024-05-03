@@ -1,8 +1,6 @@
-from DTC import dtc_executor, gridsystem, trajectory, noise_correction,distance_calculator
+from DTC import trajectory, noise_correction,distance_calculator
 from DTC.construct_safe_area import SafeArea
 from DTC.point import Point
-from database.save_data import save_data
-from database.db import init_db
 from DTC.distance_calculator import DistanceCalculator
 
 class CleanTraj:
@@ -12,7 +10,7 @@ class CleanTraj:
     # Mock data to test each method individually, 
     # Merge update_safe_areas into what claes and arthur is doing
 
-    def __init__(self, gridsystem : gridsystem.GridSystem) -> None:
+    def __init__(self, safe_areas, route_skeleton, init_point) -> None:
         """
         Initializes the CleanTraj object with a specific grid system.
 
@@ -24,10 +22,11 @@ class CleanTraj:
         - safe_areas (list): A list of safe areas derived from the grid system used to determine noise in trajectories.
         - noisy_points (set): A set to accumulate points identified as noisy during the trajectory cleaning process.
         """
-        self.gridsystem = gridsystem
-        self.safe_areas = self.gridsystem.safe_areas
+        self.route_skeleton = route_skeleton    
+        self.initialization_point = init_point
+        self.safe_areas = safe_areas
     
-    noisy_points = set()
+    noisy_points = []
 
     def clean(self, points: list):
         """
@@ -60,19 +59,14 @@ class CleanTraj:
 
         distance_calc = distance_calculator.DistanceCalculator()
         for point in points:
-            traj.add_point(point.longitude, point.latitude)
+            traj.add_point(point.longitude, point.latitude, point.timestamp)
         
-        noise_corrector = noise_correction.NoiseCorrection(self.gridsystem)
-        try:
-            noise_corrector.noise_detection(traj)
-        except KeyError as e:
-            print(f"Key error detected: {e}")
-            return  # or continue based on your application's needs
+        noise_corrector = noise_correction.NoiseCorrection(self.safe_areas ,self.route_skeleton, self.initialization_point)
+        noise_corrector.noise_detection(traj)
 
         self.update_safe_areas() 
 
 
-    # This is slow as FUUUUUUUUCK
     def incremental_refine(self,safe_area ,point: Point, initialization_point):
         """
         Incrementally refines the classification of a point as noisy or clear by comparing its distance to the nearest 
@@ -88,16 +82,18 @@ class CleanTraj:
         - Potentially adds the point to the noisy_points set if it is determined to be outside the safe area's radius.
         """
 
-        (anchor, min_dist) = DistanceCalculator.find_nearest_neighbor_from_candidates(point, self.gridsystem.safe_areas.keys(), initialization_point) 
+        (_, min_dist) = DistanceCalculator.find_nearest_neighbor_from_candidates(point, self.safe_areas.keys(), initialization_point)
+        if safe_area.timestamp == None:
+            return 
         safe_area.update_confidence(min_dist, point)
         if ((min_dist > (safe_area.radius))):
-            self.noisy_points.add(point)
+            self.noisy_points.append(point)
     
 
     def update_safe_areas(self):
-        for _,v in self.gridsystem.safe_areas.items():
+        for _,v in self.safe_areas.items():
             if v.PointsInSafeArea is not None:
                 for point in v.PointsInSafeArea:
-                    self.incremental_refine(v, point, self.gridsystem.initialization_point)
+                    self.incremental_refine(v, point, self.initialization_point)
 
 

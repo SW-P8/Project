@@ -8,12 +8,13 @@ import multiprocessing as mp
 from DTC.distance_calculator import DistanceCalculator
 from DTC.collection_utils import CollectionUtils
 from DTC.point import Point
+from DTC.trajectory import Trajectory
 
 class ConstructSafeArea:
     @staticmethod
     def construct_safe_areas(route_skeleton: set, grid: dict, decrease_factor: float, initialization_point) -> dict:
         cs = ConstructSafeArea._create_cover_sets(route_skeleton, grid, initialization_point)
-
+        
         safe_areas = dict()
 
         for anchor in route_skeleton:
@@ -102,10 +103,19 @@ class SafeArea:
         self.confidence_change_factor = confidence_change
         self.decay_factor = 1 / (60*60*24) # Set as the fraction of a day 1 second represents. Done as TimeDelta is given in seconds.
         self.timestamp = datetime.now() # Creation time.
-        self.construct()
         self.cardinality_normalisation = normalisation_factor
         self.cardinality_squish = cardinality_squish
         self.max_confidence_change = max_confidence_change
+        
+
+    def add_to_point_cloud(self, Point):
+        self.PointsInSafeArea.append(Point)
+
+    def get_point_cloud(self):
+        return self.PointsInSafeArea
+
+    def remove_nearest_points(self):
+        self.PointsInSafeArea = []
 
     PointsInSafeArea = []
 
