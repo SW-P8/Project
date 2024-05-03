@@ -1,17 +1,17 @@
-from onlinedtc.runner import *
+from onlinedtc.runner import create_trajectory_point_cloud, build_grid_system
+from onlinedtc.runner import smooth_new_main_route, filter_smoothed_main_route
 from DTC.trajectory import Trajectory, TrajectoryPointCloud
 from DTC.gridsystem import GridSystem
-from DTC.route_skeleton import RouteSkeleton
 import pytest
-
 # I am lazy, so no mocking will happen here >:(
+
 
 def test_create_trajectory_point_cloud_with_non_empty():
     # Arrange
     trajectory = Trajectory()
     for i in range(20):
         trajectory.add_point(1 + 0.1 * i, 1)
-    
+
     # Act
     result = create_trajectory_point_cloud(trajectory)
 
@@ -31,6 +31,7 @@ def test_create_trajectory_point_cloud_with_empty():
     assert TrajectoryPointCloud == type(result)
     assert 0 == len(result.trajectories[0].points)
 
+
 @pytest.fixture
 def trajectory_point_cloud():
     trajectory = Trajectory()
@@ -39,6 +40,7 @@ def trajectory_point_cloud():
         trajectory.add_point(1 + 0.1 * i, 1)
     point_cloud.add_trajectory(trajectory)
     return point_cloud
+
 
 def test_build_grid_system_with_data(trajectory_point_cloud):
     # Arrange
@@ -50,6 +52,7 @@ def test_build_grid_system_with_data(trajectory_point_cloud):
     # Assert
     assert GridSystem == type(result)
     assert 20 == len(result.main_route)
+
 
 def test_build_grid_system_empty_point_cloud():
     # Arrange
@@ -63,28 +66,34 @@ def test_build_grid_system_empty_point_cloud():
     assert GridSystem == type(result)
     assert 0 == len(result.main_route)
 
+
 def test_smooth_new_main_route_with_data():
     # Arrange
     main_route = {(1, 1)}
     smoothed_main_route = {(0, 1), (1, 1), (2, 1), (2, 2)}
 
     # Act
-    (result_1, result_2) = smooth_new_main_route(main_route, smoothed_main_route)
+    (result_1, result_2) = smooth_new_main_route(
+        main_route, smoothed_main_route)
 
     # Assert
     assert set == type(result_1)
     assert set == type(result_2)
 
     assert {(1.5, 1.5)} == result_1
-    assert {(0, 1), (1, 1), (1.5, 1.5), (2, 1), (2, 2)} == set(sorted(result_2)) # Sorted as merging has no guaranteees of preserving the order.
-    
+    # Sorted as merging has no guaranteees of preserving the order.
+    assert {(0, 1), (1, 1), (1.5, 1.5), (2, 1),
+            (2, 2)} == set(sorted(result_2))
+
+
 def test_smooth_new_main_route_with_no_data():
     # Arrange
     main_route = set()
     smoothed_main_route = set()
 
     # Act
-    (result_1, result_2) = smooth_new_main_route(main_route, smoothed_main_route)
+    (result_1, result_2) = smooth_new_main_route(
+        main_route, smoothed_main_route)
 
     # Assert
     assert set == type(result_1)
@@ -93,20 +102,23 @@ def test_smooth_new_main_route_with_no_data():
     assert set() == result_1
     assert set() == result_2
 
+
 def test_smooth_new_main_route_with_no_new_data():
     # Arrange
     main_route = set()
     smoothed_main_route = {(0, 1), (1, 1), (2, 1), (2, 2)}
 
     # Act
-    (result_1, result_2) = smooth_new_main_route(main_route, smoothed_main_route)
-    
+    (result_1, result_2) = smooth_new_main_route(
+        main_route, smoothed_main_route)
+
     # Assert
     assert set == type(result_1)
     assert set == type(result_2)
 
     assert set() == result_1
-    assert smoothed_main_route == result_2 #No data, so no change.
+    assert smoothed_main_route == result_2  # No data, so no change.
+
 
 def test_filter_smooth_main_route_no_filtering():
     # Arrange
@@ -115,10 +127,13 @@ def test_filter_smooth_main_route_no_filtering():
     min_pts = 1
 
     # Act
-    result = filter_smoothed_main_route(merged_smooth_main_route, new_smooth_main_route, min_pts)
-    
+    result = filter_smoothed_main_route(
+        merged_smooth_main_route, new_smooth_main_route, min_pts)
+
     # Assert
-    assert {(0, 1), (1, 1), (2, 1), (2, 2)} == result # All points in merged are included, so all points should be returned.
+    # All points in merged are included, so all points should be returned.
+    assert {(0, 1), (1, 1), (2, 1), (2, 2)} == result
+
 
 def test_filter_smooth_main_route_return_whole_new_route():
     # Arrange
@@ -127,10 +142,12 @@ def test_filter_smooth_main_route_return_whole_new_route():
     min_pts = 1
 
     # Act
-    result = filter_smoothed_main_route(merged_smooth_main_route, new_smooth_main_route, min_pts)
+    result = filter_smoothed_main_route(
+        merged_smooth_main_route, new_smooth_main_route, min_pts)
 
     # Assert
-    assert {(1, 1), (2, 1)} == result # All points in merged are included, so all points should be returned.
+    assert {(1, 1), (2, 1)} == result  # All points in merged are included.
+
 
 def test_filter_smooth_main_route_return_partial_new_route():
     # Arrange
@@ -139,7 +156,9 @@ def test_filter_smooth_main_route_return_partial_new_route():
     min_pts = 2
 
     # Act
-    result = filter_smoothed_main_route(merged_smooth_main_route, new_smooth_main_route, min_pts)
+    result = filter_smoothed_main_route(
+        merged_smooth_main_route, new_smooth_main_route, min_pts)
 
     # Assert
-    assert {(1, 1), (2, 1)} == result # (30, 30) should be filteres as an outlier
+    # (30, 30) should be filteres as an outlier
+    assert {(1, 1), (2, 1)} == result
