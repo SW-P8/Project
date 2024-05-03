@@ -4,11 +4,6 @@ from DTC.point import Point
 from DTC.distance_calculator import DistanceCalculator
 
 class CleanTraj:
-    # TODO:
-    # Tests should include - create a grid system based on a subset of the data-set t-drive
-    # Take a trajectory from t drive non-cleaned and use as input here
-    # Mock data to test each method individually, 
-    # Merge update_safe_areas into what claes and arthur is doing
 
     def __init__(self, safe_areas, route_skeleton, init_point) -> None:
         """
