@@ -142,8 +142,14 @@ class TestConstructSafeArea():
 
         safe_area_from_json = safe_areas_from_json[anchor]
 
-        assert safe_area_from_cover_set.__dict__ == safe_area_from_json.__dict__
-
-
+        assert safe_area_from_cover_set.anchor == safe_area_from_json.anchor
+        assert safe_area_from_cover_set.cardinality == safe_area_from_json.cardinality
+        assert safe_area_from_cover_set.cardinality_normalisation == safe_area_from_json.cardinality_normalisation
+        assert safe_area_from_cover_set.cardinality_squish == safe_area_from_json.cardinality_squish
+        assert safe_area_from_cover_set.confidence == safe_area_from_json.confidence
+        assert safe_area_from_cover_set.confidence_change_factor == safe_area_from_json.confidence_change_factor
+        assert safe_area_from_cover_set.max_confidence_change == safe_area_from_json.max_confidence_change
+        assert safe_area_from_cover_set.decay_factor == safe_area_from_json.decay_factor
+        assert safe_area_from_cover_set.timestamp == safe_area_from_json.timestamp
         
 

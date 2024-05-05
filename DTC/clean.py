@@ -84,8 +84,8 @@ class CleanTraj:
 
     def update_safe_areas(self):
         for _,v in self.safe_areas.items():
-            if v.PointsInSafeArea is not None:
-                for point in v.PointsInSafeArea:
+            if v.points_in_safe_area is not None:
+                for point in v.points_in_safe_area.points:
                     self.incremental_refine(v, point, self.initialization_point)
 
 
