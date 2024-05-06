@@ -15,10 +15,13 @@ class NoiseCorrection:
             nearest_anchor, dist = DistanceCalculator.find_nearest_neighbor_from_candidates(point, self.route_skeleton, self.initialization_point)
             self.safe_areas[nearest_anchor].add_to_point_cloud(point)
             if dist >= self.safe_areas[nearest_anchor].radius:
+                point.noise_flag = True
                 # Ensures that we do not try to clean first or last element. Should be improved!
-                if i != 0 and i != len(trajectory.points) - 1:
+            if i != 0 and i != 1 and i != len(trajectory.points -1):
+                if trajectory.points[i-1].noise_flag is True and trajectory.points[i-2].noise_flag is False and point.noise_flag is False:
                     self.correct_noisy_point(trajectory, i)
-                    
+                elif trajectory.points[i-1].noise_flag is True and trajectory.points[i-2].noise_flag is True or  point.noise_flag is True and trajectory.points[-1] is True:
+                    self.remove_point_from_trajectory(trajectory, point)
 
     def correct_noisy_point(self, trajectory: Trajectory, point_id: int) -> None:
         avg_point = DistanceCalculator.calculate_average_position(trajectory.points[point_id - 1], trajectory.points[point_id + 1])
@@ -28,3 +31,5 @@ class NoiseCorrection:
        
         trajectory.points[point_id].set_coordinates(DistanceCalculator.convert_cell_to_point(self.initialization_point, nearest_anchor))
 
+    def remove_point_from_trajectory(self, trajectory, point):
+        pass

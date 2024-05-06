@@ -6,6 +6,8 @@ class Point:
         self.longitude = longitude
         self.latitude = latitude
         self.timestamp = timestamp
+    
+    noise_flag = False
 
     def get_coordinates(self) -> tuple[float, float]:
         return (self.longitude, self.latitude)
