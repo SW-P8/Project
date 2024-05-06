@@ -56,7 +56,11 @@ class CleanTraj:
             traj.add_point(point.longitude, point.latitude, point.timestamp)
         
         noise_corrector = noise_correction.NoiseCorrection(self.safe_areas ,self.route_skeleton, self.initialization_point)
-        noise_corrector.noise_detection(traj)
+        traj = noise_corrector.noise_detection(traj)
+        if traj is not None:
+            #save traj in database
+            pass
+        
 
         self.update_safe_areas() 
 
