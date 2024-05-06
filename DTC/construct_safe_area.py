@@ -174,6 +174,8 @@ class SafeArea:
         else:
             delta = timestamp - self.timestamp
             new_confidence = self.confidence - self.calculate_time_decay(delta.total_seconds())
+            if new_confidence < 0.5: #  TODO: need proper threshold
+                pass
             return (new_confidence, timestamp)
 
     def set_confidence(self, confidence: float, timestamp: datetime):
@@ -187,7 +189,7 @@ class SafeArea:
         self.confidence = confidence
         self.timestamp = timestamp
 
-    def update_confidence(self, dist, point: Point):
+    def update_confidence(self, dist, point: Point, update_function=None):
         """
         Updates the confidence of the SafeArea based on the distance from a point.
 
@@ -202,6 +204,8 @@ class SafeArea:
             self.cardinality += 1
         else:
             self.confidence -= self.calculate_confidence_decrease(distance_to_safearea)
+        if self.confidence < 0.5:  # TODO: Threshold
+            update_function(self)
     
     def calculate_time_decay(self, delta:float):
         """
