@@ -4,6 +4,7 @@ from database.taxi_data_handler import TaxiDataHandler
 from database.load_data import load_data_from_csv
 from database.db import init_db, new_tdrive_db_pool
 
+
 class DTCExecutor:
     def __init__(self, initialize_db: bool = False) -> None:
         if initialize_db:
@@ -23,25 +24,26 @@ class DTCExecutor:
         gs.extract_route_skeleton()
         gs.construct_safe_areas()
 
-        #TODO: Implement online step
+        # TODO: Implement online step
 
         return gs
-    
-    def create_point_cloud_with_n_points(self, n: int, city: bool = False):
+
+    def create_point_cloud_with_n_points(self, n: int, city: bool = False, with_time: bool = False):
         records = self.tdrive_handler.read_n_records_inside_bbb(n, city)
         tid_of_existing_trajectory = 1
         trajectory = Trajectory()
         pc = TrajectoryPointCloud()
 
-        for _, _, longitude, latitude, tid in records:
+        for _, timestamp, longitude, latitude, tid in records:
             # Separate points into trajectories based on their trajectory ids
             if tid != tid_of_existing_trajectory:
                 pc.add_trajectory(trajectory)
                 trajectory = Trajectory()
                 tid_of_existing_trajectory = tid
-
-            trajectory.add_point(longitude, latitude)
+            if with_time:
+                trajectory.add_point(longitude, latitude, timestamp)
+            else:
+                trajectory.add_point(longitude, latitude, timestamp)
 
         pc.add_trajectory(trajectory)
         return pc
-        

@@ -168,9 +168,13 @@ class SafeArea:
         Returns:
             tuple[float, datetime]: The current confidence and timestamp.
         """
-        delta = timestamp - self.timestamp
-        new_confidence = self.confidence - self.calculate_time_decay(delta.total_seconds())
-        return (new_confidence, timestamp)
+        if self.timestamp is None:
+            self.timestamp = timestamp
+            return (self.confidence, timestamp)
+        else:
+            delta = timestamp - self.timestamp
+            new_confidence = self.confidence - self.calculate_time_decay(delta.total_seconds())
+            return (new_confidence, timestamp)
 
     def set_confidence(self, confidence: float, timestamp: datetime):
         """
