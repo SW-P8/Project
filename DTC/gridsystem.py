@@ -1,5 +1,5 @@
 from DTC.trajectory import TrajectoryPointCloud, Trajectory
-from sklearn.neighbors import KDTree
+from scipy.spatial import KDTree
 from DTC.distance_calculator import DistanceCalculator
 from math import floor
 from collections import defaultdict
@@ -64,6 +64,7 @@ class GridSystem:
 
     def construct_safe_areas(self, decrease_factor: float = 0.01):
         self.safe_areas = ConstructSafeArea.construct_safe_areas(self.route_skeleton, self.grid, decrease_factor, self.initialization_point)
+        self.construct_safe_areas_tree()
     
     def construct_safe_areas_tree(self):
         if self.safe_areas is None:

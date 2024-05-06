@@ -13,12 +13,10 @@ class NoiseCorrection:
 
     # TODO decide how to handle if p-1 or p+1 is also noise, such that we do not correct noise with noise.
     def noise_detection(self, trajectory: Trajectory) -> Trajectory:
-        safe_area_list = list(self.safe_areas.keys())
-        safe_area_trees = KDTree(safe_area_list)
         
         for i, point in enumerate(trajectory.points):
-            dist, nearest_anchor  = safe_area_trees.query(x=(point.longitude, point.latitude))
-            nearest_anchor = safe_area_list[nearest_anchor]
+            dist, nearest_anchor  = self.safe_area_trees.query(x=(point.longitude, point.latitude))
+            nearest_anchor = self.safe_areas_list[nearest_anchor]
             self.safe_areas[nearest_anchor].add_to_point_cloud(point)
             if dist >= self.safe_areas[nearest_anchor].radius:
                 point.noise_flag = True
