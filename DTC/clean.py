@@ -5,7 +5,7 @@ from DTC.distance_calculator import DistanceCalculator
 
 class CleanTraj:
 
-    def __init__(self, safe_areas, route_skeleton, init_point) -> None:
+    def __init__(self,safe_areas ,route_skeleton,safe_area_lists, safe_area_trees,init_point):
         """
         Initializes the CleanTraj object with a specific grid system.
 
@@ -17,10 +17,11 @@ class CleanTraj:
         - safe_areas (list): A list of safe areas derived from the grid system used to determine noise in trajectories.
         - noisy_points (set): A set to accumulate points identified as noisy during the trajectory cleaning process.
         """
-        self.route_skeleton = route_skeleton    
-        self.initialization_point = init_point
+        self.route_skeleton = route_skeleton
         self.safe_areas = safe_areas
-    
+        self.safe_areas_list = safe_area_lists
+        self.safe_area_trees = safe_area_trees
+        self.initialization_point = init_point
 
     def clean(self, points: list):
         """
@@ -55,7 +56,7 @@ class CleanTraj:
         for point in points:
             traj.add_point(point.longitude, point.latitude, point.timestamp)
         
-        noise_corrector = noise_correction.NoiseCorrection(self.safe_areas ,self.route_skeleton, self.initialization_point)
+        noise_corrector = noise_correction.NoiseCorrection(self.safe_areas ,self.route_skeleton,self.safe_areas_list, self.safe_area_trees ,self.initialization_point)
         traj = noise_corrector.noise_detection(traj)
         if traj is not None:
             #save traj in database

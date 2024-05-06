@@ -4,9 +4,11 @@ from DTC.trajectory import Trajectory
 from DTC.distance_calculator import DistanceCalculator
 from scipy.spatial import KDTree
 class NoiseCorrection:
-    def __init__(self,safe_areas ,route_skeleton, init_point):
+    def __init__(self,safe_areas ,route_skeleton,safe_area_lists, safe_area_trees,init_point):
         self.route_skeleton = route_skeleton
         self.safe_areas = safe_areas
+        self.safe_areas_list = safe_area_lists
+        self.safe_area_trees = safe_area_trees
         self.initialization_point = init_point
 
     # TODO decide how to handle if p-1 or p+1 is also noise, such that we do not correct noise with noise.
@@ -21,7 +23,7 @@ class NoiseCorrection:
             if dist >= self.safe_areas[nearest_anchor].radius:
                 point.noise_flag = True
                 # Ensures that we do not try to clean first or last element. Should be improved!
-            if i != 0 and i != 1 and i != len(trajectory.points -1):
+            if i != 0 or i != 1 or i != len(trajectory.points -1):
                 if trajectory.points[i-1].noise_flag is True and trajectory.points[i-2].noise_flag is False and point.noise_flag is False:
                     self.correct_noisy_point(trajectory, i)
                 elif trajectory.points[i-1].noise_flag is True and trajectory.points[i-2].noise_flag is True or  point.noise_flag is True and trajectory.points[-1] is True:

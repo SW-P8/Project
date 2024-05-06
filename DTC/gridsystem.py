@@ -1,4 +1,5 @@
 from DTC.trajectory import TrajectoryPointCloud, Trajectory
+from sklearn.neighbors import KDTree
 from DTC.distance_calculator import DistanceCalculator
 from math import floor
 from collections import defaultdict
@@ -18,6 +19,8 @@ class GridSystem:
         self.main_route = set()
         self.route_skeleton = set()
         self.safe_areas = defaultdict(set)
+        self.safe_areas_list = list()
+        self.safe_area_trees = KDTree
 
     def create_grid_system(self):
         process_count = mp.cpu_count()
@@ -61,6 +64,12 @@ class GridSystem:
 
     def construct_safe_areas(self, decrease_factor: float = 0.01):
         self.safe_areas = ConstructSafeArea.construct_safe_areas(self.route_skeleton, self.grid, decrease_factor, self.initialization_point)
+    
+    def construct_safe_areas_tree(self):
+        if self.safe_areas is None:
+            return
+        self.safe_areas_list = list(self.safe_areas.keys())
+        self.safe_area_trees = KDTree(self.safe_areas_list)
 
 
     def incremental_refinement(self, pc: TrajectoryPointCloud):
