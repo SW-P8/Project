@@ -66,7 +66,8 @@ for cell, density_center, active in main_route:
 ax_cmr.scatter(*zip(*points), color='g', label='Point')
 ax_cmr.scatter(*zip(*density_centers.values()), color='orange',
                marker='D', label='Density center')
-
+ax_cmr.add_patch(plt.Rectangle((2.02, 2.02), 2.98, 2.98, linestyle='--', fill=False, color='green', linewidth=2))
+ax_cmr.text(3.65, 3.40, r'$\Omega_{1,1}=(1.5, 1.5)$')
 # Candidate Nearest Neighbor Figure
 ax_cnn.add_patch(plt.Rectangle((5, 5), 1, 1, color='green', alpha=0.375, label='cell'))
 for anchor in route_skeleton:
