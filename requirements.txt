@@ -14,6 +14,7 @@ fonttools==4.50.0
 geographiclib==2.0
 geopandas==0.14.4
 geopy==2.4.1
+gpxpy==1.6.2
 idna==3.7
 igraph==0.11.4
 iniconfig==2.0.0
@@ -25,6 +26,7 @@ MarkupSafe==2.1.5
 matplotlib==3.8.3
 networkx==2.8.8
 numpy==1.26.4
+-e git+https://github.com/SW-P8/Project.git@13a1af6ac87c2f29caab320f0df840f34c6e5848#egg=online_dtc
 osmnx==1.9.2
 packaging==24.0
 pandas==2.2.1
@@ -35,6 +37,9 @@ psycopg2==2.9.9
 py-cpuinfo==9.0.0
 pyparsing==3.1.2
 pyproj==3.6.1
+PyQt5==5.15.10
+PyQt5-Qt5==5.15.2
+PyQt5-sip==12.13.0
 pytest==8.1.1
 pytest-benchmark==4.0.0
 python-dateutil==2.9.0.post0
