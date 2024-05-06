@@ -84,11 +84,9 @@ class ConstructSafeArea:
         candidates = set()
         distance_to_corner_of_cell = sqrt(0.5 ** 2 + 0.5 ** 2)
         for anchor in route_skeleton:
-            print(anchor)
             dist = DistanceCalculator.calculate_euclidian_distance_between_cells(cell, anchor)
             if dist <= min_dist + distance_to_corner_of_cell:
                 if dist < min_dist:
-                    print(dist)
                     min_dist = dist
                     historic_mindist.append(dist)
                 candidates.add((anchor, dist))
