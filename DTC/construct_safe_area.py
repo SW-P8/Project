@@ -211,9 +211,7 @@ class SafeArea:
             float: The decay factor for confidence.
         """
         decay = delta * self.decay_factor
-        normalised_cardinality = self.cardinality / self.cardinality_normalisation
-        cardinality_offset = self.sigmoid(normalised_cardinality, 3.0, -0.1, 1)
-        decay = self.sigmoid(decay, -cardinality_offset, -0.5, 2) # -0.5 forces the line to go through (0,0) and 2 normalizes the function such that it maps any number to a value between -1 and 1
+        decay = self.sigmoid(decay, 0, -0.5, 2) # -0.5 forces the line to go through (0,0) and 2 normalizes the function such that it maps any number to a value between -1 and 1
         decay = max(decay, 0.0)
         return round(decay, 5)
     
