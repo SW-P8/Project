@@ -211,13 +211,13 @@ class SafeArea:
             float: The decay factor for confidence.
         """
         decay = delta * self.decay_factor
-        decay = self.sigmoid(decay, 0, -0.5, 2) # -0.5 forces the line to go through (0,0) and 2 normalizes the function such that it maps any number to a value between -1 and 1
+        decay = self.sigmoid(decay, -0.5, 2) # -0.5 forces the line to go through (0,0) and 2 normalizes the function such that it maps any number to a value between -1 and 1
         decay = max(decay, 0.0)
         return round(decay, 5)
     
     
-    def sigmoid(self, x: float, x_offset: float, y_offset, multiplier: float) -> float:
-        return (1/(1 + np.exp((-x) + x_offset)) + y_offset) * multiplier
+    def sigmoid(self, x: float, y_offset, multiplier: float) -> float:
+        return (1/(1 + np.exp((-x))) + y_offset) * multiplier
 
     def get_confidence_increase(self):
         inc = max(min((1 / (self.cardinality * self.cardinality_squish)), self.max_confidence_change), self.confidence_change_factor)
