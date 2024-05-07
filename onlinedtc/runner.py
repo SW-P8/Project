@@ -5,7 +5,6 @@ from DTC.construct_safe_area import ConstructSafeArea, SafeArea
 
 
 def update_safe_area(safe_area: SafeArea, safe_areas: dict, initialization_point, old_smoothed_main_route: set):
-    safe_areas.pop(safe_area.anchor)
     point_cloud = create_trajectory_point_cloud(safe_area.get_point_cloud())
 
     grid_system = build_grid_system(point_cloud, initialization_point)

@@ -2,6 +2,8 @@ from DTC import gridsystem, route_skeleton
 from DTC.gridsystem import GridSystem
 from DTC.trajectory import Trajectory
 from DTC.distance_calculator import DistanceCalculator
+from concurrent.futures import ThreadPoolExecutor
+from onlinedtc.runner import update_safe_area
 
 
 class NoiseCorrection:
@@ -28,7 +30,7 @@ class NoiseCorrection:
                     self.correct_noisy_point(trajectory, i)
 
         if len(low_confidence_safe_areas):
-            print("Time to update b!tch")
+            self._update_safe_areas_thread(low_confidence_safe_areas)
 
     def correct_noisy_point(self, trajectory: Trajectory, point_id: int) -> None:
         avg_point = DistanceCalculator.calculate_average_position(
@@ -40,3 +42,17 @@ class NoiseCorrection:
 
         trajectory.points[point_id].set_coordinates(
             DistanceCalculator.convert_cell_to_point(self.initialization_point, nearest_anchor))
+        
+    def _update_safe_areas_thread(self, low_confidence_safe_areas):
+        updated_areas = []
+        with ThreadPoolExecutor() as executor:
+            for area in low_confidence_safe_areas:
+                self.safe_areas.pop(area.anchor)
+                updated_area = executor.submit(self.update_safe_area, area)
+                self.safe_areas[updated_area.anchor] = updated_area
+
+        return updated_areas
+
+    
+    def update_safe_area(self, safe_area):
+        return update_safe_area(safe_area, self.safe_areas, self.initialization_point, self.route_skeleton)
