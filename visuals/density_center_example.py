@@ -25,6 +25,24 @@ points = [
     (7.6, 4.4),
     (8.8, 3.2)
 ]
+candidae_points = [
+    (3.1, 3.3, 'red'),
+    (3.8, 3.8, 'red'),
+    (4.5, 4.2, 'red'),
+    (4.5, 4.8, 'red'),
+    (5.1, 5.1, 'green'),
+    (5.1, 5.3, 'green'),
+    (5.3, 5.1, 'green'),
+    (5.3, 5.3, 'green'),
+    (4.7, 5.1, 'green'),
+    (4.7, 5.2, 'green'),
+    (6.8, 5.1, 'red'),
+    (6.8, 5.2, 'red'),
+    (7.2, 4.4, 'red'),
+    (7.2, 4.8, 'red'),
+    (7.6, 4.4, 'red'),
+    (8.8, 3.2, 'red')
+]
 
 # Region -- Find density centers
 grid_system = {}
@@ -69,15 +87,18 @@ ax_cmr.scatter(*zip(*density_centers.values()), color='orange',
 ax_cmr.add_patch(plt.Rectangle((2.02, 2.02), 2.98, 2.98, linestyle='--', fill=False, color='green', linewidth=2))
 ax_cmr.text(3.65, 3.40, r'$\Omega_{1,1}=(1.5, 1.5)$')
 # Candidate Nearest Neighbor Figure
-ax_cnn.add_patch(plt.Rectangle((5, 5), 1, 1, color='green', alpha=0.375, label='cell'))
-for anchor in route_skeleton:
-    x_a, y_a = anchor
-    ax_cnn.scatter(*anchor, color='orange')
-    ax_cnn.plot([x_a, 5], [y_a, 5], color='orange', zorder=0)
-for candidate in candidates:
-    ax_cnn.scatter(*candidate, color='green')
-for dist in historic_mindist:
-    ax_cnn.add_patch(plt.Circle((5.5, 5.5), dist, color ='green', fill=False))
+for point in candidae_points:
+    x, y, color = point
+    ax_cnn.scatter(x, y, color=color)
+ax_cnn.scatter(5.5, 5.5, color='green')
+ax_cnn.add_patch(plt.Circle((5.5, 5.5), 0.7, color ='green', fill=False))
+ax_cnn.add_patch(plt.Circle((5.5, 5.5), 1, color ='green', fill=False, linestyle='--'))
+
+ax_cnn.plot([5.5, 5.5], [5.5, 4.8], linestyle='--', dashes=(2, 1), linewidth=1, color='green')
+ax_cnn.text(5.6, 5.2, 'mindist', fontsize=10)
+
+ax_cnn.plot([5.5, 5.5], [4.8, 4.5], linestyle='--', dashes=(2, 1), linewidth=1, color='green')
+ax_cnn.text(5.6, 4.6, u'\u03B5', fontsize=10)
 
 # Region -- Figure configurations
 for ax in [ax_cmr, ax_cnn]:
