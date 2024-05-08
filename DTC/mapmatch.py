@@ -63,7 +63,7 @@ def run_mapmatch(n_points:int):
 
     # uses osmnx to pull a networkx map from the OSM database
     nx_map = NxMap.from_geofence(geofence)
-
+    
     matcher = LCSSMatcher(nx_map)
     
     print("Matching...")
