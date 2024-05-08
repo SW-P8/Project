@@ -70,47 +70,4 @@ class TestCleanTrajectory:
             set((point.longitude, point.latitude) for point in old_trajectory.points) - set((point.longitude, point.latitude) for point in trajectory.points))
         # We want to check if the point clouds of the safe areas are filled when a trajectory is cleaned.
         assert 0 == len(old_safe_area.points_in_safe_area.points)
-        assert 0 != len(grid_system.safe_areas[safe_area_anchor].points_in_safe_area.points) 
-
-
-tester = TestCleanTrajectory()
-
-
-class test_methods:
-    def grid_system(self):
-        pc = TrajectoryPointCloud()
-        t = Trajectory()
-        
-        # Add point to use initialization point
-        t.add_point(1,0,datetime(2024, 1, 1, 1, 1, 1))
-
-        for i in range(1, 5):
-            # Shift points 5 meters north and east (should result in 5 points being 1 cell apart in both x and y)
-            shifted_point = DistanceCalculator.shift_point_with_bearing(t.points[0], i * 5, DistanceCalculator.NORTH)
-            shifted_point = DistanceCalculator.shift_point_with_bearing(shifted_point, i * 5, DistanceCalculator.EAST)
-        
-            t.add_point(shifted_point[0], shifted_point[1], datetime(2024, 1, 1, 1, 1, 1 + i))
-        pc.add_trajectory(t)
-        gs = GridSystem(pc)
-        gs.create_grid_system()
-        gs.extract_main_route()
-        gs.extract_route_skeleton()
-        gs.construct_safe_areas()
-        for _,safe_area in gs.safe_areas.items():
-            safe_area.radius = 5
-            safe_area.timestamp = datetime.now()
-            safe_area.cardinality = random.randint(1, 12)
-        return gs
-
-    def trajectory(self):
-        trajectory = Trajectory()
-        trajectory.add_point(116.37677, 39.88791, datetime.now())
-        trajectory.add_point(116.38033, 39.88795, datetime.now())
-        trajectory.add_point(116.39392, 39.89014, datetime.now())
-        return trajectory
-
-
-fixtures = test_methods()
-
-
-tester.test_clean(fixtures.grid_system(), fixtures.trajectory())
+        assert 0 != len(grid_system.safe_areas[safe_area_anchor].points_in_safe_area.points)
