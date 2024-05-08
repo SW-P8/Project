@@ -204,6 +204,7 @@ class SafeArea:
             self.cardinality += 1
         else:
             self.confidence -= self.calculate_confidence_decrease(distance_to_safearea)
+            print(self.confidence)
         if self.confidence < 0.5:  # TODO: Threshold
             update_function(self)
     

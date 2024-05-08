@@ -1,0 +1,115 @@
+# These tests will test if the cleaning part of the system can trigger safe-area updating.
+from DTC.trajectory import Trajectory
+from DTC.noise_correction import NoiseCorrection
+from DTC.construct_safe_area import SafeArea
+from DTC.distance_calculator import DistanceCalculator
+from unittest.mock import patch
+from copy import deepcopy
+from datetime import datetime
+import pytest
+import threading
+
+
+@pytest.fixture
+def safe_areas():
+    safe_areas = {}
+    for i in range(5):
+        safe_areas[(i * 2.5, i * 2.5)] = SafeArea((0, 0),
+                                                  2, 10, 0.1, 0.1, 0.1, 0.1)
+    safe_areas[1000, 1000] = SafeArea((1000, 1000), 2, 10, 0.1, 0.1, 0.1, 0.1)
+    return safe_areas
+
+
+@pytest.fixture
+def noise_corrector(safe_areas):
+    route_skeleton = {(0, 0), (2.5, 2.5), (5, 5), (7.5, 7.5), (10, 10)}
+    initialization_point = (0, 0)
+    return NoiseCorrection(safe_areas, route_skeleton, initialization_point)
+
+
+@pytest.fixture
+def trajectory_off_one_direction():
+    trajectory = Trajectory()
+    trajectory.add_point(0, 0, datetime.now())
+    trajectory.add_point(0, 0, datetime.now())
+    trajectory.add_point(0, 0, datetime.now())
+    return trajectory
+
+@pytest.fixture
+def trajectory_off_two_direction(trajectory_off_one_direction):
+    trajectory = trajectory_off_one_direction
+    trajectory.add_point(10, 10, datetime.now())
+    trajectory.add_point(10, 10, datetime.now())
+    trajectory.add_point(10, 10, datetime.now())
+    trajectory.add_point(10, 10, datetime.now())
+    trajectory.add_point(10, 10, datetime.now())
+    return trajectory
+
+
+def test_noise_correction_calls_update(noise_corrector, trajectory_off_one_direction):
+    # Arrange + Act
+    with patch.object(noise_corrector, '_update_safe_areas_thread') as mock_update:
+        for _ in range(100):
+            noise_corrector.noise_detection(deepcopy(trajectory_off_one_direction))
+
+    # Assert
+    mock_update.assert_called()
+
+
+def test_noise_correction_does_not_call_update(noise_corrector, trajectory_off_one_direction):
+    # Arrange + Act
+    with patch.object(noise_corrector, '_update_safe_areas_thread') as mock_update:
+        noise_corrector.noise_detection(deepcopy(trajectory_off_one_direction))
+
+    # Assert
+    mock_update.assert_not_called()
+
+
+def test_noise_correction_creates_threads(safe_areas, trajectory_off_one_direction):
+    # Arrange
+    route_skeleton = {(0, 0), (2.5, 2.5), (5, 5), (7.5, 7.5), (10, 10)}
+    initialization_point = (0, 1)
+    noise_corrector = NoiseCorrection(safe_areas, route_skeleton, initialization_point)
+    num_of_threads_before = threading.active_count()
+
+    # Act
+    with patch.object(noise_corrector, 'update_safe_area') as mock_update_safe_area:
+        for _ in range(2):
+            noise_corrector.noise_detection(deepcopy(trajectory_off_one_direction))
+    num_of_threads_after = threading.active_count()
+
+    # Assert
+    mock_update_safe_area.assert_called()
+    # Threads should be closed.
+    assert 0 == num_of_threads_before - num_of_threads_after
+    assert 1 == mock_update_safe_area.call_count
+
+
+def test_noise_correction_creates_two_threads(safe_areas, trajectory_off_two_direction):
+    # Arrange
+    DistanceCalculator.convert_cell_to_point((0, 1), (10, 10))
+
+    route_skeleton = {(0, 0), (2.5, 2.5), (5, 5), (7.5, 7.5), (1000, 1000)}
+    initialization_point = (0, 0)
+    for area in safe_areas.values():
+        print(DistanceCalculator.convert_cell_to_point(initialization_point, area.anchor))
+    noise_corrector = NoiseCorrection(
+        safe_areas, route_skeleton, initialization_point)
+    num_of_threads_before = threading.active_count()
+
+    # Act
+    with patch.object(noise_corrector, 'update_safe_area') as mock_update_safe_area:
+        for _ in range(1):
+            noise_corrector.noise_detection(
+                deepcopy(trajectory_off_two_direction))
+    num_of_threads_after = threading.active_count()
+
+    # Assert
+    mock_update_safe_area.assert_called()
+    # Threads should be closed.
+    assert 0 == num_of_threads_before - num_of_threads_after
+    assert 2 == mock_update_safe_area.call_count
+
+def test_noise_correction_removes_safe_areas():
+    pass
+

@@ -1,8 +1,9 @@
-from onlinedtc.runner import create_trajectory_point_cloud, build_grid_system, smooth_new_main_route, filter_smoothed_main_route, update_safe_area
+from onlinedtc.runner import create_trajectory_point_cloud, build_grid_system
+from onlinedtc.runner import smooth_new_main_route, filter_smoothed_main_route
+from onlinedtc.runner import update_safe_area
 from DTC.trajectory import Trajectory, TrajectoryPointCloud, Point
 from DTC.gridsystem import GridSystem
 from DTC.construct_safe_area import SafeArea
-from DTC.distance_calculator import DistanceCalculator
 import pytest
 # I am lazy, so no mocking will happen here >:(
 
@@ -166,7 +167,6 @@ def test_update_safe_area():
     # Arrange
     initialization_point = (1, 1)
     old_smoothed_main_route = {(1, 1), (1, 1), (2, 1), (2, 2)}
-    anchor_cover_set = {(1, 1), (1, 1), (2, 1), (2, 2)}
     safe_area = SafeArea((10, -0.5), 10, 4, 0.1, 0.1, 0.1, 0.1)
 
     for i in range(100):
