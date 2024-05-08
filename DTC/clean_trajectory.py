@@ -1,12 +1,10 @@
-from DTC import trajectory, noise_correction, distance_calculator
+from DTC import noise_correction
 from DTC.trajectory import Trajectory
 from DTC.construct_safe_area import SafeArea
 from DTC.route_skeleton import RouteSkeleton
-from DTC.point import Point
-from DTC.distance_calculator import DistanceCalculator
 
 
-class CleanTraj:
+class CleanTrajectory:
 
     def __init__(self, safe_areas: set[SafeArea], route_skeleton: RouteSkeleton, init_point: tuple[float, float]) -> None:
         """
@@ -51,7 +49,7 @@ class CleanTraj:
         - Modifies the internal state of the trajectory by updating its points attribute.
         - Adjusts the set of noisy points within the class based on proximity to safe areas.
         """
-        if len(input_trajectory.points) is 0:
+        if len(input_trajectory.points) == 0:
             pass
         else:
             noise_corrector = noise_correction.NoiseCorrection(

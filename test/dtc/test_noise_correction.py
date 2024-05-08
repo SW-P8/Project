@@ -92,6 +92,8 @@ class TestNoiseCorrection():
 
         five_point_grid.route_skeleton = {(0,0), (2.5,2.5), (5,5), (7,7), (10,10)}
         five_point_grid.construct_safe_areas(0)
+        for safe_area in five_point_grid.safe_areas:
+            five_point_grid.safe_areas[safe_area].radius = 1 # As confidence update is a part of nosie detection, a safe area cannot have 0 as its radius.
 
         nc = NoiseCorrection(five_point_grid.safe_areas, five_point_grid.route_skeleton, five_point_grid.initialization_point)
         # Changing point to make it an outlier.
