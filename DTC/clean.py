@@ -53,12 +53,12 @@ class CleanTraj:
 
         distance_calc = distance_calculator.DistanceCalculator()
         for point in points:
-            traj.add_point(point.longitude, point.latitude, point.timestamp)
+            traj.add_point(point.longitude, point.latitude, point.timestamp, point.noise)
         
         noise_corrector = noise_correction.NoiseCorrection(self.safe_areas ,self.route_skeleton, self.initialization_point)
-        noise_corrector.noise_detection(traj)
-
-        self.update_safe_areas() 
+        a = noise_corrector.noise_detection(traj)
+        return a
+        #self.update_safe_areas() 
 
 
     def incremental_refine(self,safe_area ,point: Point, initialization_point):

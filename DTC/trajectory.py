@@ -12,8 +12,8 @@ class Trajectory:
         self.min_latitude = float('inf')
         self.max_latitude = float('-inf')
 
-    def add_point(self,longitude: float, latitude: float, timestamp: Optional[datetime] = None) -> None:
-        self.points.append(Point(longitude, latitude, timestamp))
+    def add_point(self,longitude: float, latitude: float, timestamp: Optional[datetime] = None, noise: Optional[bool] = False) -> None:
+        self.points.append(Point(longitude, latitude, timestamp, noise))
 
         # Check if added longitude is new max
         if longitude > self.max_longitude:

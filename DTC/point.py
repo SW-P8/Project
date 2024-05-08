@@ -2,10 +2,11 @@ from typing import Optional
 from datetime import datetime
 
 class Point:
-    def __init__(self, longitude: float, latitude: float, timestamp: Optional[datetime] = None) -> None:
+    def __init__(self, longitude: float, latitude: float, timestamp: Optional[datetime] = None, noise: Optional[bool] = False) -> None:
         self.longitude = longitude
         self.latitude = latitude
         self.timestamp = timestamp
+        self.noise = noise
 
     def get_coordinates(self) -> tuple[float, float]:
         return (self.longitude, self.latitude)

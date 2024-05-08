@@ -2,12 +2,14 @@ from DTC import gridsystem, route_skeleton
 from DTC.gridsystem import GridSystem
 from DTC.trajectory import Trajectory
 from DTC.distance_calculator import DistanceCalculator
+import copy
 
 class NoiseCorrection:
     def __init__(self,safe_areas ,route_skeleton, init_point):
         self.route_skeleton = route_skeleton
         self.safe_areas = safe_areas
         self.initialization_point = init_point
+        self.noisy_points = []
 
     # TODO decide how to handle if p-1 or p+1 is also noise, such that we do not correct noise with noise.
     def noise_detection(self, trajectory: Trajectory):
@@ -17,8 +19,9 @@ class NoiseCorrection:
             if dist >= self.safe_areas[nearest_anchor].radius:
                 # Ensures that we do not try to clean first or last element. Should be improved!
                 if i != 0 and i != len(trajectory.points) - 1:
+                    self.noisy_points.append(copy.copy(point.noise))
                     self.correct_noisy_point(trajectory, i)
-                    
+        return self.noisy_points                    
 
     def correct_noisy_point(self, trajectory: Trajectory, point_id: int) -> None:
         avg_point = DistanceCalculator.calculate_average_position(trajectory.points[point_id - 1], trajectory.points[point_id + 1])
