@@ -8,3 +8,4 @@ online_dtc.egg-info
 *.jpeg
 *.jpg
 *.json
+data/

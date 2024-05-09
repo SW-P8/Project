@@ -59,16 +59,16 @@ class TestGridsystem():
         return gs
 
     def test_grid_is_build_correctly(self, two_point_grid):
-        assert two_point_grid.grid.keys() == {(3, 3), (7, 7)}
+        assert two_point_grid.grid.keys() == {(4, 4), (8, 8)}
 
-        assert (3, 3) == two_point_grid.grid[(3, 3)][0]
+        assert (4, 4) == two_point_grid.grid[(4, 4)][0]
 
-        assert (7, 7) == two_point_grid.grid[(7, 7)][0]
+        assert (8, 8) == two_point_grid.grid[(8, 8)][0]
 
     def test_extract_main_route_returns_correctly_with_single_point(self, single_point_grid):
         single_point_grid.extract_main_route()
 
-        assert single_point_grid.main_route == {(3, 3)}
+        assert single_point_grid.main_route == {(4, 4)}
 
     def test_extract_main_route_raises_error_correctly(self, single_point_grid):
         with pytest.raises(ValueError) as e:
@@ -79,7 +79,7 @@ class TestGridsystem():
     def test_extract_main_route_returns_correctly_with_two_points(self, two_point_grid):
         two_point_grid.extract_main_route(0.4)
 
-        assert two_point_grid.main_route == {(3, 3), (7, 7)}
+        assert two_point_grid.main_route == {(4, 4), (8, 8)}
 
         two_point_grid.main_route = set()
         # Should return an empty set with default d
@@ -104,8 +104,8 @@ class TestGridsystem():
         gs.create_grid_system()
         gs.extract_main_route()
 
-        # Density center is skewed towards (3, 3) enough that (6, 6) is not included in main route
-        assert gs.main_route == {(3, 3)}
+        # Density center is skewed towards (4, 4) enough that (8, 8) is not included in main route
+        assert gs.main_route == {(4, 4)}
 
     def test_extract_route_skeleton_returns_correctly_with_single_cell(self, single_point_grid):
         single_point_grid.main_route = {(3, 3)}
@@ -126,60 +126,60 @@ class TestGridsystem():
         assert single_point_grid.route_skeleton == {(16.0, 3.5)}
 
     def test_construct_safe_areas_returns_correctly_with_two_points_and_single_anchor_and_no_refinement(self, two_point_grid):
-        two_point_grid.route_skeleton = {(3, 3)}
+        two_point_grid.route_skeleton = {(4, 4)}
         two_point_grid.construct_safe_areas(0)
         
-        expected_r = DistanceCalculator.calculate_euclidian_distance_between_cells((7, 7), (3, 3))
+        expected_r = DistanceCalculator.calculate_euclidian_distance_between_cells((8, 8), (4, 4))
         
         assert len(two_point_grid.safe_areas) == 1
-        assert two_point_grid.safe_areas[(3, 3)].radius == expected_r
+        assert two_point_grid.safe_areas[(4, 4)].radius == expected_r
 
     def test_construct_safe_areas_returns_correctly_with_two_points_and_single_anchor(self, two_point_grid):
-        two_point_grid.route_skeleton = {(3, 3)}
+        two_point_grid.route_skeleton = {(4, 4)}
         two_point_grid.construct_safe_areas()
         
-        expected_r = DistanceCalculator.calculate_euclidian_distance_between_cells((7, 7), (3, 3)) * 0.99
+        expected_r = DistanceCalculator.calculate_euclidian_distance_between_cells((8, 8), (4, 4)) * 0.99
 
         assert len(two_point_grid.safe_areas) == 1
-        assert two_point_grid.safe_areas[(3, 3)].radius == expected_r
+        assert two_point_grid.safe_areas[(4, 4)].radius == expected_r
 
     def test_construct_safe_areas_returns_correctly_with_five_points_and_single_anchor(self, five_point_grid):
-        five_point_grid.route_skeleton = {(3, 3)}
+        five_point_grid.route_skeleton = {(4, 4)}
         five_point_grid.construct_safe_areas()
         
-        expected_r = DistanceCalculator.calculate_euclidian_distance_between_cells((7, 7), (3, 3)) * 0.99
+        expected_r = DistanceCalculator.calculate_euclidian_distance_between_cells((8, 8), (4, 4)) * 0.99
 
         assert len(five_point_grid.safe_areas) == 1
-        assert five_point_grid.safe_areas[(3, 3)].radius == expected_r
+        assert five_point_grid.safe_areas[(4, 4)].radius == expected_r
 
         # Now expect 2 points to be removed as noise
         five_point_grid.construct_safe_areas(0.4)
         
         p3 = DistanceCalculator.calculate_exact_index_for_point(five_point_grid.pc.trajectories[0].points[2], five_point_grid.initialization_point)
-        distance_to_p3 = DistanceCalculator.calculate_euclidian_distance_between_cells(p3, (3, 3)) 
+        distance_to_p3 = DistanceCalculator.calculate_euclidian_distance_between_cells(p3, (4, 4)) 
 
         p4 = DistanceCalculator.calculate_exact_index_for_point(five_point_grid.pc.trajectories[0].points[3], five_point_grid.initialization_point)
-        distance_to_p4 = DistanceCalculator.calculate_euclidian_distance_between_cells(p4, (3, 3)) 
+        distance_to_p4 = DistanceCalculator.calculate_euclidian_distance_between_cells(p4, (4, 4)) 
 
         assert len(five_point_grid.safe_areas) == 1
         # As the points are far enough apart, it should result in the 4th point being removed while the 3rd point remains
         # Hence the radius should be smaller than distance to p4 and greater than distance to p3
-        assert five_point_grid.safe_areas[(3, 3)].radius < distance_to_p4
-        assert five_point_grid.safe_areas[(3, 3)].radius > distance_to_p3
+        assert five_point_grid.safe_areas[(4, 4)].radius < distance_to_p4
+        assert five_point_grid.safe_areas[(4, 4)].radius > distance_to_p3
     
     def test_construct_safe_areas_returns_correctly_with_five_points_and_two_anchors(self, five_point_grid):
         # With this split, p1 and p2 belongs to first anchor and p3, p4 and p5 belongs to 2nd anchor
-        five_point_grid.route_skeleton = {(2, 2), (7, 7)}
+        five_point_grid.route_skeleton = {(3, 3), (8, 8)}
         five_point_grid.construct_safe_areas()
         
         # As mentioned above, the refining radius of safe areas with these splits, will mean that p2 and p3 are removed respectively
         # Thereby yielding radius values just shy of their distance to the anchor points
         p2 = DistanceCalculator.calculate_exact_index_for_point(five_point_grid.pc.trajectories[0].points[1], five_point_grid.initialization_point)
-        expected_r1 = DistanceCalculator.calculate_euclidian_distance_between_cells(p2, (2, 2)) * 0.99
+        expected_r1 = DistanceCalculator.calculate_euclidian_distance_between_cells(p2, (3, 3)) * 0.99
 
         p3 = DistanceCalculator.calculate_exact_index_for_point(five_point_grid.pc.trajectories[0].points[2], five_point_grid.initialization_point)
-        expected_r2 = DistanceCalculator.calculate_euclidian_distance_between_cells(p3, (7, 7)) * 0.99
+        expected_r2 = DistanceCalculator.calculate_euclidian_distance_between_cells(p3, (8, 8)) * 0.99
 
         assert len(five_point_grid.safe_areas) == 2
-        assert five_point_grid.safe_areas[(2, 2)].radius == expected_r1
-        assert five_point_grid.safe_areas[(7, 7)].radius == expected_r2
+        assert five_point_grid.safe_areas[(3, 3)].radius == expected_r1
+        assert five_point_grid.safe_areas[(8, 8)].radius == expected_r2

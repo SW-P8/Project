@@ -28,72 +28,72 @@ class TestConstructSafeArea():
         return gs
 
     def test_create_cover_sets_returns_correctly_with_single_anchor(self, two_point_grid):
-        two_point_grid.route_skeleton = {(3, 3)}
+        two_point_grid.route_skeleton = {(4, 4)}
         cs = ConstructSafeArea._create_cover_sets(two_point_grid.route_skeleton, two_point_grid.grid, True)
 
-        expected_d1 = DistanceCalculator.calculate_euclidian_distance_between_cells((3, 3), (3, 3))
-        expected_d2 = DistanceCalculator.calculate_euclidian_distance_between_cells((7, 7), (3, 3))
+        expected_d1 = DistanceCalculator.calculate_euclidian_distance_between_cells((4, 4), (4, 4))
+        expected_d2 = DistanceCalculator.calculate_euclidian_distance_between_cells((8, 8), (4, 4))
         
-        (p1, d1), (p2, d2) = cs[(3, 3)]
-        coordinates_with_dist = {((3, 3), expected_d1), ((7, 7), expected_d2)}
+        (p1, d1), (p2, d2) = cs[(4, 4)]
+        coordinates_with_dist = {((4, 4), expected_d1), ((8, 8), expected_d2)}
 
         assert len(cs) == 1
         assert (p1, d1) in coordinates_with_dist
         assert (p2, d2) in coordinates_with_dist
 
     def test_create_cover_sets_returns_correctly_with_single_anchor_and_no_relaxed_nn(self, two_point_grid):
-        two_point_grid.route_skeleton = {(3, 3)}
+        two_point_grid.route_skeleton = {(4, 4)}
         cs = ConstructSafeArea._create_cover_sets(two_point_grid.route_skeleton, two_point_grid.grid, False)
 
-        expected_d1 = DistanceCalculator.calculate_euclidian_distance_between_cells((3, 3), (3, 3))
-        expected_d2 = DistanceCalculator.calculate_euclidian_distance_between_cells((7, 7), (3, 3))
+        expected_d1 = DistanceCalculator.calculate_euclidian_distance_between_cells((4, 4), (4, 4))
+        expected_d2 = DistanceCalculator.calculate_euclidian_distance_between_cells((8, 8), (4, 4))
         
-        (p1, d1), (p2, d2) = cs[(3, 3)]
-        coordinates_with_dist = {((3, 3), expected_d1), ((7, 7), expected_d2)}
+        (p1, d1), (p2, d2) = cs[(4, 4)]
+        coordinates_with_dist = {((4, 4), expected_d1), ((8, 8), expected_d2)}
 
         assert len(cs) == 1
         assert (p1, d1) in coordinates_with_dist
         assert (p2, d2) in coordinates_with_dist
 
     def test_create_cover_sets_returns_correctly_with_two_anchors(self, two_point_grid):
-        two_point_grid.route_skeleton = {(3, 3), (5, 6)}
+        two_point_grid.route_skeleton = {(4, 4), (6, 7)}
         cs = ConstructSafeArea._create_cover_sets(two_point_grid.route_skeleton, two_point_grid.grid, True)
 
-        expected_d1 = DistanceCalculator.calculate_euclidian_distance_between_cells((3, 3), (3, 3))
-        expected_d2 = DistanceCalculator.calculate_euclidian_distance_between_cells((7, 7), (5, 6))
-        p1, d1 = list(cs[(3, 3)])[0]
-        p2, d2 = list(cs[(5, 6)])[0]
+        expected_d1 = DistanceCalculator.calculate_euclidian_distance_between_cells((4, 4), (4, 4))
+        expected_d2 = DistanceCalculator.calculate_euclidian_distance_between_cells((8, 8), (6, 7))
+        p1, d1 = list(cs[(4, 4)])[0]
+        p2, d2 = list(cs[(6, 7)])[0]
 
         assert len(cs) == 2
-        assert p1 == (3, 3)
+        assert p1 == (4, 4)
         assert d1 == expected_d1
 
-        assert p2 == (7, 7)
+        assert p2 == (8, 8)
         assert d2 == expected_d2
 
 
-        assert cs[(3, 3)].isdisjoint(cs[(5, 6)])
+        assert cs[(4, 4)].isdisjoint(cs[(6, 7)])
 
     def test_create_cover_sets_returns_correctly_with_multiple_anchors(self, two_point_grid):
-        two_point_grid.route_skeleton = {(2, 3), (3, 3), (5, 6), (7, 7)}
+        two_point_grid.route_skeleton = {(2, 3), (4, 4), (5, 6), (8, 8)}
         cs = ConstructSafeArea._create_cover_sets(two_point_grid.route_skeleton, two_point_grid.grid, True)
 
-        expected_d1 = DistanceCalculator.calculate_euclidian_distance_between_cells((3, 3), (3, 3))
-        expected_d2 = DistanceCalculator.calculate_euclidian_distance_between_cells((7, 7), (7, 7))
+        expected_d1 = DistanceCalculator.calculate_euclidian_distance_between_cells((4, 4), (4, 4))
+        expected_d2 = DistanceCalculator.calculate_euclidian_distance_between_cells((8, 8), (8, 8))
 
-        p1, d1 = list(cs[(3, 3)])[0]
-        p2, d2 = list(cs[(7, 7)])[0]
+        p1, d1 = list(cs[(4, 4)])[0]
+        p2, d2 = list(cs[(8, 8)])[0]
 
-        # Length is only gonna be 2 as defaultdict is utilized and (3, 3), (7, 7) does not have any points added
+        # Length is only gonna be 2 as defaultdict is utilized and (4, 4), (8, 8) does not have any points added
         assert len(cs) == 2
-        assert p1 == (3, 3)
+        assert p1 == (4, 4)
         assert d1 == expected_d1
 
-        assert p2 == (7, 7)
+        assert p2 == (8, 8)
         assert d2 == expected_d2
         assert cs[(2, 3)] == set()
         assert cs[(5, 6)] == set()
-        assert cs[(3, 3)].isdisjoint(cs[(7, 7)])
+        assert cs[(4, 4)].isdisjoint(cs[(8, 8)])
 
     def test_find_candidate_nearest_neighbors_returns_correctly_with_single_anchor(self):
         route_skeleton = {(2, 2)}
@@ -125,9 +125,9 @@ class TestConstructSafeArea():
         cnn2 = ConstructSafeArea._find_candidate_nearest_neighbors(route_skeleton_list, route_skeleton_kd_tree, c2)
         cnn3 = ConstructSafeArea._find_candidate_nearest_neighbors(route_skeleton_list, route_skeleton_kd_tree, c3)
 
-        assert set(cnn1) == {(2, 2), (2.5, 2.5)}
+        assert set(cnn1) == {(2, 2), (2.5, 2.5), (3, 3)}
         assert set(cnn2) == {(2, 2), (2.5, 2.5), (3, 3)}
-        assert set(cnn3) == {(2.5, 2.5), (3, 3), (4, 4)}
+        assert set(cnn3) == {(2, 2), (2.5, 2.5), (3, 3), (3, 3), (4, 4)}
 
     def test_creation_from_cover_set_and_from_meta_data_are_equal(self):
         safe_area_file = "safe_area_test.json"
