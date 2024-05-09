@@ -1,55 +1,33 @@
-from database import db, load_data
-from database.taxi_data_handler import TaxiDataHandler
 from DTC.clean_trajectory import CleanTrajectory
 from DTC.gridsystem import GridSystem
-from DTC.trajectory import TrajectoryPointCloud, Trajectory
 from DTC.route_skeleton import RouteSkeleton
+from DTC.dtc_executor import DTCExecutor
+from math import ceil
+from tqdm import tqdm
 import pytest
 
 
 @pytest.fixture
 def data():
-    connection_pool = db.new_tdrive_db_pool()
-    load_data.load_data_from_csv(connection_pool)
-    data_handler = TaxiDataHandler(connection_pool)
-    data = data_handler.read_n_records_inside_bbb(0, True)
-    return data
+    executor = DTCExecutor(True)
+    return executor.create_point_cloud_with_n_points(300000, True, True)
 
 
 @pytest.fixture
 def model_data(data):
-    testing_data = data[:1000]
-    tid_of_existing_trajectory = 1
-    trajectory = Trajectory()
-    pc = TrajectoryPointCloud()
-    for _, timestamp, longitude, latitude, tid in testing_data:
-        if tid != tid_of_existing_trajectory:
-            pc.add_trajectory(trajectory)
-            trajectory = Trajectory()
-            tid_of_existing_trajectory = tid
-            trajectory.add_point(longitude, latitude, timestamp)
-    pc.add_trajectory(trajectory)
-    return pc
+    point_cloud = data
+    point_cloud.trajectories = data.trajectories[:1000]
+    return point_cloud
 
 
 @pytest.fixture
 def testing_data(data):
-    testing_data = data[1000:1100]
-    tid_of_existing_trajectory = 1
-    trajectory = Trajectory()
-    pc = TrajectoryPointCloud()
-    for _, timestamp, longitude, latitude, tid in testing_data:
-        if tid != tid_of_existing_trajectory:
-            pc.add_trajectory(trajectory)
-            trajectory = Trajectory()
-            tid_of_existing_trajectory = tid
-            trajectory.add_point(longitude, latitude, timestamp)
-    pc.add_trajectory(trajectory)
-    return pc.trajectories
+    testing_data = data.trajectories[1000:1050]
+    return testing_data
 
 
 @pytest.fixture
-def grid_system(model_data):
+def model(model_data):
     grid_system = GridSystem(model_data)
     route_skeleton = RouteSkeleton()
 
@@ -57,7 +35,7 @@ def grid_system(model_data):
 
     grid_system.extract_main_route()
 
-    min_pts_in_component = len(grid_system.main_route) * 0.0001
+    min_pts_in_component = ceil(len(grid_system.main_route) * 0.0001)
 
     smoothed_main_route = route_skeleton.smooth_main_route(
         grid_system.main_route, 25)
@@ -71,7 +49,8 @@ def grid_system(model_data):
 
 
 @pytest.fixture
-def cleaner(grid_system):
+def cleaner(model):
+    grid_system, _ = model
     cleaner = CleanTrajectory(
         grid_system.safe_areas,
         grid_system.route_skeleton,
@@ -79,5 +58,9 @@ def cleaner(grid_system):
     return cleaner
 
 
-def test_safe_areas_can_be_updated():
+@pytest.mark.skip
+def test_safe_areas_can_be_updated(model, cleaner, testing_data):
+    grid_system, smoothed_main_route = model
+    for trajectory in tqdm(testing_data, desc="Cleaning trajectories"):
+        cleaner.clean(trajectory)
     pass

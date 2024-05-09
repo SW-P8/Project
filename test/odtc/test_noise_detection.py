@@ -21,9 +21,8 @@ def safe_areas():
 
 @pytest.fixture
 def noise_corrector(safe_areas):
-    route_skeleton = {(0, 0), (2.5, 2.5), (5, 5), (7.5, 7.5), (10, 10)}
     initialization_point = (0, 0)
-    return NoiseCorrection(safe_areas, route_skeleton, initialization_point)
+    return NoiseCorrection(safe_areas, initialization_point)
 
 
 @pytest.fixture
@@ -65,9 +64,8 @@ def test_noise_correction_does_not_call_update(noise_corrector, trajectory_off_o
 
 def test_noise_correction_creates_threads(safe_areas, trajectory_off_one_direction):
     # Arrange
-    route_skeleton = {(0, 0), (2.5, 2.5), (5, 5), (7.5, 7.5), (10, 10)}
     initialization_point = (0, 1)
-    noise_corrector = NoiseCorrection(safe_areas, route_skeleton, initialization_point)
+    noise_corrector = NoiseCorrection(safe_areas, initialization_point)
     num_of_threads_before = threading.active_count()
 
     # Act
@@ -88,11 +86,9 @@ def test_noise_correction_creates_threads(safe_areas, trajectory_off_one_directi
 def test_noise_correction_creates_two_threads(safe_areas, trajectory_off_two_direction):
     # Arrange
     DistanceCalculator.convert_cell_to_point((0, 1), (10, 10))
-
-    route_skeleton = {(0, 0), (2.5, 2.5), (5, 5), (7.5, 7.5), (1000, 1000)}
     initialization_point = (0, 0)
     noise_corrector = NoiseCorrection(
-        safe_areas, route_skeleton, initialization_point)
+        safe_areas, initialization_point)
     num_of_threads_before = threading.active_count()
 
     # Act

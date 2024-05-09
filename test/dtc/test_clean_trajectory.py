@@ -48,14 +48,13 @@ class TestCleanTrajectory:
         return trajectory
 
     def test_init(self, grid_system: GridSystem):
-        clean_traj = CleanTrajectory(grid_system.safe_areas, grid_system.route_skeleton, grid_system.initialization_point)
+        clean_traj = CleanTrajectory(grid_system.safe_areas, grid_system.initialization_point)
         assert clean_traj.initialization_point == grid_system.initialization_point
-        assert clean_traj.route_skeleton == grid_system.route_skeleton
         assert isinstance(clean_traj.safe_areas, dict)
 
     def test_clean(self, grid_system, trajectory):
         # Arrange
-        clean_trajectory = CleanTrajectory(grid_system.safe_areas, grid_system.route_skeleton, grid_system.initialization_point)
+        clean_trajectory = CleanTrajectory(grid_system.safe_areas, grid_system.initialization_point)
         old_trajectory = copy.deepcopy(trajectory)
         safe_area_anchor = [anchor for anchor in grid_system.safe_areas][0]
         old_safe_area = copy.deepcopy(grid_system.safe_areas[safe_area_anchor])

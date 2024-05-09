@@ -5,10 +5,10 @@ from onlinedtc.runner import update_safe_area
 
 
 class NoiseCorrection:
-    def __init__(self, safe_areas, route_skeleton, init_point):
-        self.route_skeleton = route_skeleton
+    def __init__(self, safe_areas, init_point, smoothed_main_route = set()):
         self.safe_areas = safe_areas
         self.initialization_point = init_point
+        self.smoothed_main_route = smoothed_main_route
 
     # TODO decide how to handle if p-1 or p+1 is also noise, such that we do not correct noise with noise.
     def noise_detection(self, trajectory: Trajectory):
@@ -37,7 +37,7 @@ class NoiseCorrection:
 
         # Calculate noisy point to be the center of nearest anchor.
         nearest_anchor, _ = DistanceCalculator.find_nearest_neighbor_from_candidates(
-            avg_point, self.route_skeleton, self.initialization_point)
+            avg_point, self.safe_areas.keys(), self.initialization_point)
 
         trajectory.points[point_id].set_coordinates(
             DistanceCalculator.convert_cell_to_point(self.initialization_point, nearest_anchor))
@@ -54,4 +54,4 @@ class NoiseCorrection:
 
     
     def update_safe_area(self, safe_area):
-        return update_safe_area(safe_area, self.safe_areas, self.initialization_point, self.route_skeleton)
+        return update_safe_area(safe_area, self.safe_areas, self.initialization_point, self.smoothed_main_route)

@@ -1,12 +1,11 @@
 from DTC import noise_correction
 from DTC.trajectory import Trajectory
 from DTC.construct_safe_area import SafeArea
-from DTC.route_skeleton import RouteSkeleton
 
 
 class CleanTrajectory:
 
-    def __init__(self, safe_areas: set[SafeArea], route_skeleton: RouteSkeleton, init_point: tuple[float, float]) -> None:
+    def __init__(self, safe_areas: set[SafeArea], init_point: tuple[float, float], smoothed_main_route = set()) -> None:
         """
         Initializes the CleanTraj object with a specific grid system.
 
@@ -18,9 +17,9 @@ class CleanTrajectory:
         - safe_areas (list): A list of safe areas derived from the grid system used to determine noise in trajectories.
         - noisy_points (set): A set to accumulate points identified as noisy during the trajectory cleaning process.
         """
-        self.route_skeleton = route_skeleton
         self.initialization_point = init_point
         self.safe_areas = safe_areas
+        self.old_smoothed_main_route = smoothed_main_route
 
     def clean(self, input_trajectory: Trajectory):
         """
@@ -53,5 +52,5 @@ class CleanTrajectory:
             pass
         else:
             noise_corrector = noise_correction.NoiseCorrection(
-                self.safe_areas, self.route_skeleton, self.initialization_point)
+                self.safe_areas, self.initialization_point, self.old_smoothed_main_route)
             noise_corrector.noise_detection(input_trajectory)
