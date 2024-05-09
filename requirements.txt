@@ -7,10 +7,13 @@ click-plugins==1.1.1
 cligj==0.7.2
 colorama==0.4.6
 contourpy==1.2.0
+Counter==1.0.0
 cycler==0.12.1
+exceptiongroup==1.2.0
 fiona==1.9.6
 folium==0.16.0
 fonttools==4.50.0
+geodatasets==2023.12.0
 geographiclib==2.0
 geopandas==0.14.4
 geopy==2.4.1
@@ -26,12 +29,16 @@ MarkupSafe==2.1.5
 matplotlib==3.8.3
 networkx==2.8.8
 numpy==1.26.4
-osmnx==1.9.2
+-e git+ssh://git@github.com/SW-P8/Project.git@700e92470103a433207dd49494de5c3baa101b4d#egg=online_dtc
+osmnx==2.0.0b0
 packaging==24.0
 pandas==2.2.1
 pillow==10.2.0
+platformdirs==4.2.1
 pluggy==1.4.0
 polyline==2.0.2
+pooch==1.8.1
+progress==1.6
 psycopg2==2.9.9
 py-cpuinfo==9.0.0
 pyparsing==3.1.2
@@ -47,11 +54,11 @@ requests==2.31.0
 Rtree==1.2.0
 scikit-learn==1.4.2
 scipy==1.13.0
-setuptools==69.2.0
 shapely==2.0.4
 six==1.16.0
 texttable==1.7.0
 threadpoolctl==3.5.0
+tomli==2.0.1
 tqdm==4.66.2
 tzdata==2024.1
 urllib3==2.2.1
