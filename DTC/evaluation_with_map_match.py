@@ -8,9 +8,11 @@ from osmnx.graph import graph_from_bbox
 from osmnx.io import save_graphml, load_graphml
 from osmnx.distance import nearest_edges
 from osmnx.projection import project_graph, project_geometry
+import networkx
 from DTC.distance_calculator import DistanceCalculator
 from DTC.collection_utils import CollectionUtils
 from shapely.geometry import Point
+from progress.bar import Bar
 
 class mapmatcher:
     def transform(self, point):
@@ -19,65 +21,71 @@ class mapmatcher:
 
     def project_points_to_graph(self, projected_graph, points):
         projected_points = []
+        bar = Bar('Projecting points', max=len(points))
         for point in points:
             projected_point, _ = project_geometry(Point(point), to_crs=projected_graph.graph['crs'])
             projected_points.append((point, (projected_point.x, projected_point.y)))
+            bar.next()
+        bar.finish()
         
         return projected_points
 
     def mapmatch(self):
         graph = load_graphml(filepath='data/InnerBBB.graphml')
-        print('Epic win')
         
         print('Loading rsk data')
         with open("data/City area/All/AllcityRSK.json", "r") as rskinfile:
             json_data = json.load(rskinfile)
         data = [self.transform(eval(x)) for x in json_data]
-        
         projected_graph = project_graph(graph)
         
         projected_data = self.project_points_to_graph(projected_graph, data)
+        # process_count = mp.cpu_count()
+        # splits = CollectionUtils.split(projected_data[:160], process_count)
+        # tasks = []
+        # pipe_list = []
+        # manager = mp.Manager()
+        # #shared_graph = manager.Value(networkx.MultiDiGraph, project_graph)
+        # shared_list = manager.list(projected_graph)
         
-        process_count = mp.cpu_count()
-        splits = CollectionUtils.split(projected_data, process_count)
-        tasks = []
-        pipe_list = []
+        # for split in splits:
+        #     if split != []:
+        #         recv_end, send_end = mp.Pipe(False)
+        #         t = mp.Process(target=self.find_nearest_edge, args=(shared_list, split, send_end))
+        #         tasks.append(t)
+        #         pipe_list.append(recv_end)
+        #         t.start()
 
-        for split in splits:
-            if split != []:
-                recv_end, send_end = mp.Pipe(False)
-                t = mp.Process(target=self.find_nearest_edge, args=(projected_graph, split[:10], send_end))
-                tasks.append(t)
-                pipe_list.append(recv_end)
-                t.start()
+        # perp_dist = []
+        # for (i, task) in enumerate(tasks):
+        #     dists = pipe_list[i].recv()
+        #     task.join()
+        #     for dist in dists:
+        #         perp_dist.append(dist)
 
-        perp_dist = []
-        for (i, task) in enumerate(tasks):
-            dists = pipe_list[i].recv()
-            task.join()
-            for dist in dists:
-                perp_dist.append(dist)
-
+        perp_dist = self.find_nearest_edge(projected_graph, projected_data, None)
+        
         with open("data/perpendicular_distance.json", "w") as pdout:
             pdout.write(json.dumps(perp_dist))
 
         for x in perp_dist:
             print(x)
             
-        #df = pd.DataFrame(data, columns=['longitude', 'latitude'])
         print('BData loaded and spungit')
 
     def find_nearest_edge(self, graph, data, send_end):
         perp_dist = list()
-        
+        bar = Bar('Mapmatching', max=len(data))
         
         for coord, proj in data:
             long, lat = coord
             x, y = proj
             _, dist = nearest_edges(graph, x, y, return_dist=True)
             perp_dist.append((long, lat, dist))
-        
-        send_end.send(perp_dist)
+            bar.next()
+        bar.finish()
+        return perp_dist
+        #send_end.send(perp_dist)
 
     def save_model_locally(self):
         north = 40.0245
@@ -85,7 +93,7 @@ class mapmatcher:
         east = 116.5334
         west = 116.2031
         
-        graph = graph_from_bbox(bbox=(north, south, east, west), network_type='drive')
+        graph = graph_from_bbox(bbox=(north, south, east, west), network_type='drive', simplify=False)
         save_graphml(graph, filepath='data/InnerBBB.graphml')
         print("Saved Inner City BBB Graph")
 
@@ -93,7 +101,7 @@ if __name__ == '__main__':
     mm = mapmatcher()
     
     if (not os.path.exists('data/InnerBBB.graphml')):
-        print('Epic fail')
+        print('Local model not found')
         mm.save_model_locally()
     
     mm.mapmatch()
