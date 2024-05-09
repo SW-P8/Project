@@ -1,3 +1,4 @@
+from typing import Optional
 from DTC import trajectory, noise_correction,distance_calculator
 from DTC.construct_safe_area import SafeArea
 from DTC.point import Point
@@ -5,7 +6,7 @@ from DTC.distance_calculator import DistanceCalculator
 
 class CleanTraj:
 
-    def __init__(self, safe_areas, route_skeleton, init_point) -> None:
+    def __init__(self, safe_areas, init_point, min_lat, min_long) -> None:
         """
         Initializes the CleanTraj object with a specific grid system.
 
@@ -16,13 +17,14 @@ class CleanTraj:
         Attributes:
         - safe_areas (list): A list of safe areas derived from the grid system used to determine noise in trajectories.
         - noisy_points (set): A set to accumulate points identified as noisy during the trajectory cleaning process.
-        """
-        self.route_skeleton = route_skeleton    
+        """  
         self.initialization_point = init_point
         self.safe_areas = safe_areas
+        self.min_lat = min_lat
+        self.min_long = min_long
     
 
-    def clean(self, points: list):
+    def clean(self, traj : trajectory.Trajectory):
         """
         Processes a list of trajectory points to identify and correct noise, refining the trajectory.
 
@@ -49,15 +51,10 @@ class CleanTraj:
         - Modifies the internal state of the trajectory by updating its points attribute.
         - Adjusts the set of noisy points within the class based on proximity to safe areas.
         """
-        traj = trajectory.Trajectory()
 
-        distance_calc = distance_calculator.DistanceCalculator()
-        for point in points:
-            traj.add_point(point.longitude, point.latitude, point.timestamp, point.noise)
-        
-        noise_corrector = noise_correction.NoiseCorrection(self.safe_areas ,self.route_skeleton, self.initialization_point)
-        a = noise_corrector.noise_detection(traj)
-        return a
+        noise_corrector = noise_correction.NoiseCorrection(self.safe_areas , self.initialization_point, min_lat=self.min_lat, min_lon=self.min_long)
+        trajectory, a = noise_corrector.noise_detection(traj)
+        return trajectory, a
         #self.update_safe_areas() 
 
 
