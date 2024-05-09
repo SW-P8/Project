@@ -71,9 +71,9 @@ class ConstructSafeArea:
 
     @staticmethod
     def _find_candidate_nearest_neighbors(route_skeleton_list: list, route_skeleton_kd_tree: KDTree, cell: tuple) -> dict:
-        distance_to_corner_of_cell = 2 * sqrt(0.5 ** 2 + 0.5 ** 2)       
+        relaxation_radius = sqrt(2) 
         min_dist, _ = route_skeleton_kd_tree.query(cell)   
-        candidate_indices = route_skeleton_kd_tree.query_ball_point(cell, min_dist + distance_to_corner_of_cell)
+        candidate_indices = route_skeleton_kd_tree.query_ball_point(cell, min_dist + relaxation_radius)
         return [route_skeleton_list[i] for i in candidate_indices]
     
     @staticmethod
