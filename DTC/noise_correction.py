@@ -24,7 +24,7 @@ class NoiseCorrection:
             self.safe_areas[nearest_anchor].update_confidence(dist, point, update_function)
             if dist >= self.safe_areas[nearest_anchor].radius:
                 # Ensures that we do not try to clean first or last element. Should be improved!
-                if i > 1 and i != len(trajectory.points) - 1:
+                if i > 0 and i != len(trajectory.points) - 1:
                     self.correct_noisy_point(trajectory, i)
 
         if len(low_confidence_safe_areas):

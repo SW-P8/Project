@@ -33,10 +33,10 @@ class TestCleanTrajectory:
         gs.extract_main_route()
         gs.extract_route_skeleton()
         gs.construct_safe_areas()
-        for _,safe_area in gs.safe_areas.items():
+        for safe_area in gs.safe_areas.values():
             safe_area.radius = 5
             safe_area.timestamp = datetime.now()
-            safe_area.cardinality = random.randint(1, 12)
+            safe_area.cardinality = 6
         return gs
 
     @pytest.fixture

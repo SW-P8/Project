@@ -53,7 +53,7 @@ def load_data_from_csv(db: SimpleConnectionPool, limit=0):
 def __get_numeric_part(file_name) -> int:
     return int(file_name.split('/')[-1].split('.')[0])
 
-def _transform_data(df: pd.DataFrame, trajectory_id: int, area: str = "full") -> pd.DataFrame:
+def _transform_data(df: pd.DataFrame, trajectory_id: int, area: str = "city") -> pd.DataFrame:
     """
     Transform the given DataFrame based on specified geographical area.
 

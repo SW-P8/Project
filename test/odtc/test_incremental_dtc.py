@@ -176,7 +176,7 @@ def test_update_safe_area():
     safe_areas[safe_area.anchor] = safe_area
 
     # Act
-    result = update_safe_area(safe_area, safe_areas,
+    result = update_safe_area(safe_area,
                               initialization_point, old_smoothed_main_route)
 
     # Assert
