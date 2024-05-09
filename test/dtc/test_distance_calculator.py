@@ -28,10 +28,22 @@ class TestDistanceCalculator:
 
     def test_calculate_index_for_point_is_correct(self, two_point_grid):
         (x1, y1) = DistanceCalculator.calculate_exact_index_for_point(two_point_grid.pc.trajectories[0].points[0], two_point_grid.initialization_point)
-        assert (3, 3) == (floor(x1), floor(y1))
-
         (x2, y2) = DistanceCalculator.calculate_exact_index_for_point(two_point_grid.pc.trajectories[0].points[1], two_point_grid.initialization_point)
-        assert (7, 7) == (floor(x2), floor(y2))
+
+        assert (4, 4) == (floor(x1), floor(y1))
+        assert (8, 8) == (floor(x2), floor(y2))
+
+    def test_calculate_index_for_point_returns_correctly_with_negative_index(self, two_point_grid):
+        long_lat_west_of_init = DistanceCalculator.shift_point_with_bearing(two_point_grid.initialization_point, 20, DistanceCalculator.WEST)
+        point_west_of_init = Point(long_lat_west_of_init[0], long_lat_west_of_init[1])
+        long_lat_south_of_init = DistanceCalculator.shift_point_with_bearing(two_point_grid.initialization_point, 20, DistanceCalculator.SOUTH)
+        point_south_of_init = Point(long_lat_south_of_init[0], long_lat_south_of_init[1])
+
+        (x1, y1) = DistanceCalculator.calculate_exact_index_for_point(point_west_of_init, two_point_grid.initialization_point)
+        (x2, y2) = DistanceCalculator.calculate_exact_index_for_point(point_south_of_init,two_point_grid.initialization_point)
+
+        assert (-4, 0) == (floor(x1), floor(y1))
+        assert (0, -4) == (floor(x2), floor(y2))
 
     def test_convert_cell_to_point(self):
         cell = (10,10)
@@ -53,8 +65,8 @@ class TestDistanceCalculator:
         # Point 2 has exact index (7, 7)
         (nn2, d2) = DistanceCalculator.find_nearest_neighbor_from_candidates(two_point_grid.pc.trajectories[0].points[1], candidates, two_point_grid.initialization_point)
 
-        expected_d1 = DistanceCalculator.calculate_euclidian_distance_between_cells((3, 3), (2.5, 2.5))
-        expected_d2 = DistanceCalculator.calculate_euclidian_distance_between_cells((7, 7), (2.5, 2.5))
+        expected_d1 = DistanceCalculator.calculate_euclidian_distance_between_cells((4, 4), (2.5, 2.5))
+        expected_d2 = DistanceCalculator.calculate_euclidian_distance_between_cells((8, 8), (2.5, 2.5))
 
         assert (nn1, d1) == ((2.5, 2.5), expected_d1)
         assert (nn2, d2) == ((2.5, 2.5), expected_d2)
@@ -66,8 +78,8 @@ class TestDistanceCalculator:
         # Point 2 has exact index (7, 7)
         (nn2, d2) = DistanceCalculator.find_nearest_neighbor_from_candidates(two_point_grid.pc.trajectories[0].points[1], candidates, two_point_grid.initialization_point)
 
-        expected_d1 = DistanceCalculator.calculate_euclidian_distance_between_cells((3, 3), (2.5, 2.5))
-        expected_d2 = DistanceCalculator.calculate_euclidian_distance_between_cells((7, 7), (5, 6))
+        expected_d1 = DistanceCalculator.calculate_euclidian_distance_between_cells((4, 4), (2.5, 2.5))
+        expected_d2 = DistanceCalculator.calculate_euclidian_distance_between_cells((8, 8), (5, 6))
 
         assert (nn1, d1) == ((2.5, 2.5), expected_d1)
         assert (nn2, d2) == ((5, 6), expected_d2)
@@ -79,8 +91,8 @@ class TestDistanceCalculator:
         # Point 2 has exact index (7, 7)
         (nn2, d2) = DistanceCalculator.find_nearest_neighbor_from_candidates(two_point_grid.pc.trajectories[0].points[1], candidates, two_point_grid.initialization_point)
 
-        expected_d1 = DistanceCalculator.calculate_euclidian_distance_between_cells((3, 3), (3, 3))
-        expected_d2 = DistanceCalculator.calculate_euclidian_distance_between_cells((7, 7), (7, 7))
+        expected_d1 = DistanceCalculator.calculate_euclidian_distance_between_cells((4, 4), (3, 3))
+        expected_d2 = DistanceCalculator.calculate_euclidian_distance_between_cells((8, 8), (7, 7))
 
         assert (nn1, d1) == ((3, 3), expected_d1)
         assert (nn2, d2) == ((7, 7), expected_d2)
