@@ -19,11 +19,15 @@ class DistanceCalculator():
     def calculate_exact_index_for_point(point: Point, initialization_point: tuple) -> tuple:
         # Calculate x index
         x_offset = DistanceCalculator.get_distance_between_points(initialization_point, (point.longitude, initialization_point[1]))
-        x_coordinate = (x_offset / DistanceCalculator.CELL_SIZE) - 1
+        if point.longitude < initialization_point[0]:
+            x_offset = -x_offset
+        x_coordinate = (x_offset / DistanceCalculator.CELL_SIZE)
 
         # Calculate y index
         y_offset = DistanceCalculator.get_distance_between_points(initialization_point, (initialization_point[0], point.latitude))
-        y_coordinate = (y_offset / DistanceCalculator.CELL_SIZE) - 1
+        if point.latitude < initialization_point[1]:
+            y_offset = -y_offset
+        y_coordinate = (y_offset / DistanceCalculator.CELL_SIZE)
 
         return (x_coordinate, y_coordinate)
    
