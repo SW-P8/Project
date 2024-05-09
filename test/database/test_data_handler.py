@@ -29,8 +29,8 @@ class TestDataHandler():
         assert len(res2) == 9
     
     def test_read_n_records_inside_bbb(self, dal: TaxiDataHandler):
-        res1 = dal.read_records_inside_bbb(12)
-        res2 = dal.read_records_inside_bbb(15)
+        res1 = dal.read_n_records_inside_bbb(12)
+        res2 = dal.read_n_records_inside_bbb(15)
 
         assert len(res1) == 10
         assert len(res2) == 10
