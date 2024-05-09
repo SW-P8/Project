@@ -10,11 +10,12 @@ class TestCheapBenchmark:
     def setup_class(cls):
         cls.grid_system = None
         cls.point_cloud = None
-        cls.limit = 1000
-        cls.n_points = 100000
+        cls.limit = 100000
+        cls.n_points = 100000000
         cls.conn = None
         cls.handler = None
         cls.executor = None
+        cls.pc_file = "AllcityPC.json"
         cls.grid_file = "AllcityGrid.json"
         cls.mr_file = "AllcityMR.json"
         cls.rsk_file = "AllcityRSK.json"
@@ -26,6 +27,7 @@ class TestCheapBenchmark:
         cls.decrease_factor = 0.01
         cls.find_relaxed_nn = True
         cls.should_write_to_json = False
+        cls.with_time = True
 
     @pytest.mark.bm_cheap
     def test_db_setup(self):
@@ -37,13 +39,15 @@ class TestCheapBenchmark:
 
     @pytest.mark.bm_cheap
     def test_point_cloud(self, benchmark):
-        point_cloud = benchmark.pedantic(self.__class__.executor.create_point_cloud_with_n_points, kwargs={'n':self.__class__.n_points, 'city': self.city_bb}, rounds=1, iterations=1, warmup_rounds=0)
-        self.__class__.point_cloud = point_cloud
-        self.__class__.grid_system = gridsystem.GridSystem(point_cloud)
+        point_cloud = benchmark.pedantic(self.__class__.executor.create_point_cloud_with_n_points, kwargs={'n':self.__class__.n_points, 'city': self.city_bb, 'with_time': self.with_time}, rounds=1, iterations=1, warmup_rounds=0)
+        if self.should_write_to_json:
+            json_read_write.write_point_cloud_to_json(self.pc_file, point_cloud)
         assert point_cloud is not None
     
     @pytest.mark.bm_cheap
     def test_build_grid_system(self, benchmark):
+        point_cloud = json_read_write.read_point_cloud_from_json(self.pc_file)
+        self.__class__.grid_system = gridsystem.GridSystem(point_cloud)
         benchmark.pedantic(self.__class__.grid_system.create_grid_system, rounds=1, iterations=1, warmup_rounds=0)
         if self.should_write_to_json:
             json_read_write.write_grid_to_json(self.grid_file, self.__class__.grid_system.grid)
