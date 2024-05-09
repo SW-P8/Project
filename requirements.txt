@@ -26,7 +26,6 @@ MarkupSafe==2.1.5
 matplotlib==3.8.3
 networkx==2.8.8
 numpy==1.26.4
--e git+https://github.com/SW-P8/Project.git@13a1af6ac87c2f29caab320f0df840f34c6e5848#egg=online_dtc
 osmnx==1.9.2
 packaging==24.0
 pandas==2.2.1
