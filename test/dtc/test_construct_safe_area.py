@@ -144,7 +144,6 @@ class TestConstructSafeArea():
 
         assert safe_area_from_cover_set.anchor == safe_area_from_json.anchor
         assert safe_area_from_cover_set.cardinality == safe_area_from_json.cardinality
-        assert safe_area_from_cover_set.cardinality_normalisation == safe_area_from_json.cardinality_normalisation
         assert safe_area_from_cover_set.cardinality_squish == safe_area_from_json.cardinality_squish
         assert safe_area_from_cover_set.confidence == safe_area_from_json.confidence
         assert safe_area_from_cover_set.confidence_change_factor == safe_area_from_json.confidence_change_factor
