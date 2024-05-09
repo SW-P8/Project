@@ -8,7 +8,7 @@ class TestSafeArea():
     @pytest.fixture
     def default_safe_area(self):
         cover_set = {(5, 5)}
-        safe_area = SafeArea.from_cover_set(cover_set, (5, 5), decrease_factor=0.1, confidence_change=0.01, normalisation_factor=100000, cardinality_squish=0.1, max_confidence_change=0.1)
+        safe_area = SafeArea.from_cover_set(cover_set, (5, 5), decrease_factor=0.1, confidence_change=0.01, cardinality_squish=0.1, max_confidence_change=0.1)
         safe_area.timestamp = datetime.now()
         return safe_area
 
