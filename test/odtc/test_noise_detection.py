@@ -38,11 +38,9 @@ def trajectory_off_one_direction():
 @pytest.fixture
 def trajectory_off_two_direction(trajectory_off_one_direction):
     trajectory = trajectory_off_one_direction
-    trajectory.add_point(0.000003, 0.000003, datetime.now())
-    trajectory.add_point(0.000003, 0.000003, datetime.now())
-    trajectory.add_point(0.000003, 0.000003, datetime.now())
-    trajectory.add_point(0.000003, 0.000003, datetime.now())
-    trajectory.add_point(0.000003, 0.000003, datetime.now())
+    trajectory.add_point(-180, -90, datetime.now())
+    trajectory.add_point(-180, -90, datetime.now())
+    trajectory.add_point(-180, -90, datetime.now())
     return trajectory
 
 

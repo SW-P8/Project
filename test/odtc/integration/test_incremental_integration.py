@@ -3,6 +3,7 @@ from database.taxi_data_handler import TaxiDataHandler
 from DTC.clean_trajectory import CleanTrajectory
 from DTC.gridsystem import GridSystem
 from DTC.trajectory import TrajectoryPointCloud, Trajectory
+from DTC.route_skeleton import RouteSkeleton
 import pytest
 
 
@@ -48,17 +49,35 @@ def testing_data(data):
 
 
 @pytest.fixture
-def grid_system():
-    grid_system = GridSystem()
-    
+def grid_system(model_data):
+    grid_system = GridSystem(model_data)
+    route_skeleton = RouteSkeleton()
+
+    grid_system.create_grid_system()
+
+    grid_system.extract_main_route()
+
+    min_pts_in_component = len(grid_system.main_route) * 0.0001
+
+    smoothed_main_route = route_skeleton.smooth_main_route(
+        grid_system.main_route, 25)
+    filtered_main_route = route_skeleton.graph_based_filter(
+        smoothed_main_route, 20, min_pts_in_component)
+    grid_system.route_skeleton = route_skeleton.filter_sparse_points(
+        filtered_main_route, 20)
+
+    grid_system.construct_safe_areas()
+    return grid_system, smoothed_main_route
+
 
 @pytest.fixture
 def cleaner(grid_system):
     cleaner = CleanTrajectory(
-        grid_system.safe_areas, grid_system.route_skeleton, grid_system.initialization_point)
+        grid_system.safe_areas,
+        grid_system.route_skeleton,
+        grid_system.initialization_point)
     return cleaner
 
 
 def test_safe_areas_can_be_updated():
     pass
-

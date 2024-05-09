@@ -167,7 +167,8 @@ def test_update_safe_area():
     # Arrange
     initialization_point = (1, 1)
     old_smoothed_main_route = {(1, 1), (1, 1), (2, 1), (2, 2)}
-    safe_area = SafeArea((10, -0.5), 10, 4, 0.1, 0.1, 0.1, 0.1)
+    expected_anchor = (11, 0.5)
+    safe_area = SafeArea.from_meta_data(expected_anchor, 10, 2)
 
     for i in range(100):
         point = Point(1 + 0.00001 * i, 1)
@@ -181,4 +182,5 @@ def test_update_safe_area():
 
     # Assert
     assert dict == type(result)
-    assert (10, -0.5) == result[(10.0, -0.5)].anchor
+    print(next(iter(result.values())).anchor)
+    assert expected_anchor == result[expected_anchor].anchor
