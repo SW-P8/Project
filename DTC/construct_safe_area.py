@@ -78,8 +78,7 @@ class ConstructSafeArea:
         return [route_skeleton_list[i] for i in candidate_indices]
     
     @staticmethod
-    def find_candidate_nearest_neighbors_with_historic_mindist(route_skeleton: set, cell: tuple) -> dict:
-        historic_mindist = list()
+    def find_candidate_nearest_neighbors_with_mindist(route_skeleton: set, cell: tuple) -> dict:
         min_dist = float("inf")
         candidates = set()
         distance_to_corner_of_cell = sqrt(0.5 ** 2 + 0.5 ** 2)
@@ -88,9 +87,8 @@ class ConstructSafeArea:
             if dist <= min_dist + distance_to_corner_of_cell:
                 if dist < min_dist:
                     min_dist = dist
-                    historic_mindist.append(dist)
                 candidates.add((anchor, dist))
-        return ({a for a, d in candidates if d <= min_dist + distance_to_corner_of_cell}, historic_mindist)
+        return ({a for a, d in candidates if d <= min_dist + distance_to_corner_of_cell})
 
 class SafeArea:
     def __init__(self, anchor: tuple[float, float], radius: float, cardinality: int, confidence_change, normalisation_factor, cardinality_squish, max_confidence_change) -> None:
