@@ -14,9 +14,8 @@ import threading
 def safe_areas():
     safe_areas = {}
     for i in range(5):
-        safe_areas[(i * 2.5, i * 2.5)] = SafeArea((0, 0),
-                                                  2, 10, 0.1, 0.1, 0.1, 0.1)
-    safe_areas[1000, 1000] = SafeArea((1000, 1000), 2, 10, 0.1, 0.1, 0.1, 0.1)
+        safe_areas[(i * 2.5, i * 2.5)] = SafeArea.from_meta_data((i * 2.5, i * 2.5), 2, 10)
+    safe_areas[1000, 1000] = SafeArea.from_meta_data((1000, 1000), 2, 10)
     return safe_areas
 
 
@@ -30,19 +29,20 @@ def noise_corrector(safe_areas):
 @pytest.fixture
 def trajectory_off_one_direction():
     trajectory = Trajectory()
-    trajectory.add_point(0, 0, datetime.now())
-    trajectory.add_point(0, 0, datetime.now())
-    trajectory.add_point(0, 0, datetime.now())
+    trajectory.add_point(180, 90, datetime.now())
+    trajectory.add_point(180, 90, datetime.now())
+    trajectory.add_point(180, 90, datetime.now())
     return trajectory
+
 
 @pytest.fixture
 def trajectory_off_two_direction(trajectory_off_one_direction):
     trajectory = trajectory_off_one_direction
-    trajectory.add_point(10, 10, datetime.now())
-    trajectory.add_point(10, 10, datetime.now())
-    trajectory.add_point(10, 10, datetime.now())
-    trajectory.add_point(10, 10, datetime.now())
-    trajectory.add_point(10, 10, datetime.now())
+    trajectory.add_point(0.000003, 0.000003, datetime.now())
+    trajectory.add_point(0.000003, 0.000003, datetime.now())
+    trajectory.add_point(0.000003, 0.000003, datetime.now())
+    trajectory.add_point(0.000003, 0.000003, datetime.now())
+    trajectory.add_point(0.000003, 0.000003, datetime.now())
     return trajectory
 
 
@@ -83,6 +83,8 @@ def test_noise_correction_creates_threads(safe_areas, trajectory_off_one_directi
     # Threads should be closed.
     assert 0 == num_of_threads_before - num_of_threads_after
     assert 1 == mock_update_safe_area.call_count
+    # Assert that the safe area is removed.
+    assert (1000, 1000) not in safe_areas.keys()
 
 
 def test_noise_correction_creates_two_threads(safe_areas, trajectory_off_two_direction):
@@ -91,15 +93,13 @@ def test_noise_correction_creates_two_threads(safe_areas, trajectory_off_two_dir
 
     route_skeleton = {(0, 0), (2.5, 2.5), (5, 5), (7.5, 7.5), (1000, 1000)}
     initialization_point = (0, 0)
-    for area in safe_areas.values():
-        print(DistanceCalculator.convert_cell_to_point(initialization_point, area.anchor))
     noise_corrector = NoiseCorrection(
         safe_areas, route_skeleton, initialization_point)
     num_of_threads_before = threading.active_count()
 
     # Act
     with patch.object(noise_corrector, 'update_safe_area') as mock_update_safe_area:
-        for _ in range(1):
+        for _ in range(2):
             noise_corrector.noise_detection(
                 deepcopy(trajectory_off_two_direction))
     num_of_threads_after = threading.active_count()
@@ -109,7 +109,6 @@ def test_noise_correction_creates_two_threads(safe_areas, trajectory_off_two_dir
     # Threads should be closed.
     assert 0 == num_of_threads_before - num_of_threads_after
     assert 2 == mock_update_safe_area.call_count
-
-def test_noise_correction_removes_safe_areas():
-    pass
-
+    # Assert that the correct safe-areas are removed.
+    assert (0, 0) not in safe_areas.keys()
+    assert (1000, 1000) not in safe_areas.keys()

@@ -84,11 +84,9 @@ class ConstructSafeArea:
         candidates = set()
         distance_to_corner_of_cell = sqrt(0.5 ** 2 + 0.5 ** 2)
         for anchor in route_skeleton:
-            print(anchor)
             dist = DistanceCalculator.calculate_euclidian_distance_between_cells(cell, anchor)
             if dist <= min_dist + distance_to_corner_of_cell:
                 if dist < min_dist:
-                    print(dist)
                     min_dist = dist
                     historic_mindist.append(dist)
                 candidates.add((anchor, dist))
@@ -138,7 +136,7 @@ class SafeArea:
         return cls(anchor, radius, cardinality, confidence_change, normalisation_factor, cardinality_squish, max_confidence_change)
     
     @classmethod
-    def from_meta_data(cls, anchor: tuple[float, float], radius: float, cardinality: float, confidence_change: float = 0.01, normalisation_factor: int = 100000, cardinality_squish: float = 0.1, max_confidence_change: float = 0.1):
+    def from_meta_data(cls, anchor: tuple[float, float], radius: float, cardinality: int, confidence_change: float = 0.01, normalisation_factor: int = 100000, cardinality_squish: float = 0.1, max_confidence_change: float = 0.1):
         return cls(anchor, radius, cardinality, confidence_change, normalisation_factor, cardinality_squish, max_confidence_change)
 
        
@@ -204,7 +202,6 @@ class SafeArea:
             self.cardinality += 1
         else:
             self.confidence -= self.calculate_confidence_decrease(distance_to_safearea)
-            print(self.confidence)
         if self.confidence < 0.5:  # TODO: Threshold
             update_function(self)
     

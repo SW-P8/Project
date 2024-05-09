@@ -29,8 +29,7 @@ class NoiseCorrection:
 
         if len(low_confidence_safe_areas):
             self._update_safe_areas_thread(low_confidence_safe_areas)
-        
-        print("")
+
 
     def correct_noisy_point(self, trajectory: Trajectory, point_id: int) -> None:
         avg_point = DistanceCalculator.calculate_average_position(
