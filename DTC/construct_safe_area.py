@@ -93,7 +93,7 @@ class ConstructSafeArea:
         return ({a for a, d in candidates if d <= min_dist + distance_to_corner_of_cell}, historic_mindist)
 
 class SafeArea:
-    def __init__(self, anchor: tuple[float, float], radius: float, cardinality: int, confidence_change, normalisation_factor, cardinality_squish, max_confidence_change) -> None:
+    def __init__(self, anchor: tuple[float, float], radius: float, cardinality: int, confidence_change, cardinality_squish, max_confidence_change) -> None:
         """
         Initializes a SafeArea instance.
 
@@ -114,7 +114,6 @@ class SafeArea:
         self.confidence_change_factor = confidence_change
         self.decay_factor = 1 / (60*60*24) # Set as the fraction of a day 1 second represents. Done as TimeDelta is given in seconds.
         self.timestamp =  None
-        self.cardinality_normalisation = normalisation_factor
         self.cardinality_squish = cardinality_squish
         self.max_confidence_change = max_confidence_change
         
@@ -131,14 +130,14 @@ class SafeArea:
     PointsInSafeArea = []
 
     @classmethod
-    def from_cover_set(cls, cover_set: set, anchor: tuple[float, float], decrease_factor: float, confidence_change: float = 0.01, normalisation_factor: int = 100000, cardinality_squish: float = 0.1, max_confidence_change: float = 0.1):
+    def from_cover_set(cls, cover_set: set, anchor: tuple[float, float], decrease_factor: float, confidence_change: float = 0.01, cardinality_squish: float = 0.1, max_confidence_change: float = 0.1):
         radius = SafeArea.calculate_radius(cover_set, decrease_factor)
         cardinality = len(cover_set)
-        return cls(anchor, radius, cardinality, confidence_change, normalisation_factor, cardinality_squish, max_confidence_change)
+        return cls(anchor, radius, cardinality, confidence_change, cardinality_squish, max_confidence_change)
     
     @classmethod
-    def from_meta_data(cls, anchor: tuple[float, float], radius: float, cardinality: float, confidence_change: float = 0.01, normalisation_factor: int = 100000, cardinality_squish: float = 0.1, max_confidence_change: float = 0.1):
-        return cls(anchor, radius, cardinality, confidence_change, normalisation_factor, cardinality_squish, max_confidence_change)
+    def from_meta_data(cls, anchor: tuple[float, float], radius: float, cardinality: float, confidence_change: float = 0.01, cardinality_squish: float = 0.1, max_confidence_change: float = 0.1):
+        return cls(anchor, radius, cardinality, confidence_change, cardinality_squish, max_confidence_change)
 
        
     @staticmethod   
@@ -208,8 +207,8 @@ class SafeArea:
         Returns:
             float: The decay factor for confidence.
         """
-        decay = delta * self.decay_factor
-        decay = self.sigmoid(decay, -0.5, 2) # -0.5 forces the line to go through (0,0) and 2 normalizes the function such that it maps any number to a value between -1 and 1
+        time = delta * self.decay_factor
+        decay = self.sigmoid(time, -0.5, 2) # -0.5 forces the line to go through (0,0) and 2 normalizes the function such that it maps any number to a value between -1 and 1
         decay = max(decay, 0.0)
         return round(decay, 5)
     
