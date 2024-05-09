@@ -7,14 +7,23 @@ import multiprocessing as mp
 from osmnx.graph import graph_from_bbox
 from osmnx.io import save_graphml, load_graphml
 from osmnx.distance import nearest_edges
+from osmnx.projection import project_graph, project_geometry
 from DTC.distance_calculator import DistanceCalculator
 from DTC.collection_utils import CollectionUtils
-from progress.bar import Bar
+from shapely.geometry import Point
 
 class mapmatcher:
     def transform(self, point):
         return DistanceCalculator.convert_cell_to_point(
             (116.20287663548845, 39.75112986803514), point)
+
+    def project_points_to_graph(self, projected_graph, points):
+        projected_points = []
+        for point in points:
+            projected_point, _ = project_geometry(Point(point), to_crs=projected_graph.graph['crs'])
+            projected_points.append((point, (projected_point.x, projected_point.y)))
+        
+        return projected_points
 
     def mapmatch(self):
         graph = load_graphml(filepath='data/InnerBBB.graphml')
@@ -25,27 +34,32 @@ class mapmatcher:
             json_data = json.load(rskinfile)
         data = [self.transform(eval(x)) for x in json_data]
         
+        projected_graph = project_graph(graph)
+        
+        projected_data = self.project_points_to_graph(projected_graph, data)
+        
         process_count = mp.cpu_count()
-        splits = CollectionUtils.split(data, process_count)
+        splits = CollectionUtils.split(projected_data, process_count)
         tasks = []
         pipe_list = []
 
         for split in splits:
             if split != []:
                 recv_end, send_end = mp.Pipe(False)
-                t = mp.Process(target=self.find_nearest_edge, args=(graph, split, send_end))
+                t = mp.Process(target=self.find_nearest_edge, args=(projected_graph, split[:10], send_end))
                 tasks.append(t)
                 pipe_list.append(recv_end)
                 t.start()
 
         perp_dist = []
         for (i, task) in enumerate(tasks):
-            d = pipe_list[i].recv()
+            dists = pipe_list[i].recv()
             task.join()
-            perp_dist.append(d)
+            for dist in dists:
+                perp_dist.append(dist)
 
         with open("data/perpendicular_distance.json", "w") as pdout:
-            json.dump(perp_dist, pdout)    
+            pdout.write(json.dumps(perp_dist))
 
         for x in perp_dist:
             print(x)
@@ -55,9 +69,12 @@ class mapmatcher:
 
     def find_nearest_edge(self, graph, data, send_end):
         perp_dist = list()
-                
-        for long, lat in data:
-            dist = nearest_edges(graph, long, lat, return_dist=True)
+        
+        
+        for coord, proj in data:
+            long, lat = coord
+            x, y = proj
+            _, dist = nearest_edges(graph, x, y, return_dist=True)
             perp_dist.append((long, lat, dist))
         
         send_end.send(perp_dist)
