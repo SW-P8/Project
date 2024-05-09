@@ -2,6 +2,7 @@ from math import sqrt
 from DTC.point import Point
 from geopy import distance
 from typing import Optional
+from scipy.spatial import KDTree
 
 class DistanceCalculator():
     # Direction constants
@@ -18,11 +19,15 @@ class DistanceCalculator():
     def calculate_exact_index_for_point(point: Point, initialization_point: tuple) -> tuple:
         # Calculate x index
         x_offset = DistanceCalculator.get_distance_between_points(initialization_point, (point.longitude, initialization_point[1]))
-        x_coordinate = (x_offset / DistanceCalculator.CELL_SIZE) - 1
+        if point.longitude < initialization_point[0]:
+            x_offset = -x_offset
+        x_coordinate = (x_offset / DistanceCalculator.CELL_SIZE)
 
         # Calculate y index
         y_offset = DistanceCalculator.get_distance_between_points(initialization_point, (initialization_point[0], point.latitude))
-        y_coordinate = (y_offset / DistanceCalculator.CELL_SIZE) - 1
+        if point.latitude < initialization_point[1]:
+            y_offset = -y_offset
+        y_coordinate = (y_offset / DistanceCalculator.CELL_SIZE)
 
         return (x_coordinate, y_coordinate)
    
@@ -82,6 +87,11 @@ class DistanceCalculator():
                 min_dist = dist
 
         return (nearest_anchor, min_dist)
+    
+    @staticmethod
+    def find_nearest_neighbour_from_candidates_with_kd_tree(point, candidates: list, candidates_kd_tree: KDTree) -> tuple[tuple[float, float], float]:
+        min_dist, nn_index = candidates_kd_tree.query(point)
+        return (candidates[nn_index], min_dist)
 
     # Converts cell coordinate to long lat based on initialization_point
     @staticmethod

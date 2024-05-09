@@ -1,6 +1,6 @@
 from operator import itemgetter
 from datetime import datetime
-from math import sqrt, tanh, floor
+from math import sqrt, tanh
 from DTC.distance_calculator import DistanceCalculator
 import numpy as np
 from collections import defaultdict
@@ -8,25 +8,23 @@ import multiprocessing as mp
 from DTC.distance_calculator import DistanceCalculator
 from DTC.collection_utils import CollectionUtils
 from DTC.point import Point
-from scipy.spatial import KDTree
+from DTC.trajectory import Trajectory
+from scipy.spatial import KDTree 
 
 class ConstructSafeArea:
     @staticmethod
-    def construct_safe_areas(route_skeleton: set, grid: dict, decrease_factor: float, initialization_point) -> dict:
-        cs = ConstructSafeArea._create_cover_sets(route_skeleton, grid, initialization_point)
+    def construct_safe_areas(route_skeleton: set, grid: dict, decrease_factor: float, find_relaxed_nn: bool = True) -> dict:
+        cs = ConstructSafeArea._create_cover_sets(route_skeleton, grid, find_relaxed_nn)
 
         safe_areas = dict()
 
         for anchor in route_skeleton:
-            safe_areas[anchor] = SafeArea(cs[anchor], anchor, decrease_factor)
+            safe_areas[anchor] = SafeArea.from_cover_set(cs[anchor], anchor, decrease_factor)
 
         return safe_areas
 
     @staticmethod
-    def _create_cover_sets(route_skeleton: set, grid: dict, initialization_point: tuple, find_candidate_algorithm = None) -> dict:
-        if find_candidate_algorithm is None:
-            find_candidate_algorithm = ConstructSafeArea._find_candidate_nearest_neighbors
-        
+    def _create_cover_sets(route_skeleton: set, grid: dict, find_relaxed_nn: bool) -> dict:    
         process_count = mp.cpu_count()
         sub_grid_keys = CollectionUtils.split(grid.keys(), process_count)
         tasks = []
@@ -36,7 +34,7 @@ class ConstructSafeArea:
             if split != []:
                 recv_end, send_end = mp.Pipe(False)
                 sub_grid = CollectionUtils.get_sub_dict_from_subset_of_keys(grid, split)
-                task = mp.Process(target=ConstructSafeArea.create_cover_sets_sub_grid, args=(route_skeleton, sub_grid, initialization_point, find_candidate_algorithm, send_end))
+                task = mp.Process(target=ConstructSafeArea.create_cover_sets_sub_grid, args=(route_skeleton, sub_grid, find_relaxed_nn, send_end))
                 tasks.append(task)
                 pipe_list.append(recv_end)
                 task.start()
@@ -48,93 +46,112 @@ class ConstructSafeArea:
             task.join()
             for key, value in d.items():
                 merged_dict[key] = merged_dict[key].union(value)
-
         return merged_dict
 
     @staticmethod
-    def create_cover_sets_sub_grid(route_skeleton: set, grid: dict, initialization_point: tuple, find_candidate_algorithm, send_end):
+    def create_cover_sets_sub_grid(route_skeleton: set, grid: dict, find_relaxed_nn: bool, send_end):
         cs = defaultdict(set)
         route_skeleton_list = list(route_skeleton)
         route_skeleton_kd_tree = KDTree(route_skeleton_list)
 
         # Assign points to their nearest anchor
-        for (x, y) in grid.keys():
-            candidates = find_candidate_algorithm(route_skeleton_list, route_skeleton_kd_tree, (x + 0.5, y + 0.5))
-            for point in grid[(x, y)]:
-                (anchor, dist) = DistanceCalculator.find_nearest_neighbor_from_candidates(point, candidates, initialization_point)
-                cs[anchor].add((point, dist))
+        if find_relaxed_nn:
+            for (x, y) in grid.keys():
+                candidates = ConstructSafeArea._find_candidate_nearest_neighbors(route_skeleton_list, route_skeleton_kd_tree, (x + 0.5, y + 0.5))
+                for point in grid[(x, y)]:
+                    (anchor, dist) = DistanceCalculator.find_nearest_neighbor_from_candidates(point, candidates, None)
+                    cs[anchor].add((point, dist))
+        else:
+            for (x, y) in grid.keys():
+                for point in grid[(x, y)]:
+                    (anchor, dist) = DistanceCalculator.find_nearest_neighbour_from_candidates_with_kd_tree(point, route_skeleton_list, route_skeleton_kd_tree)
+                    cs[anchor].add((point, dist))
 
         send_end.send(cs)
 
     @staticmethod
     def _find_candidate_nearest_neighbors(route_skeleton_list: list, route_skeleton_kd_tree: KDTree, cell: tuple) -> dict:
+        relaxation_radius = sqrt(2) 
+        min_dist, _ = route_skeleton_kd_tree.query(cell)   
+        candidate_indices = route_skeleton_kd_tree.query_ball_point(cell, min_dist + relaxation_radius)
+        return [route_skeleton_list[i] for i in candidate_indices]
+    
+    @staticmethod
+    def find_candidate_nearest_neighbors_with_mindist(route_skeleton: set, cell: tuple) -> dict:
+        min_dist = float("inf")
+        candidates = set()
         distance_to_corner_of_cell = sqrt(0.5 ** 2 + 0.5 ** 2)
-
-        min_dist, _ = route_skeleton_kd_tree.query(cell)
-        candidate_indices = route_skeleton_kd_tree.query_ball_point(cell, min_dist + distance_to_corner_of_cell)
-        return {route_skeleton_list[i] for i in candidate_indices}
+        for anchor in route_skeleton:
+            dist = DistanceCalculator.calculate_euclidian_distance_between_cells(cell, anchor)
+            if dist <= min_dist + distance_to_corner_of_cell:
+                if dist < min_dist:
+                    min_dist = dist
+                candidates.add((anchor, dist))
+        return ({a for a, d in candidates if d <= min_dist + distance_to_corner_of_cell})
 
 class SafeArea:
-    def __init__(self, anchor_cover_set, anchor: tuple[float, float], decrease_factor: float, confidence_change: float = 0.01, normalisation_factor: int = 100000, cardinality_squish: float = 0.1, max_confidence_change: float = 0.1) -> None:
+    def __init__(self, anchor: tuple[float, float], radius: float, cardinality: int, confidence_change, cardinality_squish, max_confidence_change) -> None:
         """
         Initializes a SafeArea instance.
 
         Parameters:
-            anchor_cover_set (set): The set of points covering the anchor area.
             anchor (tuple[float, float]): The center point of the anchor area.
-            decrease_factor (float): The factor by which to decrease the radius in each iteration.
+            radius (float) : The radius which in collaboration with the anchor makes up the safe area
+            cardinality (int) : The amount of points contained in the cover set of the safe area
             confidence_change (float): The minimum change in confidence for each update.
             cardinality_normalisation (int): The normalization factor for cardinality in confidence calculations.
             cardinality_squish (float): The squishing factor for cardinality in confidence calculations.
             max_confidence_change (float): The maximum allowed change in confidence for each update. A value between 0 and 1.
             decrease_factor (float): The decrease a safe-area must see to have removed 'outliers'
         """
-        self.center = anchor
-        self.cover_set = anchor_cover_set
-        self.decrease_factor = decrease_factor
-        self.radius = 0
-        self.cardinality = 0
+        self.anchor = anchor
+        self.radius = radius
+        self.cardinality = cardinality
         self.confidence = 1.0
         self.confidence_change_factor = confidence_change
         self.decay_factor = 1 / (60*60*24) # Set as the fraction of a day 1 second represents. Done as TimeDelta is given in seconds.
-        self.timestamp = datetime.now() # Creation time.
-        self.construct()
-        self.cardinality_normalisation = normalisation_factor
+        self.timestamp =  None
         self.cardinality_squish = cardinality_squish
         self.max_confidence_change = max_confidence_change
+        
 
-    def construct(self):
-        """
-        Constructs the SafeArea by calculating its radius.
+    def add_to_point_cloud(self, Point):
+        self.PointsInSafeArea.append(Point)
 
-        Parameters:
-            anchor (tuple[float, float]): The center point of the anchor area.
-            decrease_factor (float): The factor by which to decrease the radius in each iteration.
-        """
-        self.calculate_radius()
+    def get_point_cloud(self):
+        return self.PointsInSafeArea
+
+    def empty_point_cloud(self):
+        self.PointsInSafeArea = []
+
+    PointsInSafeArea = []
+
+    @classmethod
+    def from_cover_set(cls, cover_set: set, anchor: tuple[float, float], decrease_factor: float, confidence_change: float = 0.01, cardinality_squish: float = 0.1, max_confidence_change: float = 0.1):
+        radius = SafeArea.calculate_radius(cover_set, decrease_factor)
+        cardinality = len(cover_set)
+        return cls(anchor, radius, cardinality, confidence_change, cardinality_squish, max_confidence_change)
+    
+    @classmethod
+    def from_meta_data(cls, anchor: tuple[float, float], radius: float, cardinality: float, confidence_change: float = 0.01, cardinality_squish: float = 0.1, max_confidence_change: float = 0.1):
+        return cls(anchor, radius, cardinality, confidence_change, cardinality_squish, max_confidence_change)
+
        
-    def calculate_radius(self):
-        """
-        Calculates the radius of the Safe Area.
-
-        Parameters:
-            anchor (tuple[float, float]): The center point of the anchor area.
-            decrease_factor (float): The factor by which to decrease the radius in each iteration.
-        """
-        radius = max(self.cover_set, key=itemgetter(1), default=(0,0))[1]
+    @staticmethod   
+    def calculate_radius(cover_set: set, decrease_factor: float):
+        radius = max(cover_set, key=itemgetter(1), default=(0,0))[1]
         removed_count = 0
-        cover_set_size = len(self.cover_set)
-        removal_threshold = self.decrease_factor * cover_set_size
-        filtered_cover_set = {(p, d) for (p, d) in self.cover_set}
+        cover_set_size = len(cover_set)
+        removal_threshold = decrease_factor * cover_set_size
+        filtered_cover_set = {(p, d) for (p, d) in cover_set}
 
         #Refine radius of safe area radius
         while removed_count < removal_threshold:
-            radius *= (1 - self.decrease_factor)
+            radius *= (1 - decrease_factor)
             filtered_cover_set = {(p, d) for (p, d) in filtered_cover_set if d <= radius}
             removed_count = cover_set_size - len(filtered_cover_set)
 
-        self.cardinality = len(filtered_cover_set)
-        self.radius = radius
+        return radius
 
     def get_current_confidence(self, timestamp: datetime) -> tuple[float, datetime]:
         """
@@ -187,16 +204,14 @@ class SafeArea:
         Returns:
             float: The decay factor for confidence.
         """
-        decay = delta * self.decay_factor
-        normalised_cardinality = self.cardinality / self.cardinality_normalisation
-        cardinality_offset = self.sigmoid(normalised_cardinality, 3.0, -0.1, 1)
-        decay = self.sigmoid(decay, -cardinality_offset, -0.5, 2) # -0.5 forces the line to go through (0,0) and 2 normalizes the function such that it maps any number to a value between -1 and 1
+        time = delta * self.decay_factor
+        decay = self.sigmoid(time, -0.5, 2) # -0.5 forces the line to go through (0,0) and 2 normalizes the function such that it maps any number to a value between -1 and 1
         decay = max(decay, 0.0)
         return round(decay, 5)
     
     
-    def sigmoid(self, x: float, x_offset: float, y_offset, multiplier: float) -> float:
-        return (1/(1 + np.exp((-x) + x_offset)) + y_offset) * multiplier
+    def sigmoid(self, x: float, y_offset, multiplier: float) -> float:
+        return (1/(1 + np.exp((-x))) + y_offset) * multiplier
 
     def get_confidence_increase(self):
         inc = max(min((1 / (self.cardinality * self.cardinality_squish)), self.max_confidence_change), self.confidence_change_factor)
