@@ -27,20 +27,23 @@ class DTCExecutor:
 
         return gs
     
-    def create_point_cloud_with_n_points(self, n: int, city: bool = False):
+    def create_point_cloud_with_n_points(self, n: int, city: bool = False, with_time: bool = False):
         records = self.tdrive_handler.read_n_records_inside_bbb(n, city)
         tid_of_existing_trajectory = 1
         trajectory = Trajectory()
         pc = TrajectoryPointCloud()
 
-        for _, _, longitude, latitude, tid in records:
+        for _, timestamp, longitude, latitude, tid in records:
             # Separate points into trajectories based on their trajectory ids
             if tid != tid_of_existing_trajectory:
                 pc.add_trajectory(trajectory)
                 trajectory = Trajectory()
                 tid_of_existing_trajectory = tid
 
-            trajectory.add_point(longitude, latitude)
+            if with_time:
+                trajectory.add_point(longitude, latitude, timestamp)
+            else:    
+                trajectory.add_point(longitude, latitude)
 
         pc.add_trajectory(trajectory)
         return pc

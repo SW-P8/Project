@@ -22,7 +22,7 @@ class NoiseCorrection:
         for i, point in enumerate(trajectory.points):
             nearest_anchor, dist = DistanceCalculator.find_nearest_neighbor_from_candidates(point, self.safe_areas.keys(), self.initialization_point)
             self.safe_areas[nearest_anchor].add_to_point_cloud(point)
-            if dist >= self.safe_areas[nearest_anchor].radius:
+            if dist > self.safe_areas[nearest_anchor].radius:
                 # Ensures that we do not try to clean first or last element. Should be improved!
                 if i != 0 and i != len(trajectory.points) - 1:
                     logging.debug(f"Nearest anchor: {nearest_anchor}, Distance: {dist}")
@@ -57,7 +57,6 @@ class NoiseCorrection:
         grid_proj = Proj(proj='tmerc', lat_0=origin_latitude, lon_0=origin_longitude, k=1, x_0=0, y_0=0, ellps='WGS84', units='m')
         # WGS84 Proj instance for lat/long
         geo_proj = Proj(proj='latlong', datum='WGS84')
-
         return grid_proj, geo_proj
 
     def convert_grid_to_geo(self, x, y, grid_proj, geo_proj):

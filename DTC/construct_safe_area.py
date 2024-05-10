@@ -46,7 +46,6 @@ class ConstructSafeArea:
             task.join()
             for key, value in d.items():
                 merged_dict[key] = merged_dict[key].union(value)
-
         return merged_dict
 
     @staticmethod
@@ -72,14 +71,13 @@ class ConstructSafeArea:
 
     @staticmethod
     def _find_candidate_nearest_neighbors(route_skeleton_list: list, route_skeleton_kd_tree: KDTree, cell: tuple) -> dict:
-        distance_to_corner_of_cell = sqrt(0.5 ** 2 + 0.5 ** 2)        
-        min_dist, _ = route_skeleton_kd_tree.query(cell)
-        candidate_indices = route_skeleton_kd_tree.query_ball_point(cell, min_dist + distance_to_corner_of_cell)
+        relaxation_radius = sqrt(2) 
+        min_dist, _ = route_skeleton_kd_tree.query(cell)   
+        candidate_indices = route_skeleton_kd_tree.query_ball_point(cell, min_dist + relaxation_radius)
         return [route_skeleton_list[i] for i in candidate_indices]
     
     @staticmethod
-    def find_candidate_nearest_neighbors_with_historic_mindist(route_skeleton: set, cell: tuple) -> dict:
-        historic_mindist = list()
+    def find_candidate_nearest_neighbors_with_mindist(route_skeleton: set, cell: tuple) -> dict:
         min_dist = float("inf")
         candidates = set()
         distance_to_corner_of_cell = sqrt(0.5 ** 2 + 0.5 ** 2)
@@ -88,12 +86,11 @@ class ConstructSafeArea:
             if dist <= min_dist + distance_to_corner_of_cell:
                 if dist < min_dist:
                     min_dist = dist
-                    historic_mindist.append(dist)
                 candidates.add((anchor, dist))
-        return ({a for a, d in candidates if d <= min_dist + distance_to_corner_of_cell}, historic_mindist)
+        return ({a for a, d in candidates if d <= min_dist + distance_to_corner_of_cell})
 
 class SafeArea:
-    def __init__(self, anchor: tuple[float, float], radius: float, cardinality: int, confidence_change, normalisation_factor, cardinality_squish, max_confidence_change) -> None:
+    def __init__(self, anchor: tuple[float, float], radius: float, cardinality: int, confidence_change, cardinality_squish, max_confidence_change) -> None:
         """
         Initializes a SafeArea instance.
 
@@ -114,7 +111,6 @@ class SafeArea:
         self.confidence_change_factor = confidence_change
         self.decay_factor = 1 / (60*60*24) # Set as the fraction of a day 1 second represents. Done as TimeDelta is given in seconds.
         self.timestamp =  None
-        self.cardinality_normalisation = normalisation_factor
         self.cardinality_squish = cardinality_squish
         self.max_confidence_change = max_confidence_change
         
@@ -131,14 +127,14 @@ class SafeArea:
     PointsInSafeArea = []
 
     @classmethod
-    def from_cover_set(cls, cover_set: set, anchor: tuple[float, float], decrease_factor: float, confidence_change: float = 0.01, normalisation_factor: int = 100000, cardinality_squish: float = 0.1, max_confidence_change: float = 0.1):
+    def from_cover_set(cls, cover_set: set, anchor: tuple[float, float], decrease_factor: float, confidence_change: float = 0.01, cardinality_squish: float = 0.1, max_confidence_change: float = 0.1):
         radius = SafeArea.calculate_radius(cover_set, decrease_factor)
         cardinality = len(cover_set)
-        return cls(anchor, radius, cardinality, confidence_change, normalisation_factor, cardinality_squish, max_confidence_change)
+        return cls(anchor, radius, cardinality, confidence_change, cardinality_squish, max_confidence_change)
     
     @classmethod
-    def from_meta_data(cls, anchor: tuple[float, float], radius: float, cardinality: float, confidence_change: float = 0.01, normalisation_factor: int = 100000, cardinality_squish: float = 0.1, max_confidence_change: float = 0.1):
-        return cls(anchor, radius, cardinality, confidence_change, normalisation_factor, cardinality_squish, max_confidence_change)
+    def from_meta_data(cls, anchor: tuple[float, float], radius: float, cardinality: float, confidence_change: float = 0.01, cardinality_squish: float = 0.1, max_confidence_change: float = 0.1):
+        return cls(anchor, radius, cardinality, confidence_change, cardinality_squish, max_confidence_change)
 
        
     @staticmethod   
@@ -208,16 +204,14 @@ class SafeArea:
         Returns:
             float: The decay factor for confidence.
         """
-        decay = delta * self.decay_factor
-        normalised_cardinality = self.cardinality / self.cardinality_normalisation
-        cardinality_offset = self.sigmoid(normalised_cardinality, 3.0, -0.1, 1)
-        decay = self.sigmoid(decay, -cardinality_offset, -0.5, 2) # -0.5 forces the line to go through (0,0) and 2 normalizes the function such that it maps any number to a value between -1 and 1
+        time = delta * self.decay_factor
+        decay = self.sigmoid(time, -0.5, 2) # -0.5 forces the line to go through (0,0) and 2 normalizes the function such that it maps any number to a value between -1 and 1
         decay = max(decay, 0.0)
         return round(decay, 5)
     
     
-    def sigmoid(self, x: float, x_offset: float, y_offset, multiplier: float) -> float:
-        return (1/(1 + np.exp((-x) + x_offset)) + y_offset) * multiplier
+    def sigmoid(self, x: float, y_offset, multiplier: float) -> float:
+        return (1/(1 + np.exp((-x))) + y_offset) * multiplier
 
     def get_confidence_increase(self):
         inc = max(min((1 / (self.cardinality * self.cardinality_squish)), self.max_confidence_change), self.confidence_change_factor)

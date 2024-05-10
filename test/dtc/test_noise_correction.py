@@ -55,7 +55,7 @@ class TestNoiseCorrection():
 
         nc.correct_noisy_point(five_point_grid.pc.trajectories[0], 3)
         
-        expected_point = DistanceCalculator.convert_cell_to_point(five_point_grid.initialization_point, (5,5))
+        expected_point = DistanceCalculator.convert_cell_to_point(five_point_grid.initialization_point, (7,7))
 
         assert five_point_grid.pc.trajectories[0].points[3].longitude == expected_point[0]
         assert five_point_grid.pc.trajectories[0].points[3].latitude == expected_point[1]
@@ -89,8 +89,7 @@ class TestNoiseCorrection():
     def test_noise_detection_correct_noisy_point(self, five_point_grid):
 
         trajectory_before_correction = copy.deepcopy(five_point_grid.pc.trajectories[0])
-
-        five_point_grid.route_skeleton = {(0,0), (2.5,2.5), (5,5), (7,7), (10,10)}
+        five_point_grid.route_skeleton = {(0,0), (3.5,3.5), (5,5), (7,7.5), (10,10)}
         five_point_grid.construct_safe_areas(0)
 
         nc = NoiseCorrection(five_point_grid.safe_areas, five_point_grid.initialization_point)
@@ -104,7 +103,7 @@ class TestNoiseCorrection():
         
         nc.noise_detection(five_point_grid.pc.trajectories[0])
         
-        expected_corrected_point = DistanceCalculator.convert_cell_to_point(five_point_grid.initialization_point, (5,5))
+        expected_corrected_point = DistanceCalculator.convert_cell_to_point(five_point_grid.initialization_point, (7,7.5))
 
         assert five_point_grid.pc.trajectories[0] != trajectory_before_correction 
         assert five_point_grid.pc.trajectories[0].points[3].longitude == expected_corrected_point[0]

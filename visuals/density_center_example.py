@@ -25,6 +25,22 @@ points = [
     (7.6, 4.4),
     (8.8, 3.2)
 ]
+psi_points = [
+    (3.8, 3.8),
+    (4.5, 4.2),
+    (4.5, 4.8),
+    (5.1, 5.1),
+    (5.1, 5.3),
+    (5.3, 5.1),
+    (5.3, 5.3),
+    (6.2, 5.1),
+    (6.2, 5.2),
+    (6.8, 5.1),
+    (6.8, 5.2),
+    (7.2, 4.4),
+    (7.2, 4.8),
+    (7.6, 4.4),
+]
 
 # Region -- Find density centers
 grid_system = {}
@@ -39,8 +55,7 @@ for cell, cell_points in grid_system.items():
         cell, grid_system)
 
 main_route = ConstructMainRoute.extract_main_route_with_density_center(grid_system)
-route_skeleton = RouteSkeleton.extract_route_skeleton(ConstructMainRoute.extract_main_route(grid_system),1, 1, 1)
-candidates, historic_mindist = ConstructSafeArea.find_candidate_nearest_neighbors_with_historic_mindist(route_skeleton, (5, 5))
+route_skeleton = RouteSkeleton.extract_route_skeleton(ConstructMainRoute.extract_main_route(grid_system), 2, 50, 0)
 # Region -- Insert data into figures
 fig_cmr, ax_cmr = plt.subplots()
 fig_cnn, ax_cnn = plt.subplots()
@@ -57,7 +72,7 @@ for cell, density_center, active in main_route:
     
     ax_cmr.add_patch(plt.Rectangle(cell, 1, 1, color=color, alpha=0.375, label=label))
     ax_cmr.plot([x_c, x_d], [y_c, y_d], linestyle='--', dashes=(2, 1), linewidth=1, color=color)
-
+    #ax_cnn.add_patch(plt.Rectangle(cell, 1, 1, color=color, alpha=0.375, label=label))
     if first_active and active:
         first_active = False
     if first_inactive and not active:
@@ -68,16 +83,19 @@ ax_cmr.scatter(*zip(*density_centers.values()), color='orange',
                marker='D', label='Density center')
 ax_cmr.add_patch(plt.Rectangle((2.02, 2.02), 2.98, 2.98, linestyle='--', fill=False, color='green', linewidth=2))
 ax_cmr.text(3.65, 3.40, r'$\Omega_{1,1}=(1.5, 1.5)$')
-# Candidate Nearest Neighbor Figure
-ax_cnn.add_patch(plt.Rectangle((5, 5), 1, 1, color='green', alpha=0.375, label='cell'))
-for anchor in route_skeleton:
-    x_a, y_a = anchor
-    ax_cnn.scatter(*anchor, color='orange')
-    ax_cnn.plot([x_a, 5], [y_a, 5], color='orange', zorder=0)
-for candidate in candidates:
-    ax_cnn.scatter(*candidate, color='green')
-for dist in historic_mindist:
-    ax_cnn.add_patch(plt.Circle((5.5, 5.5), dist, color ='green', fill=False))
+# Safe Area Construction Figure
+for cell, density_center, active in main_route:
+    if active is False:
+        continue
+    min_dist = float('inf')
+    for anchor in route_skeleton:
+        dist = DistanceCalculator.calculate_euclidian_distance_between_cells((cell[0] + 0.5, cell[1] + 0.5), anchor)
+        if dist < min_dist:
+            min_dist = dist
+    ax_cnn.add_patch(plt.Circle((cell[0] + 0.5, cell[1] + 0.5), min_dist + np.sqrt(0.5 ** 2 + 0.5 ** 2), alpha=0.2, color='r'))
+    ax_cnn.add_patch(plt.Circle((cell[0] + 0.5, cell[1] + 0.5), min_dist, alpha=0.5, color='g'))
+ax_cnn.scatter(*zip(*psi_points), color='b', label='Point')
+ax_cnn.scatter(*zip(*route_skeleton), color='gold', marker='D', label='Anchor')
 
 # Region -- Figure configurations
 for ax in [ax_cmr, ax_cnn]:

@@ -8,47 +8,25 @@ class TestSafeArea():
     @pytest.fixture
     def default_safe_area(self):
         cover_set = {(5, 5)}
-        safe_area = SafeArea.from_cover_set(cover_set, (5, 5), decrease_factor=0.1, confidence_change=0.01, normalisation_factor=100000, cardinality_squish=0.1, max_confidence_change=0.1)
+        safe_area = SafeArea.from_cover_set(cover_set, (5, 5), decrease_factor=0.1, confidence_change=0.01, cardinality_squish=0.1, max_confidence_change=0.1)
         safe_area.timestamp = datetime.now()
         return safe_area
 
     @pytest.mark.parametrize("normalised_cardinality, expected_result",
         [
-            (0.001, -0.053),# test with values for cardinality_offset with cardinality = 100
-            (1, 0.019),     # test with values for cardinality_offset with cardinality = 100.000
-            (3, 0.400),     # test with values for cardinality_offset with cardinality = 300.000
-            (10, 0.899)     # test with values for cardinality_offset with cardinality = 1.000.000
+            (0.001, 0.4),# test with values for cardinality_offset with cardinality = 100
+            (1, 0.631),     # test with values for cardinality_offset with cardinality = 100.000
+            (3, 0.853),     # test with values for cardinality_offset with cardinality = 300.000
+            (10, 0.9)     # test with values for cardinality_offset with cardinality = 1.000.000
         ]
     )
     def test_sigmoid_as_used_for_cardinality_offset(self, normalised_cardinality, expected_result, default_safe_area):
         # Arrange
-        x_offset = 3
         y_offset = -0.1
         multiplier = 1
 
         # Act
-        result = default_safe_area.sigmoid(normalised_cardinality, x_offset, y_offset, multiplier)
-
-        # Assert
-        assert round(result, 3) == expected_result
-
-    # Test for decay with delta = 0.05 and x_offset from test_sigmoid_as_used_for_cardinality_offset.
-    @pytest.mark.parametrize("x_offset, expected_result",
-        [
-            (-0.053, 0.556),    # test with values for cardinality_offset with cardinality = 100
-            (0.019, 0.530),     # test with values for cardinality_offset with cardinality = 100.000
-            (0.400, 0.38),      # test with values for cardinality_offset with cardinality = 300.000
-            (0.899, 0.149)      # test with values for cardinality_offset with cardinality = 1.000.000
-        ]
-    )
-    def test_sigmoid_as_used_for_decay_with_delta_0_05(self, x_offset, expected_result, default_safe_area):
-        # Arrange
-        delta_decay = (1 / 60 * 60 * 24) * 0.05
-        y_offset = -0.5
-        multiplier = 2
-
-        #Act
-        result = default_safe_area.sigmoid(delta_decay, x_offset, y_offset, multiplier)
+        result = default_safe_area.sigmoid(normalised_cardinality, y_offset, multiplier)
 
         # Assert
         assert round(result, 3) == expected_result
