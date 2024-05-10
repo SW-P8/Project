@@ -21,7 +21,7 @@ class mapmatcher:
 
     def project_points_to_graph(self, projected_graph, points):
         projected_points = []
-        bar = Bar('Projecting points', max=len(points))
+        bar = Bar('Projecting points', max=len(points), suffix=' %(index)d/%(max)d - %(percent).1f%% - avg %(avg).1fs - elapsed %(elapsed)ds - ETA %(eta)ds')
         for point in points:
             projected_point, _ = project_geometry(Point(point), to_crs=projected_graph.graph['crs'])
             projected_points.append((point, (projected_point.x, projected_point.y)))
@@ -40,42 +40,40 @@ class mapmatcher:
         projected_graph = project_graph(graph)
         
         projected_data = self.project_points_to_graph(projected_graph, data)
-        # process_count = mp.cpu_count()
-        # splits = CollectionUtils.split(projected_data[:160], process_count)
-        # tasks = []
-        # pipe_list = []
-        # manager = mp.Manager()
-        # #shared_graph = manager.Value(networkx.MultiDiGraph, project_graph)
-        # shared_list = manager.list(projected_graph)
-        
-        # for split in splits:
-        #     if split != []:
-        #         recv_end, send_end = mp.Pipe(False)
-        #         t = mp.Process(target=self.find_nearest_edge, args=(shared_list, split, send_end))
-        #         tasks.append(t)
-        #         pipe_list.append(recv_end)
-        #         t.start()
+        process_count = 6 #mp.cpu_count()
+        splits = CollectionUtils.split(projected_data, process_count)
+        tasks = []
+        pipe_list = []
+                
+        for split in splits:
+            if split != []:
+                recv_end, send_end = mp.Pipe(False)
+                t = mp.Process(target=self.find_nearest_edge, args=(projected_graph, split, send_end))
+                tasks.append(t)
+                pipe_list.append(recv_end)
+                t.start()
 
-        # perp_dist = []
-        # for (i, task) in enumerate(tasks):
-        #     dists = pipe_list[i].recv()
-        #     task.join()
-        #     for dist in dists:
-        #         perp_dist.append(dist)
-
-        perp_dist = self.find_nearest_edge(projected_graph, projected_data, None)
+        perp_dist = []
+        for (i, task) in enumerate(tasks):
+            dists = pipe_list[i].recv()
+            task.join()
+            for dist in dists:
+                perp_dist.append(dist)
+        #projected_data.reverse()
+        #perp_dist = self.find_nearest_edge(projected_graph, projected_data[1200:2200], None)
         
-        with open("data/perpendicular_distance.json", "w") as pdout:
+        with open("data/perpendicular_distance_mult.json", "w") as pdout:
             pdout.write(json.dumps(perp_dist))
 
         for x in perp_dist:
             print(x)
             
-        print('BData loaded and spungit')
+        print('Mapmatching complete')
 
     def find_nearest_edge(self, graph, data, send_end):
         perp_dist = list()
-        bar = Bar('Mapmatching', max=len(data))
+        
+        bar = Bar(f'Mapmatching id = {os.getpid()}', max=len(data), suffix=' %(index)d/%(max)d - %(percent).1f%% - avg %(avg).1fs - elapsed %(elapsed)ds - ETA %(eta)ds')
         
         for coord, proj in data:
             long, lat = coord
@@ -84,8 +82,8 @@ class mapmatcher:
             perp_dist.append((long, lat, dist))
             bar.next()
         bar.finish()
-        return perp_dist
-        #send_end.send(perp_dist)
+        #return perp_dist
+        send_end.send(perp_dist)
 
     def save_model_locally(self):
         north = 40.0245

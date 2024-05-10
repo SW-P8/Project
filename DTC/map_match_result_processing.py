@@ -7,7 +7,7 @@ def process_results(path):
         json_in = json.load(matched_data)
 
     df = pd.DataFrame.from_records(json_in, columns=["longitude", "latitude", "distance"])
-    print(df.describe())
+    print(df['distance'].describe())
 
 
 if __name__ == '__main__':
