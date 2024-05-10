@@ -48,8 +48,8 @@ class CleanTraj:
         """
 
         noise_corrector = noise_correction.NoiseCorrection(self.safe_areas , self.initialization_point)
-        cleaned_trajectory, labels_of_cleaned_points = noise_corrector.noise_detection(traj)
-        return cleaned_trajectory, labels_of_cleaned_points
+        labels_of_cleaned_points = noise_corrector.noise_detection(traj)
+        return labels_of_cleaned_points
         #self.update_safe_areas() 
 
 

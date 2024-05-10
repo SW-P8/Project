@@ -1,6 +1,5 @@
 from DTC.trajectory import Trajectory
 from DTC.distance_calculator import DistanceCalculator
-import logging
 from scipy.spatial import KDTree
 
 class NoiseCorrection:
@@ -23,7 +22,7 @@ class NoiseCorrection:
                     labels_of_cleaned_points.append((point.noise))
                     self.correct_noisy_point(trajectory, i)
 
-        return trajectory, labels_of_cleaned_points                   
+        return labels_of_cleaned_points                   
 
 
     def correct_noisy_point(self, trajectory: Trajectory, point_id: int) -> None:
