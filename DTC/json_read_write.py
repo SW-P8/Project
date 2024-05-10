@@ -1,5 +1,8 @@
 import json
 from DTC.construct_safe_area import SafeArea
+from DTC.trajectory import Trajectory, TrajectoryPointCloud
+from DTC.point import Point
+import datetime
 
 def write_grid_to_json(file_name: str, grid: dict) -> None:
     with open(file_name, "w") as outfile: 
@@ -41,3 +44,25 @@ def read_safe_areas_from_json(file_name: str) -> dict:
         safe_areas[key_tuple] = safe_area_object
         
     return safe_areas
+
+def write_point_cloud_to_json(file_name: str, point_cloud: TrajectoryPointCloud):
+    def point_to_json(point: Point):
+        if point.timestamp == None:
+            return [point.longitude, point.latitude, None]
+        return [point.longitude, point.latitude, point.timestamp.isoformat()]
+    with open(file_name, "w") as outfile:
+        json.dump([t.points for t in point_cloud.trajectories], outfile, default=point_to_json, indent=4)
+
+def read_point_cloud_from_json(file_name: str):
+    point_cloud = TrajectoryPointCloud()
+    with open(file_name, "r") as point_cloud_file:
+        point_cloud_data = json.load(point_cloud_file)
+
+    for trajectory in point_cloud_data:
+        trajectory_object = Trajectory()
+        for longitude, latitude, timestamp in trajectory:
+            if timestamp != None:
+                trajectory_object.add_point(longitude, latitude, datetime.datetime.strptime(timestamp, '%Y-%m-%dT%H:%M:%S'))
+        point_cloud.add_trajectory(trajectory_object)
+
+    return point_cloud
