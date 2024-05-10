@@ -50,17 +50,17 @@ def model(model_data):
 
 @pytest.fixture
 def cleaner(model):
-    grid_system, _ = model
+    grid_system, smoothed_main_route = model
     cleaner = CleanTrajectory(
         grid_system.safe_areas,
-        grid_system.route_skeleton,
-        grid_system.initialization_point)
+        grid_system.initialization_point,
+        smoothed_main_route)
+
     return cleaner
 
 
 @pytest.mark.skip
-def test_safe_areas_can_be_updated(model, cleaner, testing_data):
-    grid_system, smoothed_main_route = model
+def test_safe_areas_can_be_updated(cleaner, testing_data):
     for trajectory in tqdm(testing_data, desc="Cleaning trajectories"):
         cleaner.clean(trajectory)
     pass
