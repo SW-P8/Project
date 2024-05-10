@@ -1,14 +1,11 @@
 import os
 import json
-import pandas as pd
-import geopandas as gpd
-import geodatasets
+
 import multiprocessing as mp
 from osmnx.graph import graph_from_bbox
 from osmnx.io import save_graphml, load_graphml
 from osmnx.distance import nearest_edges
 from osmnx.projection import project_graph, project_geometry
-import networkx
 from DTC.distance_calculator import DistanceCalculator
 from DTC.collection_utils import CollectionUtils
 from shapely.geometry import Point
@@ -34,7 +31,7 @@ class mapmatcher:
         graph = load_graphml(filepath='data/InnerBBB.graphml')
         
         print('Loading rsk data')
-        with open("data/City area/All/AllcityRSK.json", "r") as rskinfile:
+        with open("AllcityRSK.json", "r") as rskinfile:
             json_data = json.load(rskinfile)
         data = [self.transform(eval(x)) for x in json_data]
         projected_graph = project_graph(graph)
