@@ -131,3 +131,12 @@ class TestDistanceCalculator:
 
         assert DistanceCalculator.get_distance_between_points(t1, t2) == expected_distance
 
+    def test_converting_point_to_cell_and_back_is_correct(self, two_point_grid):
+        original_point = two_point_grid.pc.trajectories[0].points[0]
+        index_for_cell = DistanceCalculator.calculate_exact_index_for_point(original_point, two_point_grid.initialization_point)
+        reconverted_point = DistanceCalculator.convert_cell_to_point(two_point_grid.initialization_point, index_for_cell)
+
+        assert original_point.get_coordinates() == (1, 0)
+        assert index_for_cell == (4, 4)
+        assert reconverted_point == (1, 0)
+

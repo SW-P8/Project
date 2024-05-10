@@ -11,13 +11,11 @@ logging.basicConfig(level=logging.DEBUG)
 
 
 class NoiseCorrection:
-    def __init__(self,safe_areas , init_point, min_lat, min_lon):
+    def __init__(self,safe_areas , init_point):
         self.route_skeleton = route_skeleton
         self.safe_areas = safe_areas
         self.initialization_point = init_point
         self.noisy_points = []
-        self.min_lat = min_lat
-        self.min_lon = min_lon
 
     # TODO decide how to handle if p-1 or p+1 is also noise, such that we do not correct noise with noise.
     def noise_detection(self, trajectory: Trajectory):

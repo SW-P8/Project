@@ -6,7 +6,7 @@ from DTC.distance_calculator import DistanceCalculator
 
 class CleanTraj:
 
-    def __init__(self, safe_areas, init_point, min_lat, min_long) -> None:
+    def __init__(self, safe_areas, init_point) -> None:
         """
         Initializes the CleanTraj object with a specific grid system.
 
@@ -20,9 +20,6 @@ class CleanTraj:
         """  
         self.initialization_point = init_point
         self.safe_areas = safe_areas
-        self.min_lat = min_lat
-        self.min_long = min_long
-    
 
     def clean(self, traj : trajectory.Trajectory):
         """
@@ -52,7 +49,7 @@ class CleanTraj:
         - Adjusts the set of noisy points within the class based on proximity to safe areas.
         """
 
-        noise_corrector = noise_correction.NoiseCorrection(self.safe_areas , self.initialization_point, min_lat=self.min_lat, min_lon=self.min_long)
+        noise_corrector = noise_correction.NoiseCorrection(self.safe_areas , self.initialization_point)
         trajectory, a = noise_corrector.noise_detection(traj)
         return trajectory, a
         #self.update_safe_areas() 
