@@ -58,19 +58,14 @@ class TestCleanTraj:
         assert isinstance(clean_traj.safe_areas, dict)
 
     def test_clean(self,grid_system, trajectory):
-        clean_traj = CleanTraj(grid_system.safe_areas, grid_system.initialization_point)
-        old_trajectory = copy.copy(trajectory)
-        clean_traj.clean(trajectory)
-        count_match = 0
-        for point in trajectory.points:
-            for old_point in old_trajectory.points:
-                if point == old_point:
-                    count_match += 1
+        trajectory_cleaner = CleanTraj(grid_system.safe_areas, grid_system.initialization_point)
+        old_trajectory = copy.deepcopy(trajectory)
+        trajectory_cleaner.clean(trajectory)
 
-        assert len(old_trajectory.points) != count_match 
-        points_in_sa = []
-        for _, sa in clean_traj.safe_areas.items():
-            points_in_sa.append(sa.get_point_cloud())
-        assert points_in_sa is not None 
+        old_trajectory_set = {point.get_coordinates() for point in old_trajectory.points}
+        cleaned_trajectory_set = {point.get_coordinates() for point in trajectory.points}
+
+        assert len(old_trajectory_set - cleaned_trajectory_set) == 1
+
 
        

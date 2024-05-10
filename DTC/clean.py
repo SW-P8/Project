@@ -1,6 +1,4 @@
-from typing import Optional
-from DTC import trajectory, noise_correction,distance_calculator
-from DTC.construct_safe_area import SafeArea
+from DTC import trajectory, noise_correction
 from DTC.point import Point
 from DTC.distance_calculator import DistanceCalculator
 
@@ -50,8 +48,8 @@ class CleanTraj:
         """
 
         noise_corrector = noise_correction.NoiseCorrection(self.safe_areas , self.initialization_point)
-        trajectory, a = noise_corrector.noise_detection(traj)
-        return trajectory, a
+        cleaned_trajectory, labels_of_cleaned_points = noise_corrector.noise_detection(traj)
+        return cleaned_trajectory, labels_of_cleaned_points
         #self.update_safe_areas() 
 
 
