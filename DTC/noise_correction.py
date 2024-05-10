@@ -54,4 +54,4 @@ class NoiseCorrection:
 
     
     def update_safe_area(self, safe_area):
-        return update_safe_area(safe_area, self.safe_areas, self.initialization_point, self.smoothed_main_route)
+        return update_safe_area(safe_area, self.initialization_point, self.smoothed_main_route)

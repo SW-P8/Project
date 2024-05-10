@@ -10,10 +10,10 @@ import gc
 def test_safe_areas_can_be_updated():
     # Arrange
     data1 = read_point_cloud_from_json(
-        "test/odtc/integration/testresources/AllcityPC.json")
+        "test/odtc/integration/testresources/1milcityPC.json")
     data2 = read_point_cloud_from_json(
-        "test/odtc/integration/testresources/AllcityPC.json")
-    test_data = data2.trajectories[100000:100100]
+        "test/odtc/integration/testresources/1milcityPC.json")
+    test_data = data2.trajectories[:100]
     grid_system = GridSystem(data1)
 
     del data1
@@ -42,7 +42,7 @@ def test_safe_areas_can_be_updated():
         "test/odtc/integration/testresources/1milcitySA.json")
 
     cleaner = CleanTrajectory(
-        grid_system.safe_areas,
+        grid_system.safe_area,
         grid_system.initialization_point,
         smoothed_main_route
     )
