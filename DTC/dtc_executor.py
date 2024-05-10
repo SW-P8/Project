@@ -27,7 +27,7 @@ class DTCExecutor:
         # TODO: Implement online step
 
         return gs
-
+    
     def create_point_cloud_with_n_points(self, n: int, city: bool = False, with_time: bool = False):
         records = self.tdrive_handler.read_n_records_inside_bbb(n, city)
         tid_of_existing_trajectory = 1
@@ -40,10 +40,11 @@ class DTCExecutor:
                 pc.add_trajectory(trajectory)
                 trajectory = Trajectory()
                 tid_of_existing_trajectory = tid
+
             if with_time:
                 trajectory.add_point(longitude, latitude, timestamp)
-            else:
-                trajectory.add_point(longitude, latitude, timestamp)
+            else:    
+                trajectory.add_point(longitude, latitude)
 
         pc.add_trajectory(trajectory)
         return pc
