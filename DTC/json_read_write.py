@@ -2,6 +2,7 @@ import json
 from DTC.construct_safe_area import SafeArea
 from DTC.trajectory import Trajectory, TrajectoryPointCloud
 from DTC.point import Point
+from tqdm import tqdm
 import datetime
 
 def write_grid_to_json(file_name: str, grid: dict) -> None:
@@ -58,7 +59,7 @@ def read_point_cloud_from_json(file_name: str):
     with open(file_name, "r") as point_cloud_file:
         point_cloud_data = json.load(point_cloud_file)
 
-    for trajectory in point_cloud_data:
+    for trajectory in tqdm(point_cloud_data, desc="Inserting data in point-cloud"):
         trajectory_object = Trajectory()
         for longitude, latitude, timestamp in trajectory:
             if timestamp != None:

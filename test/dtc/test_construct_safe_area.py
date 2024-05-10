@@ -130,7 +130,7 @@ class TestConstructSafeArea():
         assert set(cnn3) == {(2, 2), (2.5, 2.5), (3, 3), (3, 3), (4, 4)}
 
     def test_creation_from_cover_set_and_from_meta_data_are_equal(self):
-        safe_area_file = "safe_area_test.json"
+        safe_area_file = "test/dtc/resources/safe_area_test.json"
         cover_set = {((1, 1), 1), ((2, 1), 2)}
         anchor = (0, 1)
         decrease_factor = 0

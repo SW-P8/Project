@@ -1,66 +1,55 @@
 from DTC.clean_trajectory import CleanTrajectory
 from DTC.gridsystem import GridSystem
 from DTC.route_skeleton import RouteSkeleton
-from DTC.dtc_executor import DTCExecutor
+from DTC.json_read_write import read_set_of_tuples_from_json, read_point_cloud_from_json, read_safe_areas_from_json, read_grid_from_json
 from math import ceil
 from tqdm import tqdm
-import pytest
+import gc
 
 
-@pytest.fixture
-def data():
-    executor = DTCExecutor(True)
-    return executor.create_point_cloud_with_n_points(300000, True, True)
+def test_safe_areas_can_be_updated():
+    # Arrange
+    data1 = read_point_cloud_from_json(
+        "test/odtc/integration/testresources/AllcityPC.json")
+    data2 = read_point_cloud_from_json(
+        "test/odtc/integration/testresources/AllcityPC.json")
+    test_data = data2.trajectories[100000:100100]
+    grid_system = GridSystem(data1)
 
+    del data1
+    del data2
+    gc.collect()
 
-@pytest.fixture
-def model_data(data):
-    point_cloud = data
-    point_cloud.trajectories = data.trajectories[:1000]
-    return point_cloud
+    grid_system.grid_system = read_grid_from_json(
+        "test/odtc/integration/testresources/1milcityGrid.json")
+    grid_system.main_route = read_set_of_tuples_from_json(
+        "test/odtc/integration/testresources/1milcityMR.json")
 
-
-@pytest.fixture
-def testing_data(data):
-    testing_data = data.trajectories[1000:1050]
-    return testing_data
-
-
-@pytest.fixture
-def model(model_data):
-    grid_system = GridSystem(model_data)
     route_skeleton = RouteSkeleton()
-
-    grid_system.create_grid_system()
-
-    grid_system.extract_main_route()
-
-    min_pts_in_component = ceil(len(grid_system.main_route) * 0.0001)
-
     smoothed_main_route = route_skeleton.smooth_main_route(
         grid_system.main_route, 25)
     filtered_main_route = route_skeleton.graph_based_filter(
-        smoothed_main_route, 20, min_pts_in_component)
+        smoothed_main_route,
+        20,
+        ceil(len(grid_system.main_route) * 0.0001)
+    )
     grid_system.route_skeleton = route_skeleton.filter_sparse_points(
-        filtered_main_route, 20)
+        filtered_main_route,
+        20
+    )
 
-    grid_system.construct_safe_areas()
-    return grid_system, smoothed_main_route
+    grid_system.safe_area = read_safe_areas_from_json(
+        "test/odtc/integration/testresources/1milcitySA.json")
 
-
-@pytest.fixture
-def cleaner(model):
-    grid_system, smoothed_main_route = model
     cleaner = CleanTrajectory(
         grid_system.safe_areas,
         grid_system.initialization_point,
-        smoothed_main_route)
+        smoothed_main_route
+    )
 
-    return cleaner
-
-
-@pytest.mark.skip
-def test_safe_areas_can_be_updated(cleaner, testing_data):
-    for trajectory in tqdm(testing_data, desc="Cleaning trajectories"):
+    for trajectory in tqdm(test_data, desc="Cleaning trajectories"):
+        print("started cleaning")
         cleaner.clean(trajectory)
-    pass
+
+
+test_safe_areas_can_be_updated()
