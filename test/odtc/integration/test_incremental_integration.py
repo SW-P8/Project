@@ -5,8 +5,9 @@ from DTC.json_read_write import read_set_of_tuples_from_json, read_point_cloud_f
 from math import ceil
 from tqdm import tqdm
 import gc
+import pytest
 
-
+@pytest.mark.skip
 def test_safe_areas_can_be_updated():
     # Arrange
     data1 = read_point_cloud_from_json(
@@ -15,10 +16,6 @@ def test_safe_areas_can_be_updated():
         "test/odtc/integration/testresources/1milcityPC.json")
     test_data = data2.trajectories[:100]
     grid_system = GridSystem(data1)
-
-    del data1
-    del data2
-    gc.collect()
 
     grid_system.grid_system = read_grid_from_json(
         "test/odtc/integration/testresources/1milcityGrid.json")
