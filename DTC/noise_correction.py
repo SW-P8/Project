@@ -43,15 +43,11 @@ class NoiseCorrection:
             DistanceCalculator.convert_cell_to_point(self.initialization_point, nearest_anchor))
         
     def _update_safe_areas_thread(self, low_confidence_safe_areas):
-        updated_areas = []
-        with ThreadPoolExecutor() as executor:
-            for area in low_confidence_safe_areas.values():
-                self.safe_areas.pop(area.anchor)
-                updated_area = executor.submit(self.update_safe_area, area).result()
-                self.safe_areas[updated_area.anchor] = updated_area
+        updated_areas = {}
+        for area in low_confidence_safe_areas.values():
+            self.safe_areas.pop(area.anchor)
+            updated_areas = update_safe_area(area, self.initialization_point, self.smoothed_main_route)
 
-        return updated_areas
-
-    
-    def update_safe_area(self, safe_area):
-        return update_safe_area(safe_area, self.initialization_point, self.smoothed_main_route)
+            
+        for safe_area in updated_areas.values():
+                self.safe_areas[safe_area.anchor] = safe_area

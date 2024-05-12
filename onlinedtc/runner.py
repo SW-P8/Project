@@ -2,6 +2,7 @@ from DTC.trajectory import TrajectoryPointCloud
 from DTC.gridsystem import GridSystem
 from DTC.route_skeleton import RouteSkeleton
 from DTC.construct_safe_area import ConstructSafeArea, SafeArea
+from math import ceil
 
 
 def update_safe_area(safe_area: SafeArea, initialization_point, old_smoothed_main_route: set):
@@ -12,8 +13,14 @@ def update_safe_area(safe_area: SafeArea, initialization_point, old_smoothed_mai
     new_smoothed_main_route, merged_smoothed_main_route = smooth_new_main_route(
         grid_system.main_route, old_smoothed_main_route)
 
+    min_pts = ceil(len(old_smoothed_main_route) * 0.0001)
+
     graphed_main_route = filter_smoothed_main_route(
-        merged_smoothed_main_route, new_smoothed_main_route, len(old_smoothed_main_route))
+        merged_smoothed_main_route, new_smoothed_main_route, min_pts)
+    
+    # Check if any anchors remain. If not return empty.
+    if len(graphed_main_route) == 0:
+        return dict()
 
     # 20 is the radius points cannot be within eachother.
     route_skeleton_ancors = RouteSkeleton.filter_sparse_points(
