@@ -1,6 +1,6 @@
-from onlinedtc.runner import create_trajectory_point_cloud, build_grid_system
-from onlinedtc.runner import smooth_new_main_route, filter_smoothed_main_route
-from onlinedtc.runner import update_safe_area
+from onlinedtc.increment import create_trajectory_point_cloud, build_grid_system
+from onlinedtc.increment import smooth_new_main_route, filter_smoothed_main_route
+from onlinedtc.increment import update_safe_area
 from DTC.trajectory import Trajectory, TrajectoryPointCloud, Point
 from DTC.gridsystem import GridSystem
 from DTC.construct_safe_area import SafeArea

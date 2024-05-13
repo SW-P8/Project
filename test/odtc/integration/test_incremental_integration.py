@@ -1,6 +1,6 @@
-from DTC.clean_trajectory import CleanTrajectory
 from DTC.gridsystem import GridSystem
 from DTC.route_skeleton import RouteSkeleton
+from DTC.noise_correction import NoiseCorrection
 from DTC.json_read_write import read_set_of_tuples_from_json, read_point_cloud_from_json, read_safe_areas_from_json, read_grid_from_json
 from math import ceil
 from tqdm import tqdm
@@ -34,14 +34,10 @@ def test_safe_areas_can_be_updated():
         20
     )
 
-    grid_system.safe_area = read_safe_areas_from_json(
+    grid_system.safe_areas = read_safe_areas_from_json(
         "test/odtc/integration/testresources/1milcitySA.json", max_confidence_change=0.001)
 
-    cleaner = CleanTrajectory(
-        grid_system.safe_area,
-        grid_system.initialization_point,
-        smoothed_main_route
-    )
-
     for trajectory in tqdm(test_data, desc="Cleaning trajectories"):
-        cleaner.clean(trajectory)
+        cleaner = NoiseCorrection(
+            grid_system.safe_areas, grid_system.initialization_point, smoothed_main_route)
+        cleaner.noise_detection(trajectory)

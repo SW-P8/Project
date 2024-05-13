@@ -168,8 +168,6 @@ class SafeArea:
         else:
             delta = timestamp - self.timestamp
             new_confidence = self.confidence - self.calculate_time_decay(delta.total_seconds())
-            if new_confidence < 0.5: #  TODO: need proper threshold
-                pass
             return (new_confidence, timestamp)
 
     def set_confidence(self, confidence: float, timestamp: datetime):

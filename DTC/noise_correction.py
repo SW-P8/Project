@@ -1,7 +1,7 @@
 from DTC.trajectory import Trajectory
 from DTC.distance_calculator import DistanceCalculator
 from scipy.spatial import KDTree
-from onlinedtc.runner import update_safe_area
+from onlinedtc.increment import update_safe_area
 import time
 import logging
 
@@ -38,7 +38,7 @@ class NoiseCorrection:
                     self.correct_noisy_point(trajectory, i)
 
         if len(low_confidence_safe_areas):
-            self._update_safe_areas_thread(low_confidence_safe_areas)
+            self._update_safe_areas(low_confidence_safe_areas)
 
         return labels_of_cleaned_points                   
 
@@ -49,18 +49,8 @@ class NoiseCorrection:
             avg_point, self.safe_areas_keys_list, self.safe_areas_keys_kd_tree, self.initialization_point)
         new_point = DistanceCalculator.convert_cell_to_point(self.initialization_point, nearest_anchor)
         trajectory.points[point_id].set_coordinates(new_point)
-        avg_point = DistanceCalculator.calculate_average_position(
-            trajectory.points[point_id - 1], trajectory.points[point_id + 1])
 
-        # Calculate noisy point to be the center of nearest anchor.
-        nearest_anchor, _ = DistanceCalculator.find_nearest_neighbor_from_candidates(
-            avg_point, self.safe_areas.keys(), self.initialization_point)
-
-        trajectory.points[point_id].set_coordinates(
-            DistanceCalculator.convert_cell_to_point(self.initialization_point,
-                                                     nearest_anchor))
-
-    def _update_safe_areas_thread(self, low_confidence_safe_areas):
+    def _update_safe_areas(self, low_confidence_safe_areas):
         start_time = time.time()
 
         updated_areas = {}

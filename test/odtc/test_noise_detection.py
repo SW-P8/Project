@@ -43,7 +43,7 @@ def trajectory_off_two_direction(trajectory_off_one_direction):
 
 def test_noise_correction_calls_update(noise_corrector, trajectory_off_one_direction):
     # Arrange + Act
-    with patch.object(noise_corrector, '_update_safe_areas_thread') as mock_update:
+    with patch.object(noise_corrector, '_update_safe_areas') as mock_update:
         for _ in range(100):
             noise_corrector.noise_detection(deepcopy(trajectory_off_one_direction))
 
@@ -53,7 +53,7 @@ def test_noise_correction_calls_update(noise_corrector, trajectory_off_one_direc
 
 def test_noise_correction_does_not_call_update(noise_corrector, trajectory_off_one_direction):
     # Arrange + Act
-    with patch.object(noise_corrector, '_update_safe_areas_thread') as mock_update:
+    with patch.object(noise_corrector, '_update_safe_areas') as mock_update:
         noise_corrector.noise_detection(deepcopy(trajectory_off_one_direction))
 
     # Assert
