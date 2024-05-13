@@ -113,18 +113,17 @@ class SafeArea:
         self.timestamp =  None
         self.cardinality_squish = cardinality_squish
         self.max_confidence_change = max_confidence_change
+        self.points_in_safe_area = Trajectory()
         
 
-    def add_to_point_cloud(self, Point):
-        self.PointsInSafeArea.append(Point)
+    def add_to_point_cloud(self, point: Point):
+        self.points_in_safe_area.add_point(point.longitude, point.latitude)
 
     def get_point_cloud(self):
-        return self.PointsInSafeArea
+        return self.points_in_safe_area
 
     def empty_point_cloud(self):
-        self.PointsInSafeArea = []
-
-    PointsInSafeArea = []
+        self.points_in_safe_area = Trajectory()
 
     @classmethod
     def from_cover_set(cls, cover_set: set, anchor: tuple[float, float], decrease_factor: float, confidence_change: float = 0.01, cardinality_squish: float = 0.1, max_confidence_change: float = 0.1):
@@ -163,9 +162,13 @@ class SafeArea:
         Returns:
             tuple[float, datetime]: The current confidence and timestamp.
         """
-        delta = timestamp - self.timestamp
-        new_confidence = self.confidence - self.calculate_time_decay(delta.total_seconds())
-        return (new_confidence, timestamp)
+        if self.timestamp is None:
+            self.timestamp = timestamp
+            return (self.confidence, timestamp)
+        else:
+            delta = timestamp - self.timestamp
+            new_confidence = self.confidence - self.calculate_time_decay(delta.total_seconds())
+            return (new_confidence, timestamp)
 
     def set_confidence(self, confidence: float, timestamp: datetime):
         """
@@ -178,7 +181,7 @@ class SafeArea:
         self.confidence = confidence
         self.timestamp = timestamp
 
-    def update_confidence(self, dist, point: Point):
+    def update_confidence(self, dist, point: Point, update_function=None):
         """
         Updates the confidence of the SafeArea based on the distance from a point.
 
@@ -193,6 +196,8 @@ class SafeArea:
             self.cardinality += 1
         else:
             self.confidence -= self.calculate_confidence_decrease(distance_to_safearea)
+        if self.confidence < 0.5:  # TODO: Threshold
+            update_function(self)
     
     def calculate_time_decay(self, delta:float):
         """

@@ -4,6 +4,7 @@ from database.taxi_data_handler import TaxiDataHandler
 from database.load_data import load_data_from_csv
 from database.db import init_db, new_tdrive_db_pool
 
+
 class DTCExecutor:
     def __init__(self, initialize_db: bool = False) -> None:
         if initialize_db:
@@ -22,8 +23,6 @@ class DTCExecutor:
         gs.extract_main_route()
         gs.extract_route_skeleton()
         gs.construct_safe_areas()
-
-        #TODO: Implement online step
 
         return gs
     
@@ -47,4 +46,3 @@ class DTCExecutor:
 
         pc.add_trajectory(trajectory)
         return pc
-        
