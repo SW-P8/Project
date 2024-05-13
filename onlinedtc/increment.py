@@ -51,7 +51,7 @@ def build_grid_system(point_cloud: TrajectoryPointCloud, initialization_point):
 
 def smooth_new_main_route(main_route: set, smoothed_main_route: set):
     new_smoothed_main_route = RouteSkeleton.smooth_main_route(
-        main_route, 20)  # TODO: Why this number
+        main_route, 25)
     merged_smoothed_main_route = smoothed_main_route.union(
         new_smoothed_main_route)
 
