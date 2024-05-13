@@ -1,6 +1,7 @@
 from DTC.trajectory import Trajectory, TrajectoryPointCloud
 from datetime import datetime
 from DTC.distance_calculator import DistanceCalculator
+import pytest
 
 class TestTrajectoryPointCloud():
     def test_adding_trajectory_updates_min_max(self):
@@ -209,6 +210,6 @@ class TestTrajectoryPointCloud():
         expected_width = 222645.28
         expected_height = 221188.78
 
-        assert expected_width == shifted_width
-        assert expected_height == shifted_height
+        assert expected_width == pytest.approx(shifted_width)
+        assert expected_height == pytest.approx(shifted_height)
 

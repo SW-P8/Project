@@ -42,32 +42,30 @@ class TestCleanTraj:
 
 
     @pytest.fixture
-    def points(self):
-        return [Point(116.37677,39.88791, datetime.now()), Point(116.38033,39.88795,datetime.now()), Point(116.39392,39.89014,datetime.now())]
+    def trajectory(self):
+        trajectory = Trajectory()
+        trajectory.add_point(116.37677,39.88791, datetime.now())
+        trajectory.add_point(116.38033,39.88795, datetime.now())
+        trajectory.add_point(116.39392,39.89014, datetime.now())
+        return trajectory
 
 
 
 
     def test_init(self, grid_system : GridSystem):
-        clean_traj = CleanTraj(grid_system.safe_areas, grid_system.route_skeleton, grid_system.initialization_point)
+        clean_traj = CleanTraj(grid_system.safe_areas, grid_system.initialization_point)
         assert clean_traj.initialization_point == grid_system.initialization_point
-        assert clean_traj.route_skeleton == grid_system.route_skeleton
         assert isinstance(clean_traj.safe_areas, dict)
 
-    def test_clean(self,grid_system, points):
-        clean_traj = CleanTraj(grid_system.safe_areas, grid_system.route_skeleton, grid_system.initialization_point)
-        old_points = copy.copy(points)
-        clean_traj.clean(points)
-        count_match = 0
-        for point in points:
-            for old_point in old_points:
-                if point == old_point:
-                    count_match += 1
+    def test_clean(self,grid_system, trajectory):
+        trajectory_cleaner = CleanTraj(grid_system.safe_areas, grid_system.initialization_point)
+        old_trajectory = copy.deepcopy(trajectory)
+        trajectory_cleaner.clean(trajectory)
 
-        assert old_points.count != count_match 
-        points_in_sa = []
-        for _, sa in clean_traj.safe_areas.items():
-            points_in_sa.append(sa.get_point_cloud())
-        assert points_in_sa is not None 
+        old_trajectory_set = {point.get_coordinates() for point in old_trajectory.points}
+        cleaned_trajectory_set = {point.get_coordinates() for point in trajectory.points}
+
+        assert len(old_trajectory_set - cleaned_trajectory_set) == 1
+
 
        
