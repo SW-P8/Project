@@ -26,20 +26,20 @@ points = [
     (8.8, 3.2)
 ]
 psi_points = [
-    (3.8, 3.8),
-    (4.5, 4.2),
-    (4.5, 4.8),
     (5.1, 5.1),
-    (5.1, 5.3),
-    (5.3, 5.1),
-    (5.3, 5.3),
-    (6.2, 5.1),
-    (6.2, 5.2),
-    (6.8, 5.1),
-    (6.8, 5.2),
-    (7.2, 4.4),
-    (7.2, 4.8),
-    (7.6, 4.4),
+    (5.7, 5.6),
+    (5.5, 5.8),
+    (5.9, 5.9),
+]
+
+anchors = [
+    (2.2, 3.1),
+    (3.5, 4),
+    (6, 6),
+    (7, 7.5),
+    (4.5, 4.5),
+    (6, 3.2),
+    (7.3, 2.5)
 ]
 
 # Region -- Find density centers
@@ -84,18 +84,15 @@ ax_cmr.scatter(*zip(*density_centers.values()), color='orange',
 ax_cmr.add_patch(plt.Rectangle((2.02, 2.02), 2.98, 2.98, linestyle='--', fill=False, color='green', linewidth=2))
 ax_cmr.text(3.65, 3.40, r'$\Omega_{1,1}=(1.5, 1.5)$')
 # Safe Area Construction Figure
-for cell, density_center, active in main_route:
-    if active is False:
-        continue
-    min_dist = float('inf')
-    for anchor in route_skeleton:
-        dist = DistanceCalculator.calculate_euclidian_distance_between_cells((cell[0] + 0.5, cell[1] + 0.5), anchor)
-        if dist < min_dist:
-            min_dist = dist
-    ax_cnn.add_patch(plt.Circle((cell[0] + 0.5, cell[1] + 0.5), min_dist + np.sqrt(0.5 ** 2 + 0.5 ** 2), alpha=0.2, color='r'))
-    ax_cnn.add_patch(plt.Circle((cell[0] + 0.5, cell[1] + 0.5), min_dist, alpha=0.5, color='g'))
+min_dist = float('inf')
+for anchor in anchors:
+    dist = DistanceCalculator.calculate_euclidian_distance_between_cells((5.5, 5.5), anchor)
+    if dist < min_dist:
+        min_dist = dist
+ax_cnn.add_patch(plt.Circle((5.5, 5.5), min_dist + np.sqrt(2), alpha=0.2, color='r'))
+ax_cnn.add_patch(plt.Circle((5.5, 5.5), min_dist, alpha=0.5, color='g'))
 ax_cnn.scatter(*zip(*psi_points), color='b', label='Point')
-ax_cnn.scatter(*zip(*route_skeleton), color='gold', marker='D', label='Anchor')
+ax_cnn.scatter(*zip(*anchors), color='gold', marker='D', label='Anchor')
 
 # Region -- Figure configurations
 for ax in [ax_cmr, ax_cnn]:
@@ -104,10 +101,10 @@ for ax in [ax_cmr, ax_cnn]:
     ax.grid()
     ax.set_axisbelow(True)
     ax.set_aspect('equal')
-    ax.set_xlim(2, 10)
-    ax.set_ylim(2, 10)
+    ax.set_xlim(2, 9)
+    ax.set_ylim(2, 9)
     ax.tick_params(left=False, right=False, labelleft=False,
                    labelbottom=False, bottom=False)
     ax.legend()
 
-plt.show()
+plt.savefig("relaxed_NN.png")

@@ -2,6 +2,7 @@ import json
 from DTC.construct_safe_area import SafeArea
 from DTC.trajectory import Trajectory, TrajectoryPointCloud
 from DTC.point import Point
+from tqdm import tqdm
 import datetime
 
 def write_grid_to_json(file_name: str, grid: dict) -> None:
@@ -33,14 +34,14 @@ def write_safe_areas_to_json(file_name: str, safe_areas: dict) -> None:
     with open(file_name, "w") as outfile: 
         json.dump({str(k): [v.radius, v.cardinality] for k, v in safe_areas.items()}, outfile, indent=4) 
 
-def read_safe_areas_from_json(file_name: str) -> dict:
+def read_safe_areas_from_json(file_name: str, max_confidence_change: float = 0.1) -> dict:
     with open(file_name, "r") as safe_areas_file:
         safe_areas_data = json.load(safe_areas_file)
     
     safe_areas = dict()
     for key, value in safe_areas_data.items():
         key_tuple = eval(key)
-        safe_area_object = SafeArea.from_meta_data(key_tuple, value[0], value[1])
+        safe_area_object = SafeArea.from_meta_data(key_tuple, value[0], value[1], max_confidence_change=max_confidence_change)
         safe_areas[key_tuple] = safe_area_object
         
     return safe_areas
@@ -58,7 +59,7 @@ def read_point_cloud_from_json(file_name: str):
     with open(file_name, "r") as point_cloud_file:
         point_cloud_data = json.load(point_cloud_file)
 
-    for trajectory in point_cloud_data:
+    for trajectory in tqdm(point_cloud_data, desc="Inserting data in point-cloud"):
         trajectory_object = Trajectory()
         for longitude, latitude, timestamp in trajectory:
             if timestamp != None:
