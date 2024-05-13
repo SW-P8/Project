@@ -53,7 +53,7 @@ class TestNoiseCorrection():
         five_point_grid.pc.trajectories[0].points[3].longitude = shifted_point[0]
         five_point_grid.pc.trajectories[0].points[3].latitude = shifted_point[1]
 
-        nc.correct_noisy_point(five_point_grid.pc.trajectories[0], 3)
+        nc.correct_noisy_point(five_point_grid.pc.trajectories[0], 4)
         
         expected_point = DistanceCalculator.convert_cell_to_point(five_point_grid.initialization_point, (7,7))
 
@@ -68,10 +68,24 @@ class TestNoiseCorrection():
 
         five_point_grid.pc.trajectories[0].points[3].timestamp = None
 
+        # Changing point to make it an outlier.
+        shifted_point = DistanceCalculator.shift_point_with_bearing(
+            five_point_grid.pc.trajectories[0].points[0], 200, DistanceCalculator.NORTH)
+        shifted_point = DistanceCalculator.shift_point_with_bearing(
+            shifted_point, 200, DistanceCalculator.EAST)
+
+        five_point_grid.pc.trajectories[0].points[3].longitude = shifted_point[0]
+        five_point_grid.pc.trajectories[0].points[3].latitude = shifted_point[1]
+
         nc = NoiseCorrection(five_point_grid.safe_areas, five_point_grid.initialization_point)
-        nc.correct_noisy_point(five_point_grid.pc.trajectories[0], 3)
+        nc.correct_noisy_point(five_point_grid.pc.trajectories[0], 4)
+
+        expected_point = DistanceCalculator.convert_cell_to_point(
+            five_point_grid.initialization_point, (7, 7))
 
         assert five_point_grid.pc.trajectories[0].points[3].timestamp == None
+        assert five_point_grid.pc.trajectories[0].points[3].longitude == expected_point[0]
+        assert five_point_grid.pc.trajectories[0].points[3].latitude == expected_point[1]
 
     # Test should not correct any points
     def test_noise_detection_no_noise(self, five_point_grid):
