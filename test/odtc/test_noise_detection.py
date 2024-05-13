@@ -2,6 +2,7 @@
 from DTC.trajectory import Trajectory
 from DTC.noise_correction import NoiseCorrection
 from DTC.construct_safe_area import SafeArea
+from DTC.distance_calculator import DistanceCalculator
 from unittest.mock import patch
 from copy import deepcopy
 from datetime import datetime
@@ -26,18 +27,18 @@ def noise_corrector(safe_areas):
 @pytest.fixture
 def trajectory_off_one_direction():
     trajectory = Trajectory()
+    trajectory.add_point(0.0004492, 0.0004522, datetime.now())
     trajectory.add_point(180, 90, datetime.now())
-    trajectory.add_point(180, 90, datetime.now())
-    trajectory.add_point(180, 90, datetime.now())
+    trajectory.add_point(0.0004492, 0.0004522, datetime.now())
     return trajectory
 
 
 @pytest.fixture
 def trajectory_off_two_direction(trajectory_off_one_direction):
     trajectory = trajectory_off_one_direction
+    trajectory.add_point(0, 0, datetime.now())
     trajectory.add_point(-180, -90, datetime.now())
-    trajectory.add_point(-180, -90, datetime.now())
-    trajectory.add_point(-180, -90, datetime.now())
+    trajectory.add_point(0, 0, datetime.now())
     return trajectory
 
 
