@@ -46,6 +46,3 @@ def test_safe_areas_can_be_updated():
 
     for trajectory in tqdm(test_data, desc="Cleaning trajectories"):
         cleaner.clean(trajectory)
-
-
-test_safe_areas_can_be_updated()
