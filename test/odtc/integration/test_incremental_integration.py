@@ -35,7 +35,7 @@ def test_safe_areas_can_be_updated():
     )
 
     grid_system.safe_area = read_safe_areas_from_json(
-        "test/odtc/integration/testresources/1milcitySA.json")
+        "test/odtc/integration/testresources/1milcitySA.json", max_confidence_change=0.001)
 
     cleaner = CleanTrajectory(
         grid_system.safe_area,
@@ -45,5 +45,3 @@ def test_safe_areas_can_be_updated():
 
     for trajectory in tqdm(test_data, desc="Cleaning trajectories"):
         cleaner.clean(trajectory)
-
-test_safe_areas_can_be_updated()

@@ -86,13 +86,16 @@ class TaxiDataHandler:
         Retrieves n records from the TaxiData table which is contained inside the Beijing Bounding Box
 
         Args:
-            n: Integer, amount of records to retrieve
+            n: Integer, amount of records to retrieve. If not set, no limit is set
 
         Returns:
             List of tuples containing n records
         """
+        if n == 0:
+            sql = "SELECT * FROM TaxiData WHERE latitude > %s AND latitude < %s AND longitude < %s AND longitude > %s"
+        else:
+            sql = "SELECT * FROM TaxiData WHERE latitude > %s AND latitude < %s AND longitude < %s AND longitude > %s LIMIT %s"
 
-        sql = "SELECT * FROM TaxiData WHERE latitude > %s AND latitude < %s AND longitude < %s AND longitude > %s LIMIT %s"
         with self.__connection_pool.getconn() as conn:
             with conn.cursor() as cursor:
                 if city:

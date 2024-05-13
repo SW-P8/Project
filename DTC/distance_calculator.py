@@ -29,7 +29,7 @@ class DistanceCalculator():
             y_offset = -y_offset
         y_coordinate = (y_offset / DistanceCalculator.CELL_SIZE)
 
-        return (x_coordinate, y_coordinate)
+        return (round(x_coordinate, 2), round(y_coordinate, 2))
    
     @staticmethod
     def shift_point_with_bearing(point, shift_dist: float, bearing: float) -> tuple:
@@ -39,7 +39,7 @@ class DistanceCalculator():
             (longitude, latitude) = point
 
         shifted_point = distance.distance(meters=shift_dist).destination((latitude, longitude), bearing)
-        return (shifted_point.longitude, shifted_point.latitude)
+        return (round(shifted_point.longitude, 7), round(shifted_point.latitude, 7))
 
     @staticmethod
     def get_distance_between_points(source, target):
@@ -89,8 +89,12 @@ class DistanceCalculator():
         return (nearest_anchor, min_dist)
     
     @staticmethod
-    def find_nearest_neighbour_from_candidates_with_kd_tree(point, candidates: list, candidates_kd_tree: KDTree) -> tuple[tuple[float, float], float]:
-        min_dist, nn_index = candidates_kd_tree.query(point)
+    def find_nearest_neighbour_from_candidates_with_kd_tree(point, candidates: list, candidates_kd_tree: KDTree, initialization_point: tuple = None) -> tuple[tuple[float, float], float]:
+        if type(point) == Point:
+            (x, y) = DistanceCalculator.calculate_exact_index_for_point(point, initialization_point)
+        else:
+            (x, y) = point
+        min_dist, nn_index = candidates_kd_tree.query((x, y))
         return (candidates[nn_index], min_dist)
 
     # Converts cell coordinate to long lat based on initialization_point
@@ -98,8 +102,8 @@ class DistanceCalculator():
     def convert_cell_to_point(initialization_point: tuple, cell: tuple) -> tuple:
         offsets = (cell[0] * DistanceCalculator.CELL_SIZE, cell[1] * DistanceCalculator.CELL_SIZE)
         
-        gps_coordinates = DistanceCalculator.shift_point_with_bearing(initialization_point, offsets[0], DistanceCalculator.NORTH)
-        gps_coordinates = DistanceCalculator.shift_point_with_bearing(gps_coordinates, offsets[1], DistanceCalculator.EAST)
+        gps_coordinates = DistanceCalculator.shift_point_with_bearing(initialization_point, offsets[0], DistanceCalculator.EAST)
+        gps_coordinates = DistanceCalculator.shift_point_with_bearing(gps_coordinates, offsets[1], DistanceCalculator.NORTH)
 
         return gps_coordinates
     

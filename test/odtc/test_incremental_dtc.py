@@ -13,9 +13,13 @@ def test_create_trajectory_point_cloud_with_non_empty():
     trajectory = Trajectory()
     for i in range(20):
         trajectory.add_point(1 + 0.1 * i, 1)
+    safe_area = SafeArea.from_meta_data((0, 0), 1, 10)
+    safe_area.points_in_safe_area = trajectory
+    safe_areas = dict()
+    safe_areas[safe_area.anchor] = safe_area
 
     # Act
-    result = create_trajectory_point_cloud(trajectory)
+    result = create_trajectory_point_cloud(safe_areas)
 
     # Assert
     assert TrajectoryPointCloud == type(result)
@@ -25,9 +29,13 @@ def test_create_trajectory_point_cloud_with_non_empty():
 def test_create_trajectory_point_cloud_with_empty():
     # Arrange
     trajectory = Trajectory()
+    safe_area = SafeArea.from_meta_data((0, 0), 1, 10)
+    safe_area.points_in_safe_area = trajectory
+    safe_areas = dict()
+    safe_areas[safe_area.anchor] = safe_area
 
     # Act
-    result = create_trajectory_point_cloud(trajectory)
+    result = create_trajectory_point_cloud(safe_areas)
 
     # Assert
     assert TrajectoryPointCloud == type(result)
@@ -177,7 +185,7 @@ def test_update_safe_area():
     safe_areas[safe_area.anchor] = safe_area
 
     # Act
-    result = update_safe_area(safe_area,
+    result = update_safe_area(safe_areas,
                               initialization_point, old_smoothed_main_route)
 
     # Assert
