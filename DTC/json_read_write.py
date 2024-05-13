@@ -41,7 +41,7 @@ def read_safe_areas_from_json(file_name: str) -> dict:
     safe_areas = dict()
     for key, value in safe_areas_data.items():
         key_tuple = eval(key)
-        safe_area_object = SafeArea.from_meta_data(key_tuple, value[0], value[1])
+        safe_area_object = SafeArea.from_meta_data(key_tuple, value[0], value[1], max_confidence_change=0.001)
         safe_areas[key_tuple] = safe_area_object
         
     return safe_areas

@@ -4,7 +4,6 @@ from DTC.route_skeleton import RouteSkeleton
 from DTC.json_read_write import read_set_of_tuples_from_json, read_point_cloud_from_json, read_safe_areas_from_json, read_grid_from_json
 from math import ceil
 from tqdm import tqdm
-import gc
 import pytest
 
 @pytest.mark.skip
@@ -46,3 +45,5 @@ def test_safe_areas_can_be_updated():
 
     for trajectory in tqdm(test_data, desc="Cleaning trajectories"):
         cleaner.clean(trajectory)
+
+test_safe_areas_can_be_updated()

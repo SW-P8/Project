@@ -1,7 +1,12 @@
 from DTC.trajectory import Trajectory
 from DTC.distance_calculator import DistanceCalculator
-from concurrent.futures import ThreadPoolExecutor
 from onlinedtc.runner import update_safe_area
+import time
+import logging
+
+
+logging.basicConfig(level=logging.INFO, filename='app.log')
+logger = logging.getLogger(__name__)
 
 
 class NoiseCorrection:
@@ -30,7 +35,6 @@ class NoiseCorrection:
         if len(low_confidence_safe_areas):
             self._update_safe_areas_thread(low_confidence_safe_areas)
 
-
     def correct_noisy_point(self, trajectory: Trajectory, point_id: int) -> None:
         avg_point = DistanceCalculator.calculate_average_position(
             trajectory.points[point_id - 1], trajectory.points[point_id + 1])
@@ -40,14 +44,31 @@ class NoiseCorrection:
             avg_point, self.safe_areas.keys(), self.initialization_point)
 
         trajectory.points[point_id].set_coordinates(
-            DistanceCalculator.convert_cell_to_point(self.initialization_point, nearest_anchor))
-        
+            DistanceCalculator.convert_cell_to_point(self.initialization_point,
+                                                     nearest_anchor))
+
     def _update_safe_areas_thread(self, low_confidence_safe_areas):
+        start_time = time.time()
+
         updated_areas = {}
         for area in low_confidence_safe_areas.values():
             self.safe_areas.pop(area.anchor)
-            updated_areas = update_safe_area(area, self.initialization_point, self.smoothed_main_route)
+        
+        end_time = time.time()
+        duration = end_time - start_time
+        logger.info(f"Safe-areas: {low_confidence_safe_areas.keys()} have been removed in {duration: .2f} seconds")
 
-            
+        start_time = time.time()
+
+        updated_areas = update_safe_area(low_confidence_safe_areas,
+                                         self.initialization_point,
+                                         self.smoothed_main_route)
+
+        end_time = time.time()
+        duration = end_time - start_time
+
+        logger.info(f"Safe-areas updated in {duration: .2f} seconds")
+        logger.info(f"Created the safe-areas: {updated_areas.keys()}")
+
         for safe_area in updated_areas.values():
-                self.safe_areas[safe_area.anchor] = safe_area
+            self.safe_areas[safe_area.anchor] = safe_area

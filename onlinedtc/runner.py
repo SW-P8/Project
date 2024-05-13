@@ -5,8 +5,8 @@ from DTC.construct_safe_area import ConstructSafeArea, SafeArea
 from math import ceil
 
 
-def update_safe_area(safe_area: SafeArea, initialization_point, old_smoothed_main_route: set):
-    point_cloud = create_trajectory_point_cloud(safe_area.get_point_cloud())
+def update_safe_area(safe_areas: dict[SafeArea], initialization_point, old_smoothed_main_route: set):
+    point_cloud = create_trajectory_point_cloud(safe_areas)
 
     grid_system = build_grid_system(point_cloud, initialization_point)
 
@@ -32,9 +32,11 @@ def update_safe_area(safe_area: SafeArea, initialization_point, old_smoothed_mai
     return new_safe_areas
 
 
-def create_trajectory_point_cloud(start_trajectory):
+def create_trajectory_point_cloud(safe_areas: dict[SafeArea]):
     point_cloud = TrajectoryPointCloud()
-    point_cloud.add_trajectory(start_trajectory)
+    for safe_area in safe_areas.values():
+        point_cloud.add_trajectory(safe_area.get_point_cloud())
+
     return point_cloud
 
 
