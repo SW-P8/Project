@@ -73,7 +73,7 @@ class TestCheapBenchmark:
         route_skeleton = json_read_write.read_set_of_tuples_from_json(self.rsk_file)
         grid = json_read_write.read_grid_from_json(self.grid_file)
 
-        safe_areas = benchmark.pedantic(ConstructSafeArea.construct_safe_areas, kwargs={'route_skeleton': route_skeleton, 'grid': grid, 'decrease_factor': self.decrease_factor, 'find_relaxed_nn': self.find_relaxed_nn}, rounds=1, iterations=1, warmup_rounds=0)
+        safe_areas = benchmark.pedantic(ConstructSafeArea.construct_safe_areas, kwargs={'route_skeleton': route_skeleton, 'grid': grid, 'find_relaxed_nn': self.find_relaxed_nn}, rounds=1, iterations=1, warmup_rounds=0)
         
         if self.should_write_to_json:
             json_read_write.write_safe_areas_to_json(self.sa_file, safe_areas)

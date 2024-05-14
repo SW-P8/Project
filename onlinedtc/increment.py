@@ -3,6 +3,7 @@ from DTC.gridsystem import GridSystem
 from DTC.route_skeleton import RouteSkeleton
 from DTC.construct_safe_area import ConstructSafeArea, SafeArea
 from math import ceil
+import config
 
 
 def update_safe_area(safe_areas: dict[SafeArea], initialization_point, old_smoothed_main_route: set):
@@ -27,7 +28,7 @@ def update_safe_area(safe_areas: dict[SafeArea], initialization_point, old_smoot
         graphed_main_route, 20)
     # 0.01 is the decrease factor used other places in the code base
     new_safe_areas = ConstructSafeArea.construct_safe_areas(
-        route_skeleton_ancors, grid_system.grid, 0.01, initialization_point)
+        route_skeleton_ancors, grid_system.grid, config.decrease_factor, initialization_point)
 
     return new_safe_areas
 
