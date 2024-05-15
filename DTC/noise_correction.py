@@ -96,7 +96,7 @@ class NoiseCorrection:
         _, nearest_neighbor1, distance1 = checked_points[iterator - 1]
         _, nearest_neighbor2, distance2 = checked_points[iterator - 2]
 
-        if (self.safe_areas[nearest_neighbor2].radius < distance2 and self.safe_areas[nearest_neighbor1].radius < distance1) or (self.safe_areas[nearest_neighbor1].radius < distance1 and self.safe_areas[nearest_neighbor].radius < distance):
+        return (self.safe_areas[nearest_neighbor2].radius < distance2 and self.safe_areas[nearest_neighbor1].radius < distance1) or (self.safe_areas[nearest_neighbor1].radius < distance1 and self.safe_areas[nearest_neighbor].radius < distance):
             return True
 
         return False
