@@ -109,13 +109,15 @@ class SafeArea:
         self.radius = radius
         self.cardinality = cardinality
         self.confidence = 1.0
-        self.confidence_change_factor = confidence_change
+        self.confidence_change_factor = 0.40
         self.decay_factor = config.decay_factor # Set as the fraction of a day 1 second represents. Done as TimeDelta is given in seconds.
         self.timestamp =  None
         self.cardinality_squish = cardinality_squish
         self.max_confidence_change = max_confidence_change
         self.points_in_safe_area = Trajectory()
-        
+    
+    def __str__(self):
+        return f"SafeArea(anchor={self.anchor}, radius={self.radius}, cardinality={self.cardinality}, confidence={self.confidence}, confidence_change_factor={self.confidence_change_factor}, decay_factor={self.decay_factor}, timestamp={self.timestamp}, cardinality_squish={self.cardinality_squish}, max_confidence_change={self.max_confidence_change}, points_in_safe_area={self.points_in_safe_area})"
 
     def add_to_point_cloud(self, point: Point):
         self.points_in_safe_area.add_point(point.longitude, point.latitude)

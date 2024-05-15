@@ -8,7 +8,7 @@ import logging
 
 
 logging.basicConfig(level=logging.INFO, filename='app.log')
-logger = logging.getLogger(__name__)
+logger = logging.getLogger("noise_corr")
 
 
 class NoiseCorrection:
@@ -86,8 +86,8 @@ class NoiseCorrection:
         end_time = time.time()
         duration = end_time - start_time
 
-        logger.info(f"Safe-areas updated in {duration: .2f} seconds")
-        logger.info(f"Created the safe-areas: {updated_areas.keys()}")
+        print(f"Safe-areas updated in {duration: .2f} seconds")
+        print(f"Created the safe-areas: {updated_areas.keys()}")
 
         for safe_area in updated_areas.values():
             self.safe_areas[safe_area.anchor] = safe_area
