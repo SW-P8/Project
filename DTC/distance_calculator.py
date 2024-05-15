@@ -3,17 +3,9 @@ from DTC.point import Point
 from geopy import distance
 from typing import Optional
 from scipy.spatial import KDTree
+import config
 
 class DistanceCalculator():
-    # Direction constants
-    NORTH = 0
-    EAST = 90
-    SOUTH = 180
-    WEST = 270
-
-    # Metric constants
-    CELL_SIZE = 5 # Based on observation in DTC paper that minimal width of a road is 5m
-    NEIGHBORHOOD_SIZE = 9 # To be determined but DTC uses 9
 
     @staticmethod
     def calculate_exact_index_for_point(point: Point, initialization_point: tuple) -> tuple:
@@ -21,13 +13,13 @@ class DistanceCalculator():
         x_offset = DistanceCalculator.get_distance_between_points(initialization_point, (point.longitude, initialization_point[1]))
         if point.longitude < initialization_point[0]:
             x_offset = -x_offset
-        x_coordinate = (x_offset / DistanceCalculator.CELL_SIZE)
+        x_coordinate = (x_offset / config.CELL_SIZE)
 
         # Calculate y index
         y_offset = DistanceCalculator.get_distance_between_points(initialization_point, (initialization_point[0], point.latitude))
         if point.latitude < initialization_point[1]:
             y_offset = -y_offset
-        y_coordinate = (y_offset / DistanceCalculator.CELL_SIZE)
+        y_coordinate = (y_offset / config.CELL_SIZE)
 
         return (round(x_coordinate, 2), round(y_coordinate, 2))
    
@@ -100,10 +92,10 @@ class DistanceCalculator():
     # Converts cell coordinate to long lat based on initialization_point
     @staticmethod
     def convert_cell_to_point(initialization_point: tuple, cell: tuple) -> tuple:
-        offsets = (cell[0] * DistanceCalculator.CELL_SIZE, cell[1] * DistanceCalculator.CELL_SIZE)
+        offsets = (cell[0] * config.CELL_SIZE, cell[1] * config.CELL_SIZE)
         
-        gps_coordinates = DistanceCalculator.shift_point_with_bearing(initialization_point, offsets[0], DistanceCalculator.EAST)
-        gps_coordinates = DistanceCalculator.shift_point_with_bearing(gps_coordinates, offsets[1], DistanceCalculator.NORTH)
+        gps_coordinates = DistanceCalculator.shift_point_with_bearing(initialization_point, offsets[0], config.EAST)
+        gps_coordinates = DistanceCalculator.shift_point_with_bearing(gps_coordinates, offsets[1], config.NORTH)
 
         return gps_coordinates
     

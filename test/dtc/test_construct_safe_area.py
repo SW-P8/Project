@@ -5,6 +5,7 @@ from DTC.trajectory import Trajectory, TrajectoryPointCloud
 from DTC.gridsystem import GridSystem
 import DTC.json_read_write as json_read_write
 from scipy.spatial import KDTree
+import config
 
 class TestConstructSafeArea():
     @pytest.fixture
@@ -16,9 +17,9 @@ class TestConstructSafeArea():
         t.add_point(1,0)
 
         # Shift second point 20 meters north and east (should result in the two points being 4 cells apart in both x and y)
-        DistanceCalculator.shift_point_with_bearing(t.points[0], 20, DistanceCalculator.NORTH)
-        shifted_point = DistanceCalculator.shift_point_with_bearing(t.points[0], 20, DistanceCalculator.NORTH)
-        shifted_point = DistanceCalculator.shift_point_with_bearing(shifted_point, 20, DistanceCalculator.EAST)
+        DistanceCalculator.shift_point_with_bearing(t.points[0], 20, config.NORTH)
+        shifted_point = DistanceCalculator.shift_point_with_bearing(t.points[0], 20, config.NORTH)
+        shifted_point = DistanceCalculator.shift_point_with_bearing(shifted_point, 20, config.EAST)
         
         t.add_point(shifted_point[0], shifted_point[1])
         pc.add_trajectory(t)

@@ -5,6 +5,7 @@ from DTC.trajectory import Trajectory, TrajectoryPointCloud
 from DTC.gridsystem import GridSystem
 from math import sqrt, floor
 from geopy import distance
+import config
 
 class TestDistanceCalculator:
     @pytest.fixture
@@ -16,9 +17,9 @@ class TestDistanceCalculator:
         t.add_point(1,0)
 
         # Shift second point 20 meters north and east (should result in the two points being 4 cells apart in both x and y)
-        DistanceCalculator.shift_point_with_bearing(t.points[0], 20, DistanceCalculator.NORTH)
-        shifted_point = DistanceCalculator.shift_point_with_bearing(t.points[0], 20, DistanceCalculator.NORTH)
-        shifted_point = DistanceCalculator.shift_point_with_bearing(shifted_point, 20, DistanceCalculator.EAST)
+        DistanceCalculator.shift_point_with_bearing(t.points[0], 20, config.NORTH)
+        shifted_point = DistanceCalculator.shift_point_with_bearing(t.points[0], 20, config.NORTH)
+        shifted_point = DistanceCalculator.shift_point_with_bearing(shifted_point, 20, config.EAST)
         
         t.add_point(shifted_point[0], shifted_point[1])
         pc.add_trajectory(t)
@@ -34,9 +35,9 @@ class TestDistanceCalculator:
         assert (8, 8) == (floor(x2), floor(y2))
 
     def test_calculate_index_for_point_returns_correctly_with_negative_index(self, two_point_grid):
-        long_lat_west_of_init = DistanceCalculator.shift_point_with_bearing(two_point_grid.initialization_point, 20, DistanceCalculator.WEST)
+        long_lat_west_of_init = DistanceCalculator.shift_point_with_bearing(two_point_grid.initialization_point, 20, config.WEST)
         point_west_of_init = Point(long_lat_west_of_init[0], long_lat_west_of_init[1])
-        long_lat_south_of_init = DistanceCalculator.shift_point_with_bearing(two_point_grid.initialization_point, 20, DistanceCalculator.SOUTH)
+        long_lat_south_of_init = DistanceCalculator.shift_point_with_bearing(two_point_grid.initialization_point, 20, config.SOUTH)
         point_south_of_init = Point(long_lat_south_of_init[0], long_lat_south_of_init[1])
 
         (x1, y1) = DistanceCalculator.calculate_exact_index_for_point(point_west_of_init, two_point_grid.initialization_point)
@@ -50,10 +51,10 @@ class TestDistanceCalculator:
         initialization_point = (1, 1)
 
         new_point = DistanceCalculator.convert_cell_to_point(initialization_point, cell)
-        shift_distance = DistanceCalculator.CELL_SIZE * 10
+        shift_distance = config.CELL_SIZE * 10
 
-        expected_point = DistanceCalculator.shift_point_with_bearing(initialization_point, shift_distance, DistanceCalculator.NORTH)
-        expected_point = DistanceCalculator.shift_point_with_bearing(expected_point, shift_distance, DistanceCalculator.EAST)
+        expected_point = DistanceCalculator.shift_point_with_bearing(initialization_point, shift_distance, config.NORTH)
+        expected_point = DistanceCalculator.shift_point_with_bearing(expected_point, shift_distance, config.EAST)
 
         assert new_point[0] == expected_point[0]
         assert new_point[1] == expected_point[1]
@@ -148,7 +149,7 @@ class TestDistanceCalculator:
         index_for_cell = DistanceCalculator.calculate_exact_index_for_point(original_point, two_point_grid.initialization_point)
         reconverted_point = DistanceCalculator.convert_cell_to_point(two_point_grid.initialization_point, index_for_cell)
 
-        longitude, latitude = DistanceCalculator.shift_point_with_bearing(original_point, 5000, DistanceCalculator.EAST)
+        longitude, latitude = DistanceCalculator.shift_point_with_bearing(original_point, 5000, config.EAST)
         point_far_away = Point(longitude, latitude)
         index_for_cell_far_away = DistanceCalculator.calculate_exact_index_for_point(point_far_away, two_point_grid.initialization_point)
         reconverted_point_far_away = DistanceCalculator.convert_cell_to_point(two_point_grid.initialization_point, index_for_cell_far_away)

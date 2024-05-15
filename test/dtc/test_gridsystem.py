@@ -5,6 +5,7 @@ from DTC.distance_calculator import DistanceCalculator
 from datetime import datetime
 from math import floor
 from collections import defaultdict
+import config
 
 class TestGridsystem():
     @pytest.fixture
@@ -29,9 +30,9 @@ class TestGridsystem():
         t.add_point(1,0,datetime(2024, 1, 1, 1, 1, 1))
 
         # Shift second point 20 meters north and east (should result in the two points being 4 cells apart in both x and y)
-        DistanceCalculator.shift_point_with_bearing(t.points[0], 20, DistanceCalculator.NORTH)
-        shifted_point = DistanceCalculator.shift_point_with_bearing(t.points[0], 20, DistanceCalculator.NORTH)
-        shifted_point = DistanceCalculator.shift_point_with_bearing(shifted_point, 20, DistanceCalculator.EAST)
+        DistanceCalculator.shift_point_with_bearing(t.points[0], 20, config.NORTH)
+        shifted_point = DistanceCalculator.shift_point_with_bearing(t.points[0], 20, config.NORTH)
+        shifted_point = DistanceCalculator.shift_point_with_bearing(shifted_point, 20, config.EAST)
         
         t.add_point(shifted_point[0], shifted_point[1], datetime(2024, 1, 1, 1, 1, 2))
         pc.add_trajectory(t)
@@ -49,8 +50,8 @@ class TestGridsystem():
 
         for i in range(1, 5):
             # Shift points 5 meters north and east (should result in 5 points being 1 cell apart in both x and y)
-            shifted_point = DistanceCalculator.shift_point_with_bearing(t.points[0], i * 5, DistanceCalculator.NORTH)
-            shifted_point = DistanceCalculator.shift_point_with_bearing(shifted_point, i * 5, DistanceCalculator.EAST)
+            shifted_point = DistanceCalculator.shift_point_with_bearing(t.points[0], i * 5, config.NORTH)
+            shifted_point = DistanceCalculator.shift_point_with_bearing(shifted_point, i * 5, config.EAST)
         
             t.add_point(shifted_point[0], shifted_point[1], datetime(2024, 1, 1, 1, 1, 1 + i))
         pc.add_trajectory(t)
@@ -95,8 +96,8 @@ class TestGridsystem():
             t.add_point(1,0,datetime(2024, 1, 1, 1, 1, i))
 
         # Shift second point 20 meters north and east (should result in the two points being 4 cells apart in both x and y)
-        shifted_point = DistanceCalculator.shift_point_with_bearing(t.points[0], 20, DistanceCalculator.NORTH)
-        shifted_point = DistanceCalculator.shift_point_with_bearing(shifted_point, 20, DistanceCalculator.EAST)
+        shifted_point = DistanceCalculator.shift_point_with_bearing(t.points[0], 20, config.NORTH)
+        shifted_point = DistanceCalculator.shift_point_with_bearing(shifted_point, 20, config.EAST)
         t.add_point(shifted_point[0], shifted_point[1], datetime(2024, 1, 1, 1, 1, 11))
 
         pc.add_trajectory(t)
