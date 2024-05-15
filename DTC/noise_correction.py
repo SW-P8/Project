@@ -11,15 +11,14 @@ logger = logging.getLogger(__name__)
 
 
 class NoiseCorrection:
-    def __init__(self, safe_areas, init_point, smoothed_main_route = set()):
+    def __init__(self, safe_areas, init_point, smoothed_main_route=set()):
         self.safe_areas = safe_areas
         self.safe_areas_keys_list = list(safe_areas.keys())
         self.safe_areas_keys_kd_tree = KDTree(self.safe_areas_keys_list)
         self.initialization_point = init_point
         self.smoothed_main_route = smoothed_main_route
 
-    # TODO decide how to handle if p-1 or p+1 is also noise, such that we do not correct noise with noise.
-    def noise_detection(self, trajectory: Trajectory, event_listener: None):
+    def noise_detection(self, trajectory: Trajectory, event_listener=None):
         labels_of_cleaned_points = []
         low_confidence_safe_areas = {}
 
@@ -42,11 +41,12 @@ class NoiseCorrection:
                 event_listener.emit()
             self._update_safe_areas(low_confidence_safe_areas)
 
-        return labels_of_cleaned_points                   
-
+        return labels_of_cleaned_points
 
     def correct_noisy_point(self, trajectory: Trajectory, point_id: int) -> None:
-        avg_point = DistanceCalculator.calculate_average_position(trajectory.points[point_id - 1], trajectory.points[point_id + 1])
+        avg_point = DistanceCalculator.calculate_average_position(
+            trajectory.points[point_id - 1],
+            trajectory.points[point_id + 1])
         nearest_anchor, _ = DistanceCalculator.find_nearest_neighbour_from_candidates_with_kd_tree(
             avg_point, self.safe_areas_keys_list, self.safe_areas_keys_kd_tree, self.initialization_point)
         new_point = DistanceCalculator.convert_cell_to_point(self.initialization_point, nearest_anchor)
@@ -58,7 +58,7 @@ class NoiseCorrection:
         updated_areas = {}
         for area in low_confidence_safe_areas.values():
             self.safe_areas.pop(area.anchor)
-        
+
         end_time = time.time()
         duration = end_time - start_time
         logger.info(f"Safe-areas: {low_confidence_safe_areas.keys()} have been removed in {duration: .2f} seconds")
