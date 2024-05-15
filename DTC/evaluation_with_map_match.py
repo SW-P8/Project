@@ -31,13 +31,13 @@ class mapmatcher:
         graph = load_graphml(filepath='data/InnerBBB.graphml')
         
         print('Loading rsk data')
-        with open("AllcityRSK.json", "r") as rskinfile:
+        with open("Outputs/RouteSkeletons/AllcityRSK252020.json", "r") as rskinfile:
             json_data = json.load(rskinfile)
         data = [self.transform(eval(x)) for x in json_data]
         projected_graph = project_graph(graph)
         
         projected_data = self.project_points_to_graph(projected_graph, data)
-        process_count = 6 #mp.cpu_count()
+        process_count = mp.cpu_count()
         splits = CollectionUtils.split(projected_data, process_count)
         tasks = []
         pipe_list = []
@@ -56,31 +56,17 @@ class mapmatcher:
             task.join()
             for dist in dists:
                 perp_dist.append(dist)
-        #projected_data.reverse()
-        #perp_dist = self.find_nearest_edge(projected_graph, projected_data[1200:2200], None)
         
-        with open("data/perpendicular_distance_mult.json", "w") as pdout:
+        with open("Outputs/PerpendicularDistances/DistanceTest.json", "w") as pdout:
             pdout.write(json.dumps(perp_dist))
 
-        for x in perp_dist:
-            print(x)
-            
-        print('Mapmatching complete')
-
-    def find_nearest_edge(self, graph, data, send_end):
-        perp_dist = list()
-        
-        bar = Bar(f'Mapmatching id = {os.getpid()}', max=len(data), suffix=' %(index)d/%(max)d - %(percent).1f%% - avg %(avg).1fs - elapsed %(elapsed)ds - ETA %(eta)ds')
-        
-        for coord, proj in data:
-            long, lat = coord
-            x, y = proj
-            _, dist = nearest_edges(graph, x, y, return_dist=True)
-            perp_dist.append((long, lat, dist))
-            bar.next()
-        bar.finish()
-        #return perp_dist
-        send_end.send(perp_dist)
+    def find_nearest_edge(self, graph, data, send_end):        
+        coords = [(long, lat) for (long, lat), _ in data]
+        xs = [x for _, (x, _) in data]
+        ys = [y for _, (_, y) in data]
+        _, distances = nearest_edges(graph, xs, ys, return_dist=True)
+        perp_distances = [(coord[0], coord[1], dist) for coord,dist in zip(coords, distances)]
+        send_end.send(perp_distances)
 
     def save_model_locally(self):
         north = 40.0245
