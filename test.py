@@ -3,9 +3,6 @@ import datetime
 import sys
 import os
 
-# Add the directory containing the DTC package to the system path
-sys.path.append(os.path.abspath(os.path.dirname(__file__)))
-
 
 from DTC.trajectory import Trajectory, TrajectoryPointCloud
 from DTC.gridsystem import GridSystem
@@ -18,12 +15,23 @@ from DTC.construct_safe_area import SafeArea
 from visuals.visualizer import Visualizer 
 import copy
 import config
-
+import matplotlib.pyplot as plt
 import logging
 
 
 logging.basicConfig(level=logging.INFO, filename='app.log')
 logger = logging.getLogger("noise_corr")
+
+def my_plot(figname, coordinates):
+    lons, lats = zip(*coordinates)
+    plt.figure(figsize=(10, 6))
+    plt.scatter(lons, lats, c='blue', marker='o')
+    plt.title('Safe Area Coordinates')
+    plt.xlabel('Longitude')
+    plt.ylabel('Latitude')
+    plt.grid(True)
+    plt.savefig(f'{figname}.png')
+
 
 def points_to_lat_lon(number_of_points, lat_change):
     import math
@@ -86,7 +94,8 @@ a =  copy.copy(gs.safe_areas)
 
 print("second_point_set")
 points_y_shift = points_to_lat_lon(500, True)#[(172.5, 4.5), (20.5, 4.5), (392.5, 4.5), (332.5, 4.5), (196.5, 4.5), (284.5, 9.5), (108.5, 9.5), (372.5, 9.5), (44.5, 9.5), (308.5, 9.5), (132.5, 9.5), (244.5, 9.5), (220.5, 9.5), (68.5, 9.5)]
-
+my_plot("shifted_points", points_y_shift)
+my_plot("non_shifted_points", points)
 
 
 for k, v in gs.safe_areas.items():
@@ -108,6 +117,14 @@ noise_corrector = NoiseCorrection(gs.safe_areas, gs.initialization_point, gs.mai
 print(noise_corrector.noise_detection(t))
 noise_corrector = NoiseCorrection(gs.safe_areas, gs.initialization_point, gs.main_route)
 print(noise_corrector.noise_detection(t))
-for v1, v2  in zip(gs.safe_areas.values(),  a.values()):
-    print(v1.anchor, v2.anchor)
+for v1  in gs.safe_areas.values():
+    print(v1.anchor)
+    
+print("\n\n\n")
+for v1  in a.values():
+    print(v1.anchor)
 print(len(gs.safe_areas), len(a))
+coordinates = list(a.keys())
+my_plot("safe_area_plot", coordinates)
+coordinates = list(gs.safe_areas.keys())
+my_plot("safe_area_plot_shifted", coordinates)

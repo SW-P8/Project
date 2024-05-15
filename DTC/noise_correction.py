@@ -1,3 +1,4 @@
+import datetime
 from DTC.trajectory import Trajectory
 from DTC.distance_calculator import DistanceCalculator
 from scipy.spatial import KDTree
@@ -75,7 +76,7 @@ class NoiseCorrection:
 
         end_time = time.time()
         duration = end_time - start_time
-        logger.info(f"Safe-areas: {low_confidence_safe_areas.keys()} have been removed in {duration: .2f} seconds")
+        logger.info(f"Safe-areas: {low_confidence_safe_areas.keys()} have been removed in {duration: .2f} seconds {datetime.datetime.now()}")
 
         start_time = time.time()
 
@@ -86,8 +87,8 @@ class NoiseCorrection:
         end_time = time.time()
         duration = end_time - start_time
 
-        print(f"Safe-areas updated in {duration: .2f} seconds")
-        print(f"Created the safe-areas: {updated_areas.keys()}")
+        logger.info(f"Safe-areas updated in {duration: .2f} seconds  {datetime.datetime.now()}")
+        logger.info(f"Created the safe-areas: {updated_areas.keys()}  {datetime.datetime.now()}")
 
         for safe_area in updated_areas.values():
             self.safe_areas[safe_area.anchor] = safe_area
