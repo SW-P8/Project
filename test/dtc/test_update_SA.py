@@ -82,9 +82,6 @@ class TestIterativeCorrection():
         self.my_plot("shifted_points", points_y_shift)
         self.my_plot("non_shifted_points", points)
 
-
-        for k, v in gs.safe_areas.items():
-            v.radius = 5
         noise_corrector = NoiseCorrection(gs.safe_areas, gs.initialization_point, gs.main_route)
         t = Trajectory()
         for point in points_y_shift:
