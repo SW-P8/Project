@@ -109,7 +109,7 @@ class SafeArea:
         self.radius = radius
         self.cardinality = cardinality
         self.confidence = 1.0
-        self.confidence_change_factor = 0.40
+        self.confidence_change_factor = confidence_change
         self.decay_factor = config.decay_factor # Set as the fraction of a day 1 second represents. Done as TimeDelta is given in seconds.
         self.timestamp =  None
         self.cardinality_squish = cardinality_squish
