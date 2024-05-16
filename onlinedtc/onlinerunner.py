@@ -2,7 +2,7 @@ from DTC.gridsystem import GridSystem
 from DTC.trajectory import TrajectoryPointCloud, Trajectory
 from DTC.noise_correction import NoiseCorrection
 from collections import defaultdict
-from datetime import datetime,  timedelta
+from datetime import datetime, timedelta
 
 import json
 
