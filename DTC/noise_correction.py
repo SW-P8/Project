@@ -95,7 +95,6 @@ class NoiseCorrection:
         _, nearest_neighbor, distance = checked_points[iterator]
         _, nearest_neighbor1, distance1 = checked_points[iterator - 1]
         _, nearest_neighbor2, distance2 = checked_points[iterator - 2]
-
         return (self.safe_areas[nearest_neighbor2].radius < distance2 and self.safe_areas[nearest_neighbor1].radius < distance1) or (self.safe_areas[nearest_neighbor1].radius < distance1 and self.safe_areas[nearest_neighbor].radius < distance)
 
     def _check_for_noise_front_back(self, trajectory: Trajectory, list_of_cleaned_points: list[bool]):

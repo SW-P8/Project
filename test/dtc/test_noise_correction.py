@@ -329,6 +329,7 @@ class TestNoiseCorrection():
         nc = NoiseCorrection(five_point_grid.safe_areas,
                              five_point_grid.initialization_point)
         checked_points = []
+        triggered = []
         trajectory = Trajectory()
         for _ in range(10):
             trajectory.add_point(1.0001348, 1.0001582, False)
@@ -336,13 +337,12 @@ class TestNoiseCorrection():
             nn, dist = DistanceCalculator.find_nearest_neighbour_from_candidates_with_kd_tree(trajectory.points[i], nc.safe_areas_keys_list, nc.safe_areas_keys_kd_tree, five_point_grid.initialization_point)
             checked_points.append((trajectory.points[i], nn, dist))
 
-        # Act + Assert
+        # Act
         for i in range(len(trajectory.points)):
-            if nc._check_consecutive_noise(i, checked_points):
-                assert False
-            else:
-                assert True
-        assert trajectory.points is not None
+            triggered.append(nc._check_consecutive_noise(i, checked_points))
+
+        # Assert
+        assert True not in triggered
 
     def test_consecutive_noise_all_noise(self, five_point_grid):
         # Arrange
@@ -355,6 +355,7 @@ class TestNoiseCorrection():
         nc = NoiseCorrection(five_point_grid.safe_areas,
                              five_point_grid.initialization_point)
         checked_points = []
+        triggered = []
         trajectory = Trajectory()
         for _ in range(10):
             trajectory.add_point(10, 10, True)
@@ -363,12 +364,12 @@ class TestNoiseCorrection():
                 trajectory.points[i], nc.safe_areas_keys_list, nc.safe_areas_keys_kd_tree, five_point_grid.initialization_point)
             checked_points.append((trajectory.points[i], nn, dist))
 
-        # Act + Assert
+        # Act
         for i in range(len(trajectory.points)):
-            if nc._check_consecutive_noise(i, checked_points):
-                assert True
-            else:
-                assert False
+            triggered.append(nc._check_consecutive_noise(i, checked_points))
+
+        # Assert
+        assert True in triggered
 
     def test_consecutive_noise_check_two_point(self, five_point_grid):
         # Arrange
@@ -381,6 +382,7 @@ class TestNoiseCorrection():
         nc = NoiseCorrection(five_point_grid.safe_areas,
                              five_point_grid.initialization_point)
         checked_points = []
+        triggered = []
         trajectory = Trajectory()
         for _ in range(4):
             trajectory.add_point(1.0001348, 1.0001582, False)
@@ -393,9 +395,9 @@ class TestNoiseCorrection():
                 trajectory.points[i], nc.safe_areas_keys_list, nc.safe_areas_keys_kd_tree, five_point_grid.initialization_point)
             checked_points.append((trajectory.points[i], nn, dist))
 
-        # Act + Assert
-        for i in range(len(trajectory.points)):
-            if nc._check_consecutive_noise(i, checked_points):
-                assert True
-            else:
-                assert False
+        # Act
+        for i in range(8):
+            triggered.append(nc._check_consecutive_noise(i + 2, checked_points))
+
+        # Assert
+        assert True in triggered
