@@ -63,9 +63,6 @@ class TestIterativeCorrection():
 
     def run_test(self):
         gs = self.fifty_point_grid()
-        #gs.construct_safe_areas()
-        #gs.construct_safe_areas()
-        print("first_point_set")
         points = self.points_to_lat_lon(500, False)
         noise_corrector = NoiseCorrection(gs.safe_areas, gs.initialization_point, gs.main_route)
         t = Trajectory()
@@ -76,7 +73,6 @@ class TestIterativeCorrection():
 
         a =  copy.copy(gs.safe_areas)
 
-        print("second_point_set")
         points_y_shift = self.points_to_lat_lon(500, True)
         self.my_plot("shifted_points", points_y_shift)
         self.my_plot("non_shifted_points", points)
@@ -92,13 +88,6 @@ class TestIterativeCorrection():
 
         noise_corrector = NoiseCorrection(gs.safe_areas, gs.initialization_point, gs.main_route)
         noise_corrector.noise_detection(t)
-        for v1  in gs.safe_areas.values():
-            print(v1.anchor)
-
-        print("\n\n\n")
-        for v1  in a.values():
-            print(v1.anchor)
-        print(len(gs.safe_areas), len(a))
         coordinates = list(a.keys())
         self.my_plot("safe_area_plot", coordinates)
         coordinates = list(gs.safe_areas.keys())
