@@ -4,6 +4,7 @@ from DTC.trajectory import Trajectory
 
 import time
 import threading
+import os
 
 
 class CleaningApplication():
@@ -16,6 +17,11 @@ class CleaningApplication():
 
     def start_cleaning(self, smoothed_main_route):
         self.smoothed_main_route = smoothed_main_route
+
+        data_folder = 'input_data'
+        if not os.path.exists(data_folder):
+            os.makedirs(data_folder)
+
         cleaning_thread = threading.Thread(target=self._continuous_cleaning)
         cleaning_thread.daemon = True
         cleaning_thread.start()
