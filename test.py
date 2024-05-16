@@ -1,54 +1,11 @@
-#import pytest
+import pytest
 import datetime
-
 from DTC.trajectory import Trajectory, TrajectoryPointCloud
 from DTC.gridsystem import GridSystem
 from DTC.point import Point
-#from DTC.noise_correction import NoiseCorrection
-from DTC.distance_calculator import DistanceCalculator
-from DTC.noise_correction import NoiseCorrection
-from DTC.route_skeleton import RouteSkeleton
-from DTC.construct_safe_area import SafeArea
-from visuals.visualizer import Visualizer 
+from DTC.noise_correction import NoiseCorrection 
 import copy
-import config
 import matplotlib.pyplot as plt
-import logging
-
-
-logging.basicConfig(level=logging.INFO, filename='app.log')
-logger = logging.getLogger("noise_corr")
-
-""" def my_plot(figname, coordinates):
-    lons, lats = zip(*coordinates)
-    plt.figure(figsize=(10, 6))
-    plt.scatter(lons, lats, c='blue', marker='o')
-    plt.title('Safe Area Coordinates')
-    plt.xlabel('Longitude')
-    plt.ylabel('Latitude')
-    plt.grid(True)
-    plt.savefig(f'{figname}.png')
-
-
-def points_to_lat_lon(number_of_points, lat_change):
-    import math
-
-    lat = 4.5 
-    distance_m = 10  
-    earth_radius = 6378137  
-
-    def meters_to_degrees_longitude(meters, latitude):
-        return meters / (111320 * math.cos(math.radians(latitude)))
-
-    delta_lon = meters_to_degrees_longitude(distance_m, lat)
-
-    start_lon = 172.5  # Starting longitude
-    if not lat_change:
-        lon_lat_coordinates = [(start_lon + i * delta_lon, lat) for i in range(number_of_points)]
-    else:
-        lon_lat_coordinates = [(start_lon + number_of_points/2 * delta_lon, lat + i * delta_lon) for i in range(number_of_points)]
-    return lon_lat_coordinates
- """
 
 
 
