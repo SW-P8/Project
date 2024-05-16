@@ -1,4 +1,3 @@
-import pytest
 import datetime
 from DTC.trajectory import Trajectory, TrajectoryPointCloud
 from DTC.gridsystem import GridSystem
