@@ -39,6 +39,9 @@ class CleaningApplication():
     def insert_data(self, data: Trajectory):
         self.input_trajectories.extend(data)
 
+    def add_time(self, hours: int = 1):
+        pass  # TODO: implement this method.
+
     def _continuous_cleaning(self):
         while True:
             if self.input_trajectories:
