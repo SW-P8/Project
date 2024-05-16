@@ -401,3 +401,32 @@ class TestNoiseCorrection():
 
         # Assert
         assert True in triggered
+    
+    def test_consecutive_noise_alternating(self, five_point_grid):
+        # Arrange
+        five_point_grid.route_skeleton = {
+            (0, 0), (3.5, 3.5), (5, 5), (7, 7.5), (10, 10)}
+        five_point_grid.construct_safe_areas(0)
+        for safe_area in five_point_grid.safe_areas.values():
+            safe_area.radius = 10
+
+        nc = NoiseCorrection(five_point_grid.safe_areas,
+                             five_point_grid.initialization_point)
+        checked_points = []
+        triggered = []
+        trajectory = Trajectory()
+        for _ in range(5):
+            trajectory.add_point(1.0001348, 1.0001582, False)
+            trajectory.add_point(50, 50, True)
+        for i in range(len(trajectory.points)):
+            nn, dist = DistanceCalculator.find_nearest_neighbour_from_candidates_with_kd_tree(
+                trajectory.points[i], nc.safe_areas_keys_list, nc.safe_areas_keys_kd_tree, five_point_grid.initialization_point)
+            checked_points.append((trajectory.points[i], nn, dist))
+
+        # Act
+        for i in range(8):
+            triggered.append(
+                nc._check_consecutive_noise(i + 2, checked_points))
+
+        # Assert
+        assert True not in triggered
