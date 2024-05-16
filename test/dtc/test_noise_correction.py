@@ -21,9 +21,6 @@ class TestNoiseCorrection():
             shifted_point = DistanceCalculator.shift_point_with_bearing(t.points[0], i * 5, config.NORTH)
             shifted_point = DistanceCalculator.shift_point_with_bearing(shifted_point, i * 5, config.EAST)
 
-            shifted_point = DistanceCalculator.shift_point_with_bearing(t.points[0], i * 5, DistanceCalculator.NORTH)
-            shifted_point = DistanceCalculator.shift_point_with_bearing(shifted_point, i * 5, DistanceCalculator.EAST)
-
             t.add_point(shifted_point[0], shifted_point[1])
         pc.add_trajectory(t)
         gs = GridSystem(pc)
@@ -75,9 +72,9 @@ class TestNoiseCorrection():
 
         # Changing point to make it an outlier.
         shifted_point = DistanceCalculator.shift_point_with_bearing(
-            five_point_grid.pc.trajectories[0].points[0], 200, DistanceCalculator.NORTH)
+            five_point_grid.pc.trajectories[0].points[0], 200, config.NORTH)
         shifted_point = DistanceCalculator.shift_point_with_bearing(
-            shifted_point, 200, DistanceCalculator.EAST)
+            shifted_point, 200, config.EAST)
 
         five_point_grid.pc.trajectories[0].points[3].longitude = shifted_point[0]
         five_point_grid.pc.trajectories[0].points[3].latitude = shifted_point[1]
