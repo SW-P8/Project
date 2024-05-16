@@ -4,6 +4,7 @@ from DTC.trajectory import Trajectory, TrajectoryPointCloud
 from DTC.point import Point
 from tqdm import tqdm
 import datetime
+import config
 
 def write_grid_to_json(file_name: str, grid: dict) -> None:
     with open(file_name, "w") as outfile: 
@@ -34,7 +35,7 @@ def write_safe_areas_to_json(file_name: str, safe_areas: dict) -> None:
     with open(file_name, "w") as outfile: 
         json.dump({str(k): [v.radius, v.cardinality] for k, v in safe_areas.items()}, outfile, indent=4) 
 
-def read_safe_areas_from_json(file_name: str, max_confidence_change: float = 0.1) -> dict:
+def read_safe_areas_from_json(file_name: str, max_confidence_change: float = config.max_confidence_change) -> dict:
     with open(file_name, "r") as safe_areas_file:
         safe_areas_data = json.load(safe_areas_file)
     

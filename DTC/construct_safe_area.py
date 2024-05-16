@@ -9,11 +9,12 @@ from DTC.distance_calculator import DistanceCalculator
 from DTC.collection_utils import CollectionUtils
 from DTC.point import Point
 from DTC.trajectory import Trajectory
-from scipy.spatial import KDTree 
+from scipy.spatial import KDTree
+import config
 
 class ConstructSafeArea:
     @staticmethod
-    def construct_safe_areas(route_skeleton: set, grid: dict, decrease_factor: float, find_relaxed_nn: bool = True) -> dict:
+    def construct_safe_areas(route_skeleton: set, grid: dict, decrease_factor: float = config.decrease_factor, find_relaxed_nn: bool = True) -> dict:
         cs = ConstructSafeArea._create_cover_sets(route_skeleton, grid, find_relaxed_nn)
 
         safe_areas = dict()
@@ -109,7 +110,7 @@ class SafeArea:
         self.cardinality = cardinality
         self.confidence = 1.0
         self.confidence_change_factor = confidence_change
-        self.decay_factor = 1 / (60*60*24) # Set as the fraction of a day 1 second represents. Done as TimeDelta is given in seconds.
+        self.decay_factor = config.decay_factor # Set as the fraction of a day 1 second represents. Done as TimeDelta is given in seconds.
         self.timestamp =  None
         self.cardinality_squish = cardinality_squish
         self.max_confidence_change = max_confidence_change
@@ -126,13 +127,13 @@ class SafeArea:
         self.points_in_safe_area = Trajectory()
 
     @classmethod
-    def from_cover_set(cls, cover_set: set, anchor: tuple[float, float], decrease_factor: float, confidence_change: float = 0.01, cardinality_squish: float = 0.1, max_confidence_change: float = 0.1):
+    def from_cover_set(cls, cover_set: set, anchor: tuple[float, float], decrease_factor: float, confidence_change: float = config.confidence_change, cardinality_squish: float = config.cardinality_squish, max_confidence_change: float = config.max_confidence_change):
         radius = SafeArea.calculate_radius(cover_set, decrease_factor)
         cardinality = len(cover_set)
         return cls(anchor, radius, cardinality, confidence_change, cardinality_squish, max_confidence_change)
     
     @classmethod
-    def from_meta_data(cls, anchor: tuple[float, float], radius: float, cardinality: float, confidence_change: float = 0.01, cardinality_squish: float = 0.1, max_confidence_change: float = 0.1):
+    def from_meta_data(cls, anchor: tuple[float, float], radius: float, cardinality: float, confidence_change: float = config.confidence_change, cardinality_squish: float = config.cardinality_squish, max_confidence_change: float = config.max_confidence_change):
         return cls(anchor, radius, cardinality, confidence_change, cardinality_squish, max_confidence_change)
 
        
@@ -141,6 +142,8 @@ class SafeArea:
         radius = max(cover_set, key=itemgetter(1), default=(0,0))[1]
         removed_count = 0
         cover_set_size = len(cover_set)
+        print(len(cover_set))
+        print(decrease_factor)
         removal_threshold = decrease_factor * cover_set_size
         filtered_cover_set = {(p, d) for (p, d) in cover_set}
 

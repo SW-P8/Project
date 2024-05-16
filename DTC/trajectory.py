@@ -3,7 +3,7 @@ from math import floor
 from typing import Optional
 from DTC.point import Point
 from DTC.distance_calculator import DistanceCalculator
-
+import config
 class Trajectory:
     def __init__(self) -> None:
         self.points = list[Point]()
@@ -60,21 +60,21 @@ class TrajectoryPointCloud:
 
     def get_shifted_min(self) -> tuple[float, float]:
         #Bearing: South (180), West (270)
-        shift_distance = DistanceCalculator.CELL_SIZE * floor(DistanceCalculator.NEIGHBORHOOD_SIZE / 2)
+        shift_distance = config.CELL_SIZE * floor(config.NEIGHBORHOOD_SIZE / 2)
 
         # Shift min point south and west
-        shifted_point = DistanceCalculator.shift_point_with_bearing((self.min_longitude, self.min_latitude), shift_distance, DistanceCalculator.WEST)
-        shifted_point = DistanceCalculator.shift_point_with_bearing(shifted_point, shift_distance, DistanceCalculator.SOUTH)
+        shifted_point = DistanceCalculator.shift_point_with_bearing((self.min_longitude, self.min_latitude), shift_distance, config.WEST)
+        shifted_point = DistanceCalculator.shift_point_with_bearing(shifted_point, shift_distance, config.SOUTH)
 
         return shifted_point
     
     def get_shifted_max(self) -> tuple[float, float]:
         #Bearing: North (0), East (90)
-        shift_distance = DistanceCalculator.CELL_SIZE * floor(DistanceCalculator.NEIGHBORHOOD_SIZE / 2)
+        shift_distance = config.CELL_SIZE * floor(config.NEIGHBORHOOD_SIZE / 2)
 
         # Shift max point north and east
-        shifted_point = DistanceCalculator.shift_point_with_bearing((self.max_longitude, self.max_latitude), shift_distance, DistanceCalculator.NORTH)
-        shifted_point = DistanceCalculator.shift_point_with_bearing(shifted_point, shift_distance, DistanceCalculator.EAST)
+        shifted_point = DistanceCalculator.shift_point_with_bearing((self.max_longitude, self.max_latitude), shift_distance, config.NORTH)
+        shifted_point = DistanceCalculator.shift_point_with_bearing(shifted_point, shift_distance, config.EAST)
 
         return shifted_point
 

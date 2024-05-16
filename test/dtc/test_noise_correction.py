@@ -4,6 +4,7 @@ from DTC.gridsystem import GridSystem
 from DTC.noise_correction import NoiseCorrection
 from DTC.distance_calculator import DistanceCalculator
 import copy
+import config
 
 
 class TestNoiseCorrection():
@@ -17,6 +18,9 @@ class TestNoiseCorrection():
 
         for i in range(1, 5):
             # Shift points 5 meters north and east (should result in 5 points being 1 cell apart in both x and y)
+            shifted_point = DistanceCalculator.shift_point_with_bearing(t.points[0], i * 5, config.NORTH)
+            shifted_point = DistanceCalculator.shift_point_with_bearing(shifted_point, i * 5, config.EAST)
+        
             shifted_point = DistanceCalculator.shift_point_with_bearing(t.points[0], i * 5, DistanceCalculator.NORTH)
             shifted_point = DistanceCalculator.shift_point_with_bearing(shifted_point, i * 5, DistanceCalculator.EAST)
 
@@ -48,8 +52,8 @@ class TestNoiseCorrection():
         original_timestamp = five_point_grid.pc.trajectories[0].points[3].timestamp
 
         # Changing point to make it an outlier.
-        shifted_point = DistanceCalculator.shift_point_with_bearing(five_point_grid.pc.trajectories[0].points[0], 200, DistanceCalculator.NORTH)
-        shifted_point = DistanceCalculator.shift_point_with_bearing(shifted_point, 200, DistanceCalculator.EAST)
+        shifted_point = DistanceCalculator.shift_point_with_bearing(five_point_grid.pc.trajectories[0].points[0], 200, config.NORTH)
+        shifted_point = DistanceCalculator.shift_point_with_bearing(shifted_point, 200, config.EAST)
 
         five_point_grid.pc.trajectories[0].points[3].longitude = shifted_point[0]
         five_point_grid.pc.trajectories[0].points[3].latitude = shifted_point[1]
@@ -112,8 +116,8 @@ class TestNoiseCorrection():
 
         nc = NoiseCorrection(five_point_grid.safe_areas, five_point_grid.initialization_point)
         # Changing point to make it an outlier.
-        shifted_point = DistanceCalculator.shift_point_with_bearing(five_point_grid.pc.trajectories[0].points[0], 200, DistanceCalculator.NORTH)
-        shifted_point = DistanceCalculator.shift_point_with_bearing(shifted_point, 200, DistanceCalculator.EAST)
+        shifted_point = DistanceCalculator.shift_point_with_bearing(five_point_grid.pc.trajectories[0].points[0], 200, config.NORTH)
+        shifted_point = DistanceCalculator.shift_point_with_bearing(shifted_point, 200, config.EAST)
 
         five_point_grid.pc.trajectories[0].points[3].longitude = shifted_point[0]
         five_point_grid.pc.trajectories[0].points[3].latitude = shifted_point[1]

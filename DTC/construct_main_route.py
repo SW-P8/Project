@@ -1,4 +1,5 @@
 from DTC.distance_calculator import DistanceCalculator
+import config
 
 class ConstructMainRoute:
     @staticmethod
@@ -8,7 +9,7 @@ class ConstructMainRoute:
         if distance_scale >= 0.5:
             raise ValueError("distance scale must be less than neighborhood size divided by 2")
         
-        distance_threshold = distance_scale * DistanceCalculator.NEIGHBORHOOD_SIZE
+        distance_threshold = distance_scale * config.NEIGHBORHOOD_SIZE
 
         for cell in grid.keys():
             density_center = ConstructMainRoute.calculate_density_center(cell, grid)
@@ -25,7 +26,7 @@ class ConstructMainRoute:
         if distance_scale >= 0.5:
             raise ValueError("distance scale must be less than neighborhood size divided by 2")
         
-        distance_threshold = distance_scale * DistanceCalculator.NEIGHBORHOOD_SIZE
+        distance_threshold = distance_scale * config.NEIGHBORHOOD_SIZE
 
         for cell in grid.keys():
             density_center = ConstructMainRoute.calculate_density_center(cell, grid)
@@ -39,7 +40,7 @@ class ConstructMainRoute:
     @staticmethod
     def calculate_density_center(index, grid: dict) -> tuple[float, float]:
         (x, y) = index
-        l = DistanceCalculator.NEIGHBORHOOD_SIZE // 2
+        l = config.NEIGHBORHOOD_SIZE // 2
         point_count = 0
         (x_sum, y_sum) = (0, 0)
  
