@@ -5,43 +5,44 @@ from DTC.noise_correction import NoiseCorrection
 from DTC.distance_calculator import DistanceCalculator
 import copy
 
-class TestNoiseCorrection():    
+
+class TestNoiseCorrection():
     @pytest.fixture
     def five_point_grid(self):
         pc = TrajectoryPointCloud()
         t = Trajectory()
-        
+
         # Add point to use initialization point
-        t.add_point(1,1)
+        t.add_point(1, 1)
 
         for i in range(1, 5):
             # Shift points 5 meters north and east (should result in 5 points being 1 cell apart in both x and y)
             shifted_point = DistanceCalculator.shift_point_with_bearing(t.points[0], i * 5, DistanceCalculator.NORTH)
             shifted_point = DistanceCalculator.shift_point_with_bearing(shifted_point, i * 5, DistanceCalculator.EAST)
-        
+
             t.add_point(shifted_point[0], shifted_point[1])
         pc.add_trajectory(t)
-        gs = GridSystem(pc) 
+        gs = GridSystem(pc)
         gs.create_grid_system()
         return gs
-   
+
     # Given that point[1] is shifted 5 meters it should be at anchor (5,5)
     def test_correct_noisy_point_should_not_change(self, five_point_grid):
-        
-        five_point_grid.route_skeleton = {(0,0), (2.5,2.5), (5,5), (7.5,7.5), (10,10)}
+
+        five_point_grid.route_skeleton = {(0, 0), (2.5, 2.5), (5, 5), (7.5, 7.5), (10, 10)}
         five_point_grid.construct_safe_areas(0)
 
         nc = NoiseCorrection(five_point_grid.safe_areas, five_point_grid.initialization_point)
         nc.correct_noisy_point(five_point_grid.pc.trajectories[0], 1)
-        
-        expected_point = DistanceCalculator.convert_cell_to_point(five_point_grid.initialization_point, (5,5))
+
+        expected_point = DistanceCalculator.convert_cell_to_point(five_point_grid.initialization_point, (5, 5))
 
         assert five_point_grid.pc.trajectories[0].points[1].longitude == expected_point[0]
         assert five_point_grid.pc.trajectories[0].points[1].latitude == expected_point[1]
 
     def test_correct_noisy_point_should_change_anchor_with_timestamp(self, five_point_grid):
-        
-        five_point_grid.route_skeleton = {(0,0), (2.5,2.5), (5,5), (7,7), (10,10)}
+
+        five_point_grid.route_skeleton = {(0, 0), (2.5, 2.5), (5, 5), (7, 7), (10, 10)}
         five_point_grid.construct_safe_areas(0)
         nc = NoiseCorrection(five_point_grid.safe_areas, five_point_grid.initialization_point)
         original_timestamp = five_point_grid.pc.trajectories[0].points[3].timestamp
@@ -54,16 +55,16 @@ class TestNoiseCorrection():
         five_point_grid.pc.trajectories[0].points[3].latitude = shifted_point[1]
 
         nc.correct_noisy_point(five_point_grid.pc.trajectories[0], 4)
-        
-        expected_point = DistanceCalculator.convert_cell_to_point(five_point_grid.initialization_point, (7,7))
+
+        expected_point = DistanceCalculator.convert_cell_to_point(five_point_grid.initialization_point, (7, 7))
 
         assert five_point_grid.pc.trajectories[0].points[3].longitude == expected_point[0]
         assert five_point_grid.pc.trajectories[0].points[3].latitude == expected_point[1]
         assert five_point_grid.pc.trajectories[0].points[3].timestamp == original_timestamp
 
     def test_correct_noisy_point_with_timestamp_none(self, five_point_grid):
-        
-        five_point_grid.route_skeleton = {(0,0), (2.5,2.5), (5,5), (7,7), (10,10)}
+
+        five_point_grid.route_skeleton = {(0, 0), (2.5, 2.5), (5, 5), (7, 7), (10, 10)}
         five_point_grid.construct_safe_areas(0)
 
         five_point_grid.pc.trajectories[0].points[3].timestamp = None
@@ -83,7 +84,7 @@ class TestNoiseCorrection():
         expected_point = DistanceCalculator.convert_cell_to_point(
             five_point_grid.initialization_point, (7, 7))
 
-        assert five_point_grid.pc.trajectories[0].points[3].timestamp == None
+        assert five_point_grid.pc.trajectories[0].points[3].timestamp is None
         assert five_point_grid.pc.trajectories[0].points[3].longitude == expected_point[0]
         assert five_point_grid.pc.trajectories[0].points[3].latitude == expected_point[1]
 
@@ -91,10 +92,10 @@ class TestNoiseCorrection():
     def test_noise_detection_no_noise(self, five_point_grid):
 
         expected_trajectory = five_point_grid.pc.trajectories[0]
-        
-        five_point_grid.route_skeleton = {(0,0), (2.5,2.5), (5,5), (7,7), (10,10)}
+
+        five_point_grid.route_skeleton = {(0, 0), (2.5, 2.5), (5, 5), (7, 7), (10, 10)}
         five_point_grid.construct_safe_areas(0)
-        
+
         nc = NoiseCorrection(five_point_grid.safe_areas, five_point_grid.initialization_point)
         nc.noise_detection(five_point_grid.pc.trajectories[0])
 
@@ -121,7 +122,7 @@ class TestNoiseCorrection():
 
         expected_corrected_point = DistanceCalculator.convert_cell_to_point(five_point_grid.initialization_point, (7, 7.5))
 
-        assert five_point_grid.pc.trajectories[0] != trajectory_before_correction 
+        assert five_point_grid.pc.trajectories[0] != trajectory_before_correction
         assert five_point_grid.pc.trajectories[0].points[3].longitude == expected_corrected_point[0]
         assert five_point_grid.pc.trajectories[0].points[3].latitude == expected_corrected_point[1]
 
@@ -290,3 +291,111 @@ class TestNoiseCorrection():
         # Assert
         assert 10 == len(trajectory.points)
         assert 0 == len(cleaned_points)
+
+    def test_check_noise_front_back_noise(self, five_point_grid):
+        # Arrange
+        five_point_grid.route_skeleton = {
+            (0, 0), (3.5, 3.5), (5, 5), (7, 7.5), (10, 10)}
+        five_point_grid.construct_safe_areas(0)
+        for safe_area in five_point_grid.safe_areas.values():
+            safe_area.radius = 10
+
+        nc = NoiseCorrection(five_point_grid.safe_areas,
+                             five_point_grid.initialization_point)
+        cleaned_points = list()
+        trajectory = Trajectory()
+        for _ in range(4):
+            trajectory.add_point(10, 10, True)
+        for _ in range(2):
+            trajectory.add_point(1.0001348, 1.0001582, False)
+        for _ in range(4):
+            trajectory.add_point(10, 10, True)
+
+        # Act
+        nc._check_for_noise_front_back(trajectory, cleaned_points)
+
+        # Assert
+        assert 2 == len(trajectory.points)
+        assert 8 == len(cleaned_points)
+
+    def test_consecutive_noise_no_noise(self, five_point_grid):
+        # Arrange
+        five_point_grid.route_skeleton = {
+            (0, 0), (3.5, 3.5), (5, 5), (7, 7.5), (10, 10)}
+        five_point_grid.construct_safe_areas(0)
+        for safe_area in five_point_grid.safe_areas.values():
+            safe_area.radius = 10
+
+        nc = NoiseCorrection(five_point_grid.safe_areas,
+                             five_point_grid.initialization_point)
+        checked_points = []
+        trajectory = Trajectory()
+        for _ in range(10):
+            trajectory.add_point(1.0001348, 1.0001582, False)
+        for i in range(len(trajectory.points)):
+            nn, dist = DistanceCalculator.find_nearest_neighbour_from_candidates_with_kd_tree(trajectory.points[i], nc.safe_areas_keys_list, nc.safe_areas_keys_kd_tree, five_point_grid.initialization_point)
+            checked_points.append((trajectory.points[i], nn, dist))
+
+        # Act + Assert
+        for i in range(len(trajectory.points)):
+            if nc._check_consecutive_noise(i, checked_points):
+                assert False
+            else:
+                assert True
+        assert trajectory.points is not None
+
+    def test_consecutive_noise_all_noise(self, five_point_grid):
+        # Arrange
+        five_point_grid.route_skeleton = {
+            (0, 0), (3.5, 3.5), (5, 5), (7, 7.5), (10, 10)}
+        five_point_grid.construct_safe_areas(0)
+        for safe_area in five_point_grid.safe_areas.values():
+            safe_area.radius = 10
+
+        nc = NoiseCorrection(five_point_grid.safe_areas,
+                             five_point_grid.initialization_point)
+        checked_points = []
+        trajectory = Trajectory()
+        for _ in range(10):
+            trajectory.add_point(10, 10, True)
+        for i in range(len(trajectory.points)):
+            nn, dist = DistanceCalculator.find_nearest_neighbour_from_candidates_with_kd_tree(
+                trajectory.points[i], nc.safe_areas_keys_list, nc.safe_areas_keys_kd_tree, five_point_grid.initialization_point)
+            checked_points.append((trajectory.points[i], nn, dist))
+
+        # Act + Assert
+        for i in range(len(trajectory.points)):
+            if nc._check_consecutive_noise(i, checked_points):
+                assert True
+            else:
+                assert False
+
+    def test_consecutive_noise_check_two_point(self, five_point_grid):
+        # Arrange
+        five_point_grid.route_skeleton = {
+            (0, 0), (3.5, 3.5), (5, 5), (7, 7.5), (10, 10)}
+        five_point_grid.construct_safe_areas(0)
+        for safe_area in five_point_grid.safe_areas.values():
+            safe_area.radius = 10
+
+        nc = NoiseCorrection(five_point_grid.safe_areas,
+                             five_point_grid.initialization_point)
+        checked_points = []
+        trajectory = Trajectory()
+        for _ in range(4):
+            trajectory.add_point(1.0001348, 1.0001582, False)
+        for _ in range(2):
+            trajectory.add_point(50, 50, True)
+        for _ in range(4):
+            trajectory.add_point(1.0001348, 1.0001582, False)
+        for i in range(len(trajectory.points)):
+            nn, dist = DistanceCalculator.find_nearest_neighbour_from_candidates_with_kd_tree(
+                trajectory.points[i], nc.safe_areas_keys_list, nc.safe_areas_keys_kd_tree, five_point_grid.initialization_point)
+            checked_points.append((trajectory.points[i], nn, dist))
+
+        # Act + Assert
+        for i in range(len(trajectory.points)):
+            if nc._check_consecutive_noise(i, checked_points):
+                assert True
+            else:
+                assert False
