@@ -1,7 +1,7 @@
 from DTC.trajectory import Trajectory
 from DTC.distance_calculator import DistanceCalculator
 from scipy.spatial import KDTree
-from copy import deepcopy
+from copy import deepcopy, copy
 from onlinedtc.increment import update_safe_area
 import time
 import logging
@@ -12,7 +12,7 @@ logger = logging.getLogger(__name__)
 
 
 class NoiseCorrection:
-    def __init__(self, safe_areas, init_point, smoothed_main_route = set()):
+    def __init__(self, safe_areas, init_point, smoothed_main_route=set()):
         self.safe_areas = safe_areas
         self.safe_areas_keys_list = list(safe_areas.keys())
         self.safe_areas_keys_kd_tree = KDTree(self.safe_areas_keys_list)
@@ -42,13 +42,13 @@ class NoiseCorrection:
 
             self.safe_areas[nearest_anchor].add_to_point_cloud(deepcopy(point))
             if checked_points[i - 1][2] > self.safe_areas[checked_points[i - 1][1]].radius:
-                if i > 1 and self._check_consecutive_noise(i, checked_points):
-                    discard_after_run = True
-                    break
-
-                if i > 1:
+                if i > 1 and not self._check_consecutive_noise(i, checked_points):
                     labels_of_cleaned_points.append((point.noise))
                     self.correct_noisy_point(trajectory, i)
+
+                else:
+                    discard_after_run = True
+                    break
 
         if len(low_confidence_safe_areas):
             self._update_safe_areas(low_confidence_safe_areas)
@@ -71,7 +71,7 @@ class NoiseCorrection:
         updated_areas = {}
         for area in low_confidence_safe_areas.values():
             self.safe_areas.pop(area.anchor)
-        
+
         end_time = time.time()
         duration = end_time - start_time
         logger.info(f"Safe-areas: {low_confidence_safe_areas.keys()} have been removed in {duration: .2f} seconds")
@@ -96,41 +96,36 @@ class NoiseCorrection:
         _, nearest_neighbor1, distance1 = checked_points[iterator - 1]
         _, nearest_neighbor2, distance2 = checked_points[iterator - 2]
 
-        return (self.safe_areas[nearest_neighbor2].radius < distance2 and self.safe_areas[nearest_neighbor1].radius < distance1) or (self.safe_areas[nearest_neighbor1].radius < distance1 and self.safe_areas[nearest_neighbor].radius < distance):
-            return True
-
-        return False
+        return (self.safe_areas[nearest_neighbor2].radius < distance2 and self.safe_areas[nearest_neighbor1].radius < distance1) or (self.safe_areas[nearest_neighbor1].radius < distance1 and self.safe_areas[nearest_neighbor].radius < distance)
 
     def _check_for_noise_front_back(self, trajectory: Trajectory, list_of_cleaned_points: list[bool]):
-
         # first check from front of trajectory if any noise-points can be removed.
-        while True:
-            nearest_neighbor, distance = DistanceCalculator.find_nearest_neighbour_from_candidates_with_kd_tree(
-                trajectory.points[0],
-                self.safe_areas_keys_list,
-                self.safe_areas_keys_kd_tree,
-                self.initialization_point)
-            if distance > self.safe_areas[nearest_neighbor].radius:
-                self.safe_areas[nearest_neighbor].add_to_point_cloud(
-                    deepcopy(trajectory.points[0]))
-                list_of_cleaned_points.append(trajectory.points[0].noise)
-                del trajectory.points[0]
-            else:
-                break
+        self._check_list_trajectory(trajectory, list_of_cleaned_points,)
+        self._check_list_trajectory(trajectory, list_of_cleaned_points, True)
 
-        # next check from the back.
+    def _check_list_trajectory(self, trajectory: Trajectory, list_of_cleaned_points: list[bool], fromBack: bool = False):
+        if fromBack:
+            iterator = len(trajectory.points) - 1
+        else:
+            iterator = 0
         while True:
+            if not trajectory.points:
+                return
             nearest_neighbor, distance = DistanceCalculator.find_nearest_neighbour_from_candidates_with_kd_tree(
-                trajectory.points[0],
+                trajectory.points[iterator],
                 self.safe_areas_keys_list,
                 self.safe_areas_keys_kd_tree,
                 self.initialization_point
             )
             if distance > self.safe_areas[nearest_neighbor].radius:
                 self.safe_areas[nearest_neighbor].add_to_point_cloud(
-                    deepcopy(trajectory.points[0]))
+                    copy(trajectory.points[iterator])
+                )
                 list_of_cleaned_points.append(
-                    trajectory.points[0].noise)
-                del trajectory.points[0]
+                    copy(trajectory.points[iterator].noise)
+                )
+                del trajectory.points[iterator]
+                if fromBack:
+                    iterator -= 1
             else:
                 break
