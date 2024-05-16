@@ -20,7 +20,7 @@ class TestNoiseCorrection():
             # Shift points 5 meters north and east (should result in 5 points being 1 cell apart in both x and y)
             shifted_point = DistanceCalculator.shift_point_with_bearing(t.points[0], i * 5, config.NORTH)
             shifted_point = DistanceCalculator.shift_point_with_bearing(shifted_point, i * 5, config.EAST)
-        
+
             shifted_point = DistanceCalculator.shift_point_with_bearing(t.points[0], i * 5, DistanceCalculator.NORTH)
             shifted_point = DistanceCalculator.shift_point_with_bearing(shifted_point, i * 5, DistanceCalculator.EAST)
 
@@ -405,7 +405,7 @@ class TestNoiseCorrection():
 
         # Assert
         assert True in triggered
-    
+
     def test_consecutive_noise_alternating(self, five_point_grid):
         # Arrange
         five_point_grid.route_skeleton = {
