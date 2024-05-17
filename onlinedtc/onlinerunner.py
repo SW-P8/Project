@@ -34,10 +34,18 @@ class RunCleaning():
                     self.grid_system.initialization_point,
                     self.smooth_main_route
                     )
-                self.rebuild = False
+                #self.rebuild = False
             trajectory = self.input_trajectories.pop(0)
-            self.cleaner.noise_detection(trajectory, self._rebuild_listener)
-            self._append_to_json(trajectory)
+            
+            #timestamp correct here
+            
+            self.cleaner.noise_detection(trajectory)
+            a = datetime.now()
+            b = a + timedelta(days=500)
+            self._confidence_check_safe_areas(b)
+            
+            #, self._rebuild_listener)
+            #self._append_to_json(trajectory)
 
     def _append_to_json(self, trajectory: Trajectory):
         if trajectory is None:
@@ -48,12 +56,16 @@ class RunCleaning():
             json_file.write("\n")
 
     def _rebuild_listener(self):
-        self.read_trajectories = True
+        self.rebuild = True
 
     def _confidence_check_safe_areas(self, time_for_check: datetime):
-        for safe_area in self.grid_system.safe_areas:
-            safe_area.get_current_confidence(time_for_check)
+        new_sa = {}
+        for safe_area in self.grid_system.safe_areas.values():
+            confidence, _ = safe_area.get_current_confidence(time_for_check)
+            if confidence > 0.5:
+                new_sa.update({safe_area.anchor: safe_area})
         self.rebuild = True
+        self.grid_system.safe_areas = new_sa
 
     def _update_time(self, days: int = 0, hours: int = 0, minutes: int = 0, seconds: int = 0):
         self.current_time + timedelta(days=days, hours=hours, minutes=minutes, seconds=seconds)

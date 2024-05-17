@@ -3,6 +3,7 @@ from DTC.trajectory import Trajectory, TrajectoryPointCloud
 from DTC.gridsystem import GridSystem
 from DTC.construct_safe_area import Point
 from DTC.noise_correction import NoiseCorrection 
+from onlinedtc.onlinerunner import RunCleaning 
 import copy
 import matplotlib.pyplot as plt
 import math
@@ -46,7 +47,7 @@ class SquareCircleBuilder:
                 lon = square_center_lon + self.meters_to_degrees_lon(half_side, square_center_lat)
             square_points.append((lon, lat))
 
-        circle_radius = 5000 
+        circle_radius = 5000
         num_circle_points = self.NUM_POINTS 
         circle_points = [
             (
@@ -100,6 +101,7 @@ class TestIterativeCorrection():
         plt.savefig(f'{figname}.png')
 
 
+
     def points_to_lat_lon(self, number_of_points, lat_change):
         import math
 
@@ -144,6 +146,7 @@ class TestIterativeCorrection():
             t.add_point(point_.longitude, point_.latitude, point_.timestamp)
 
 
+
         noise_corrector = NoiseCorrection(gs.safe_areas, gs.initialization_point, gs.main_route)
         noise_corrector.noise_detection(t)
         coordinates = list(a.keys())
@@ -172,17 +175,29 @@ class TestIterativeCorrection():
         gs.construct_safe_areas()
         coordinates = list(gs.safe_areas.keys())
         self.my_plot("safe_areas_circle_square", coordinates)
-        noise_corrector = NoiseCorrection(gs.safe_areas, gs.initialization_point, gs.main_route)
-        for point in circles:
-            point_ = Point(point[0], point[1], (datetime.datetime.now() + datetime.timedelta(days=10)))
-            t.add_point(point_.longitude, point_.latitude + sbuild.meters_to_degrees_lat(15000), point_.timestamp)
-        for point in squares:
-            point_ = Point(point[0], point[1], (datetime.datetime.now() + datetime.timedelta(days=10)))
-            t.add_point(point_.longitude, point_.latitude - sbuild.meters_to_degrees_lat(15000), point_.timestamp)
+        
+        # noise_corrector = NoiseCorrection(gs.safe_areas, gs.initialization_point, gs.main_route)
 
+        for i in range(0,4):
+            for point in circles:
+                now= datetime.datetime.now()
+                now_later = (now + datetime.timedelta(days=1000*i))
+                point_ = Point(point[0], point[1], (now_later))
+                t.add_point(point_.longitude, point_.latitude + sbuild.meters_to_degrees_lat(15000), point_.timestamp)
+            for point in squares:
+                now= datetime.datetime.now()
+                now_later = (now + datetime.timedelta(days=1000*i))
+                point_ = Point(point[0], point[1], (now_later))
+                t.add_point(point_.longitude, point_.latitude - sbuild.meters_to_degrees_lat(15000), point_.timestamp)
+        
+            a = RunCleaning(gs, gs.main_route)
 
-        noise_corrector = NoiseCorrection(gs.safe_areas, gs.initialization_point, gs.main_route)
-        noise_corrector.noise_detection(t)
+            pc = TrajectoryPointCloud()
+            pc.add_trajectory(t)
+            a.read_trajectories(copy.deepcopy(pc))
+            a.clean_and_increment()
+    
+
         coordinates = list(gs.safe_areas.keys())
         self.my_plot("safe_area_plot_shifted", coordinates)
             
