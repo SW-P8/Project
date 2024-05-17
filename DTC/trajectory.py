@@ -4,6 +4,9 @@ from typing import Optional
 from DTC.point import Point
 from DTC.distance_calculator import DistanceCalculator
 import config
+import json
+
+
 class Trajectory:
     def __init__(self) -> None:
         self.points = list[Point]()
@@ -30,6 +33,18 @@ class Trajectory:
         # Check if added latitude is ither new max
         if latitude < self.min_latitude:
             self.min_latitude = latitude
+
+    def to_dict(self) -> dict:
+        return {
+            'points': [point.to_dict() for point in self.points],
+            'min_longitude': self.min_longitude,
+            'max_longitude': self.max_longitude,
+            'min_latitude': self.min_latitude,
+            'max_latitude': self.max_latitude
+        }
+
+    def to_json(self) -> str:
+        return json.dumps(self.to_dict(), indent=4)
 
 class TrajectoryPointCloud:
     def __init__(self) -> None:

@@ -40,19 +40,24 @@ class RunCleaning():
             self._append_to_json(trajectory)
 
     def _append_to_json(self, trajectory: Trajectory):
-        if trajectory is None:
+        if trajectory.points == []:
             raise AttributeError("Trajectory is none after cleaning")
+            return
 
         with open("cleaned_trajectories.json", "a") as json_file:
-            json.dump(trajectory, json_file)
-            json_file.write("\n")
+            json_file.write(trajectory.to_json())
+            json_file.write('\n')
 
     def _rebuild_listener(self):
         self.read_trajectories = True
 
     def _confidence_check_safe_areas(self, time_for_check: datetime):
-        for safe_area in self.grid_system.safe_areas:
-            safe_area.get_current_confidence(time_for_check)
+        new_safe_areas = {}
+        for safe_area in self.grid_system.safe_areas.values():
+            confidence, _ = safe_area.get_current_confidence(time_for_check)
+            if confidence > 0.5:
+                new_safe_areas[safe_area.anchor] = safe_area
+        self.grid_system.safe_areas = new_safe_areas
         self.rebuild = True
 
     def _update_time(self, days: int = 0, hours: int = 0, minutes: int = 0, seconds: int = 0):

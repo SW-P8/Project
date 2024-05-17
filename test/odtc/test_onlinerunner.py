@@ -1,5 +1,7 @@
 import pytest
 import config
+import json
+import os
 
 from unittest.mock import patch
 from onlinedtc.onlinerunner import RunCleaning
@@ -98,14 +100,40 @@ def test_read_trajectory_read_no_trajectory(clean_runner):
     # Assert
     assert 0 == len(clean_runner.input_trajectories)
 
-@patch.object(NoiseCorrection, 'noise_detection')
-@patch.object(RunCleaning, '_append_to_json')
-def test_clean_and_increment_calls_noise_detection(clean_runner, point_cloud, mock_noise_detection, mock_append_to_json):
+
+def test_clean_and_increment_calls_noise_detection(clean_runner, point_cloud):
     # Arrange
     clean_runner.read_trajectories(point_cloud)
 
     # Act
-    clean_runner.clean_and_increment()
+    with patch.object(NoiseCorrection, 'noise_detection') as mock_noise_detection:
+        with patch.object(RunCleaning, '_append_to_json') as mock_append_to_json:
+            clean_runner.clean_and_increment()
 
     # Assert
-    mock_noise_detection.assert_called_once()
+    assert 10 == mock_noise_detection.call_count
+    assert 10 == mock_append_to_json.call_count
+
+
+def test_append_to_json_creates_file(clean_runner, trajectory):
+    # Arrange
+    path_to_file = 'cleaned_trajectories.json'
+
+    # Act
+    clean_runner._append_to_json(trajectory)
+    with open(path_to_file, 'r') as file:
+        result = json.load(file)
+
+    # Assert
+    assert result is not None
+    os.remove(path_to_file)
+
+
+def test_append_to_json_empty_trajectory_raises_attributeerror(clean_runner):
+    # Arrange
+    trajectory = Trajectory()
+
+    # Act + Assert
+    with pytest.raises(AttributeError):
+        clean_runner._append_to_json(trajectory)
+

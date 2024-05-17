@@ -34,7 +34,6 @@ class NoiseCorrection:
         for i, point in enumerate(trajectory.points):
             nearest_anchor, dist = DistanceCalculator.find_nearest_neighbour_from_candidates_with_kd_tree(
                 point, self.safe_areas_keys_list, self.safe_areas_keys_kd_tree, self.initialization_point)
-            self.safe_areas[nearest_anchor].add_to_point_cloud(point)
             self.safe_areas[nearest_anchor].update_confidence(dist, point, update_function)
 
             checked_points.append((point, nearest_anchor, dist))

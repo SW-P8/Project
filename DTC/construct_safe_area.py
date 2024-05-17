@@ -118,7 +118,7 @@ class SafeArea:
         
 
     def add_to_point_cloud(self, point: Point):
-        self.points_in_safe_area.add_point(point.longitude, point.latitude)
+        self.points_in_safe_area.add_point(point.longitude, point.latitude, point.timestamp)
 
     def get_point_cloud(self):
         return self.points_in_safe_area
@@ -142,8 +142,6 @@ class SafeArea:
         radius = max(cover_set, key=itemgetter(1), default=(0,0))[1]
         removed_count = 0
         cover_set_size = len(cover_set)
-        print(len(cover_set))
-        print(decrease_factor)
         removal_threshold = decrease_factor * cover_set_size
         filtered_cover_set = {(p, d) for (p, d) in cover_set}
 
