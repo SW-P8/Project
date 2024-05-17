@@ -88,12 +88,15 @@ class TestIterativeCorrection():
     
     def my_plot(self,figname, coordinates):
         lons, lats = zip(*coordinates)
-        plt.figure(figsize=(10, 6))
+        
+        plt.figure(figsize=(10, 10))
         plt.scatter(lons, lats, c='blue', marker='o')
+        plt.axis('scaled')
         plt.title('Safe Area Coordinates')
-        plt.xlabel('Longitude')
-        plt.ylabel('Latitude')
+        plt.xlabel('X')
+        plt.ylabel('Y')
         plt.grid(True)
+        
         plt.savefig(f'{figname}.png')
 
 
