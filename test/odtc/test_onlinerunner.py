@@ -137,3 +137,6 @@ def test_append_to_json_empty_trajectory_raises_attributeerror(clean_runner):
     with pytest.raises(AttributeError):
         clean_runner._append_to_json(trajectory)
 
+def test_clean_and_iterate_builds_new_safe_area(clean_runner, point_cloud):
+    
+    pass
