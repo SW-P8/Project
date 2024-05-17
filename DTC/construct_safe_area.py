@@ -213,10 +213,26 @@ class SafeArea:
             float: The decay factor for confidence.
         """
         time = delta * self.decay_factor
-        decay = self.sigmoid(time, -0.5, 2) # -0.5 forces the line to go through (0,0) and 2 normalizes the function such that it maps any number to a value between -1 and 1
+        #decay = self.sigmoid(time, -0.5, 2) # -0.5 forces the line to go through (0,0) and 2 normalizes the function such that it maps any number to a value between -1 and 1
+        decay = self.linear_decay(time, config.linear_decay)
         decay = max(decay, 0.0)
         return round(decay, 5)
     
+    
+    def linear_decay(self, x: float, a: float):
+        """
+        Compute the linear decay of a given value.
+
+        This method applies a linear decay function to the input value `x` using the coefficient `a`.
+
+        Args:
+            x (float): The input value to which the linear decay is applied.
+            a (float): The decay coefficient.
+
+        Returns:
+            float: The result of `a * x`, representing the decayed value.
+        """
+        return a*x
     
     def sigmoid(self, x: float, y_offset, multiplier: float) -> float:
         return (1/(1 + np.exp((-x))) + y_offset) * multiplier
