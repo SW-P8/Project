@@ -1,6 +1,7 @@
 import pytest
 from onlinedtc.onlinerunner import RunCleaning
 from DTC.gridsystem import GridSystem
+from DTC.route_skeleton import RouteSkeleton
 from DTC.trajectory import TrajectoryPointCloud, Trajectory
 
 
@@ -28,3 +29,14 @@ def test_init_no_grid_raises_error(point_cloud):
     # Act + Assert
     with pytest.raises(AttributeError):
         RunCleaning(grid_system, smooth_main_route)
+
+
+@pytest.fixture
+def grid_system(point_cloud):
+    gs = GridSystem(point_cloud)
+    rs = RouteSkeleton()
+    gs.create_grid_system()
+    gs.extract_main_route()
+    smr = rs.smooth_main_route(gs.main_route)
+    fmr = rs.graph_based_filter(smr, )
+    return 
