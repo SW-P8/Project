@@ -10,9 +10,10 @@ import json
 class RunCleaning():
     def __init__(self, grid_system: GridSystem, smoothed_main_route: defaultdict[set]) -> None:
         self.grid_system = grid_system
-        for attr_name in dir(grid_system):
-            attr = getattr(grid_system, attr_name)
-            if attr is None:
+        for attr_name, value in vars(grid_system).items():
+            if attr_name not in attr_names:
+                continue
+            if value is None or (isinstance(value, (dict, list, set, tuple, str)) and len(value) == 0):
                 raise AttributeError(f"Attribute: {attr_name} in grid system was None. All fields in grid system need to be filled for cleaning.")
         self.input_trajectories = []
         self.rebuild = True
@@ -56,3 +57,6 @@ class RunCleaning():
 
     def _update_time(self, days: int = 0, hours: int = 0, minutes: int = 0, seconds: int = 0):
         self.current_time + timedelta(days=days, hours=hours, minutes=minutes, seconds=seconds)
+
+
+attr_names = ['pc', 'initialization_point', 'grid', 'main_route', 'route_skeleton', 'safe_areas']

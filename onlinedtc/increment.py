@@ -14,7 +14,7 @@ def update_safe_area(safe_areas: dict[SafeArea], initialization_point, old_smoot
     new_smoothed_main_route, merged_smoothed_main_route = smooth_new_main_route(
         grid_system.main_route, old_smoothed_main_route)
 
-    min_pts = ceil(len(old_smoothed_main_route) * 0.0001)
+    min_pts = ceil(len(old_smoothed_main_route) * config.min_pts_from_mr)
 
     graphed_main_route = filter_smoothed_main_route(
         merged_smoothed_main_route, new_smoothed_main_route, min_pts)
