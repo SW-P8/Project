@@ -111,7 +111,7 @@ class SafeArea:
         self.confidence = 1.0
         self.confidence_change_factor = confidence_change
         self.decay_factor = config.decay_factor # Set as the fraction of a day 1 second represents. Done as TimeDelta is given in seconds.
-        self.timestamp =  None
+        self.timestamp =  datetime.now()
         self.cardinality_squish = cardinality_squish
         self.max_confidence_change = max_confidence_change
         self.points_in_safe_area = Trajectory()
@@ -169,6 +169,9 @@ class SafeArea:
         else:
             delta = timestamp - self.timestamp
             new_confidence = self.confidence - self.calculate_time_decay(delta.total_seconds())
+            if self.anchor == (56.3, 4.5):
+                print(f"anchor {self.anchor} has confidence {new_confidence}")
+            self.confidence = new_confidence
             return (new_confidence, timestamp)
 
     def set_confidence(self, confidence: float, timestamp: datetime):
@@ -197,6 +200,8 @@ class SafeArea:
             self.cardinality += 1
         else:
             self.confidence -= self.calculate_confidence_decrease(distance_to_safearea)
+            if self.anchor == (56.3, 4.5):
+                print(f"anchor {self.anchor} has confidence {self.confidence}")
         if self.confidence < 0.5:  # TODO: Threshold
             update_function(self)
     

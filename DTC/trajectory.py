@@ -36,7 +36,7 @@ class Trajectory:
 
     def to_dict(self) -> dict:
         return {
-            'points': [point.to_dict() for point in self.points],
+            'points': [point.to_dict() for point in self.points if point is not None] if self.points else [],
             'min_longitude': self.min_longitude,
             'max_longitude': self.max_longitude,
             'min_latitude': self.min_latitude,

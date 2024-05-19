@@ -50,7 +50,7 @@ class NoiseCorrection:
 
         if len(low_confidence_safe_areas):
             if event_listener is not None:
-                event_listener.emit()
+                event_listener()
             self._update_safe_areas(low_confidence_safe_areas)
 
         if discard_after_run:

@@ -8,7 +8,6 @@ import config
 
 def update_safe_area(safe_areas: dict[SafeArea], initialization_point, old_smoothed_main_route: set):
     point_cloud = create_trajectory_point_cloud(safe_areas)
-
     grid_system = build_grid_system(point_cloud, initialization_point)
 
     new_smoothed_main_route, merged_smoothed_main_route = smooth_new_main_route(

@@ -5,6 +5,7 @@ from collections import defaultdict
 from datetime import datetime, timedelta
 
 import json
+import config
 
 
 class RunCleaning():
@@ -19,7 +20,8 @@ class RunCleaning():
         self.rebuild = True
         self.cleaner = None
         self.smooth_main_route = smoothed_main_route
-        self.current_time = datetime.now()
+        self.last_check = datetime.now()
+        self.current_time = None
 
     def read_trajectories(self, point_cloud: TrajectoryPointCloud):
         for trajectory in point_cloud.trajectories:
@@ -27,21 +29,21 @@ class RunCleaning():
 
     def clean_and_increment(self):
         while self.input_trajectories:
-            self.current_time = datetime.now()
             if self.rebuild:
                 self.cleaner = NoiseCorrection(
                     self.grid_system.safe_areas,
                     self.grid_system.initialization_point,
                     self.smooth_main_route
                     )
-                self.rebuild = False
+                self.rebuild = True
             trajectory = self.input_trajectories.pop(0)
+            self.current_time = trajectory.points[len(trajectory.points) - 1].timestamp
             self.cleaner.noise_detection(trajectory, self._rebuild_listener)
+            self._check_time_call_update(self.current_time)
             self._append_to_json(trajectory)
 
     def _append_to_json(self, trajectory: Trajectory):
         if trajectory.points == []:
-            raise AttributeError("Trajectory is none after cleaning")
             return
 
         with open("cleaned_trajectories.json", "a") as json_file:
@@ -62,6 +64,20 @@ class RunCleaning():
 
     def _update_time(self, days: int = 0, hours: int = 0, minutes: int = 0, seconds: int = 0):
         self.current_time + timedelta(days=days, hours=hours, minutes=minutes, seconds=seconds)
+
+    def _check_time_call_update(self, time: datetime):
+        update_time = 12 * 3600 # System updates confidence of all safe-areas every 12 hours, timedelta uses seconds for unit.
+        unused_safe_areas = []
+        if (time - self.last_check).total_seconds() > update_time:
+            for safe_area in self.grid_system.safe_areas.values():
+                safe_area.get_current_confidence(time)
+                print(f"triggered, checking safe area: {safe_area.anchor}")
+                if safe_area.confidence < config.confidence_threshold:
+                    unused_safe_areas.append(safe_area.anchor)
+            for anchor in unused_safe_areas:
+                print(f"popping safe area {anchor} which held {len(self.grid_system.safe_areas[anchor].points_in_safe_area.points)} points, and had timestamp {self.grid_system.safe_areas[anchor].timestamp}")
+                self.grid_system.safe_areas.pop(anchor)
+            self.last_check = time
 
 
 attr_names = ['pc', 'initialization_point', 'grid', 'main_route', 'route_skeleton', 'safe_areas']
