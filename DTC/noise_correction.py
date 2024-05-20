@@ -36,7 +36,6 @@ class NoiseCorrection:
                 point, self.safe_areas_keys_list, self.safe_areas_keys_kd_tree, self.initialization_point)
             self.safe_areas[nearest_anchor].update_confidence(dist, point, update_function)
             long, lat = DistanceCalculator.calculate_exact_index_for_point(point, self.initialization_point)
-            #print(f"Adding point {long, lat} to safe area {nearest_anchor}, which is {dist} cells away")
             checked_points.append((point, nearest_anchor, dist))
 
             self.safe_areas[nearest_anchor].add_to_point_cloud(deepcopy(point))
