@@ -30,7 +30,6 @@ class RunCleaning():
     def clean_and_increment(self):
         while self.input_trajectories:
             if self.rebuild:
-                #print(f"building cleaner with safe areas {self.grid_system.safe_areas}")
                 self.cleaner = NoiseCorrection(
                     self.grid_system.safe_areas,
                     self.grid_system.initialization_point,
@@ -38,7 +37,6 @@ class RunCleaning():
                     )
                 self.rebuild = True
             trajectory = self.input_trajectories.pop(0)
-            print(trajectory.points)
             self.current_time = trajectory.points[len(trajectory.points) - 1].timestamp
             self.cleaner.noise_detection(trajectory, self._rebuild_listener)
             self._check_time_call_update(self.current_time)
@@ -59,7 +57,6 @@ class RunCleaning():
         new_safe_areas = {}
         for safe_area in self.grid_system.safe_areas.values():
             confidence, _ = safe_area.get_current_confidence(time_for_check)
-            print("checking a thing")
             if confidence > 0.5:
                 new_safe_areas[safe_area.anchor] = safe_area
         self.grid_system.safe_areas = new_safe_areas
@@ -74,12 +71,9 @@ class RunCleaning():
         if (time - self.last_check).total_seconds() > update_time:
             for safe_area in self.grid_system.safe_areas.values():
                 safe_area.get_current_confidence(time)
-                print(
-                    f"triggered, checking safe area: {safe_area.anchor}, time difference = {(time - self.last_check)}")
                 if safe_area.confidence < config.confidence_threshold:
                     unused_safe_areas.append(safe_area.anchor)
             for anchor in unused_safe_areas:
-                print(f"popping safe area {anchor} which held {len(self.grid_system.safe_areas[anchor].points_in_safe_area.points)} points, with radius {self.grid_system.safe_areas[anchor].radius}, and had timestamp {self.grid_system.safe_areas[anchor].timestamp}, and confidence {self.grid_system.safe_areas[anchor].confidence}")
                 self.grid_system.safe_areas.pop(anchor)
             self.last_check = time
 
