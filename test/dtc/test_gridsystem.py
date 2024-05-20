@@ -110,20 +110,20 @@ class TestGridsystem():
 
     def test_extract_route_skeleton_returns_correctly_with_single_cell(self, single_point_grid):
         single_point_grid.main_route = {(3, 3)}
-        single_point_grid.extract_route_skeleton()
+        single_point_grid.extract_route_skeleton(25, 20, 20)
         assert single_point_grid.route_skeleton == {(3.5, 3.5)}
 
     def test_extract_route_skeleton_returns_correctly_with_two_cells(self, single_point_grid):
         single_point_grid.main_route = {(3, 3), (12, 3)}
         single_point_grid.grid[(12, 3)].append("some random val")
-        single_point_grid.extract_route_skeleton()
+        single_point_grid.extract_route_skeleton(25, 20, 20)
         assert single_point_grid.route_skeleton == {(8.0, 3.5)}
 
     def test_extract_route_skeleton_returns_correctly_with_three_cells(self, single_point_grid):
         single_point_grid.main_route = {(3, 3), (28, 3), (33, 3)}
         single_point_grid.grid[(28, 3)].append("some random val")
         single_point_grid.grid[(33, 3)].append(("some random val"))
-        single_point_grid.extract_route_skeleton()
+        single_point_grid.extract_route_skeleton(25, 20, 20)
         assert single_point_grid.route_skeleton == {(16.0, 3.5)}
 
     def test_construct_safe_areas_returns_correctly_with_two_points_and_single_anchor_and_no_refinement(self, two_point_grid):

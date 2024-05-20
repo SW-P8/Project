@@ -19,8 +19,7 @@ class NoiseCorrection:
         self.initialization_point = init_point
         self.smoothed_main_route = smoothed_main_route
 
-    # TODO decide how to handle if p-1 or p+1 is also noise, such that we do not correct noise with noise.
-    def noise_detection(self, trajectory: Trajectory):
+    def noise_detection(self, trajectory: Trajectory, event_listener=None):
         labels_of_cleaned_points = []
         low_confidence_safe_areas = {}
 
@@ -35,9 +34,8 @@ class NoiseCorrection:
         for i, point in enumerate(trajectory.points):
             nearest_anchor, dist = DistanceCalculator.find_nearest_neighbour_from_candidates_with_kd_tree(
                 point, self.safe_areas_keys_list, self.safe_areas_keys_kd_tree, self.initialization_point)
-            self.safe_areas[nearest_anchor].add_to_point_cloud(point)
             self.safe_areas[nearest_anchor].update_confidence(dist, point, update_function)
-
+            long, lat = DistanceCalculator.calculate_exact_index_for_point(point, self.initialization_point)
             checked_points.append((point, nearest_anchor, dist))
 
             self.safe_areas[nearest_anchor].add_to_point_cloud(deepcopy(point))
@@ -51,6 +49,8 @@ class NoiseCorrection:
                     break
 
         if len(low_confidence_safe_areas):
+            if event_listener is not None:
+                event_listener()
             self._update_safe_areas(low_confidence_safe_areas)
 
         if discard_after_run:

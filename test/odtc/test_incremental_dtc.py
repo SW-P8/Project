@@ -190,5 +190,4 @@ def test_update_safe_area():
 
     # Assert
     assert dict == type(result)
-    print(next(iter(result.values())).anchor)
     assert expected_anchor == result[expected_anchor].anchor
