@@ -111,13 +111,13 @@ class SafeArea:
         self.confidence = 1.0
         self.confidence_change_factor = confidence_change
         self.decay_factor = config.decay_factor # Set as the fraction of a day 1 second represents. Done as TimeDelta is given in seconds.
-        self.timestamp =  datetime.now()
+        self.timestamp = None
         self.cardinality_squish = cardinality_squish
         self.max_confidence_change = max_confidence_change
         self.points_in_safe_area = Trajectory()
-        
 
     def add_to_point_cloud(self, point: Point):
+        self.timestamp = point.timestamp
         self.points_in_safe_area.add_point(point.longitude, point.latitude, point.timestamp)
 
     def get_point_cloud(self):
@@ -193,7 +193,7 @@ class SafeArea:
             dist (float): The distance from the SafeArea to the point.
             point (Point): The point used for updating the confidence.
         """
-        distance_to_safearea = dist - self.radius 
+        distance_to_safearea = dist - self.radius
         if (distance_to_safearea <= 0):
             (curr_conf, time) = self.get_current_confidence(point.timestamp)
             self.set_confidence(min(curr_conf + self.get_confidence_increase(), 1.0), time)

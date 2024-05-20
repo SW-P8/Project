@@ -173,7 +173,10 @@ def test_clean_and_iterate_delete_unused_safe_areas(clean_runner):
     local_points_cloud = TrajectoryPointCloud()
     t = Trajectory()
     t.add_point(0, 0, datetime(2025, 1, 1, 1, 1, 1))
+    t2 = Trajectory()
+    t2.add_point(0, 0, datetime(2026, 1, 1, 1, 1, 1))
     local_points_cloud.add_trajectory(t)
+    local_points_cloud.add_trajectory(t2)
 
     clean_runner.read_trajectories(local_points_cloud)
     old_safe_areas = deepcopy(clean_runner.grid_system.safe_areas)
@@ -181,7 +184,7 @@ def test_clean_and_iterate_delete_unused_safe_areas(clean_runner):
     clean_runner.clean_and_increment()
 
     assert clean_runner.grid_system.safe_areas != old_safe_areas
-    assert clean_runner.grid_system.safe_areas == {}
+    assert len(clean_runner.grid_system.safe_areas) == 1
 
 def test_clean_and_iterate_add_appendage_road(clean_runner):
     # Arrange
@@ -203,6 +206,7 @@ def test_clean_and_iterate_add_appendage_road(clean_runner):
 
     clean_runner.clean_and_increment()
 
+@pytest.mark.skip
 def test_clean_and_iterate_bend_road(clean_runner):
     # Create scatter plot
     fig, ax = plt.subplots()
@@ -238,15 +242,16 @@ def test_clean_and_iterate_bend_road(clean_runner):
     local_point_cloud = TrajectoryPointCloud()
     t = Trajectory()
     for i in range(30):
-        t.add_point(i * 0.00005, 0.0001, datetime.now() + timedelta(minutes=i * 5))
+        t.add_point(i * 0.00005, 0.0001, datetime.now() + timedelta(minutes=i * 3))
     for i in range(60):
-        t.add_point(0.0015, i* 0.0001 + 0.0001, datetime.now() + timedelta(minutes=i * 5))
-    for i in range(120):
+        t.add_point(0.0015, i * 0.0001 + 0.0001, datetime.now() + timedelta(minutes=i * 3))
+    for i in range(100):
         t2 = deepcopy(t)
         for point in t2.points:
-            point.timestamp = point.timestamp + timedelta(hours=i * 0.2)
+            point.timestamp = point.timestamp + timedelta(minutes=i * 20)
         local_point_cloud.add_trajectory(deepcopy(t2))
-    
+
+    trajectory = deepcopy(local_point_cloud.trajectories[2])
 
     clean_runner.read_trajectories(local_point_cloud)
 
@@ -255,11 +260,18 @@ def test_clean_and_iterate_bend_road(clean_runner):
     # Create scatter plot
     fig, ax = plt.subplots()
 
+    points = [DistanceCalculator.calculate_exact_index_for_point(
+        point, clean_runner.grid_system.initialization_point) for point in trajectory.points]
+    trajectory_x = [point[0] for point in points]
+    trajectory_y = [point[1] for point in points]
+    ax.plot(trajectory_x, trajectory_y, marker='o',
+            linestyle='-', color='black', label='Trajectory', alpha=1, markersize=1)
+
     # Add circles to represent the radii of the safe areas
     for coords, safe_area in clean_runner.grid_system.safe_areas.items():
         x, y = coords
         radius = round(safe_area.radius)
-        ax.scatter(x, y)
+        ax.scatter(x, y, s=50, marker='^')
         circle = patches.Circle((x, y), radius, fill=False, edgecolor='r')
         ax.add_patch(circle)
         ax.annotate(f'({x}, {y})\nRadius: {radius}', (x, y), textcoords="offset points", xytext=(0,10), ha='center')

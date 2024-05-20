@@ -24,10 +24,12 @@ def update_safe_area(safe_areas: dict[SafeArea], initialization_point, old_smoot
 
     # 20 is the radius points cannot be within eachother.
     route_skeleton_ancors = RouteSkeleton.filter_sparse_points(
-        graphed_main_route, 20)
+        graphed_main_route, config.distance_interval)
     # 0.01 is the decrease factor used other places in the code base
     new_safe_areas = ConstructSafeArea.construct_safe_areas(
         route_skeleton_ancors, grid_system.grid, config.decrease_factor, initialization_point)
+    for safe_area in new_safe_areas.values():
+        safe_area.timestamp = grid_system.max_timestamp
 
     return new_safe_areas
 
@@ -51,7 +53,7 @@ def build_grid_system(point_cloud: TrajectoryPointCloud, initialization_point):
 
 def smooth_new_main_route(main_route: set, smoothed_main_route: set):
     new_smoothed_main_route = RouteSkeleton.smooth_main_route(
-        main_route, 25)
+        main_route, config.smooth_radius)
     merged_smoothed_main_route = smoothed_main_route.union(
         new_smoothed_main_route)
 
@@ -60,6 +62,6 @@ def smooth_new_main_route(main_route: set, smoothed_main_route: set):
 
 def filter_smoothed_main_route(merged_smoothed_main_route: set, new_smoothed_main_route: set, min_pts):
     graphed_main_route = RouteSkeleton.graph_based_filter(
-        merged_smoothed_main_route, 20, min_pts)
+        merged_smoothed_main_route, config.filtering_list_radius, min_pts)
 
     return graphed_main_route.intersection(set(new_smoothed_main_route))

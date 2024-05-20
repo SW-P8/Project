@@ -14,14 +14,15 @@ class Trajectory:
         self.max_longitude = float('-inf')
         self.min_latitude = float('inf')
         self.max_latitude = float('-inf')
+        self.max_timestamp = datetime.min
 
-    def add_point(self,longitude: float, latitude: float, timestamp: Optional[datetime] = None, noise: Optional[bool] = False) -> None:
+    def add_point(self,longitude: float, latitude: float, timestamp: datetime = datetime.min, noise: Optional[bool] = False) -> None:
         self.points.append(Point(longitude, latitude, timestamp, noise))
 
         # Check if added longitude is new max
         if longitude > self.max_longitude:
             self.max_longitude = longitude
-        
+
         # Check if added longitude is new min
         if longitude < self.min_longitude:
             self.min_longitude = longitude
@@ -33,6 +34,9 @@ class Trajectory:
         # Check if added latitude is ither new max
         if latitude < self.min_latitude:
             self.min_latitude = latitude
+
+        if timestamp is not None:
+            self.max_timestamp = max(self.max_timestamp, timestamp)
 
     def to_dict(self) -> dict:
         return {
@@ -53,8 +57,9 @@ class TrajectoryPointCloud:
         self.max_longitude = float('-inf')
         self.min_latitude = float('inf')
         self.max_latitude = float('-inf')
+        self.max_timestamp = datetime.min
 
-    def add_trajectory(self,trajectory: Trajectory) -> None:
+    def add_trajectory(self, trajectory: Trajectory) -> None:
         self.trajectories.append(trajectory)
 
         # Check if added trajectory contains new max longitude
@@ -72,9 +77,11 @@ class TrajectoryPointCloud:
         # Check if added trajectory contains new min latitude
         if trajectory.min_latitude < self.min_latitude:
             self.min_latitude = trajectory.min_latitude
+        
+        self.max_timestamp = max(self.max_timestamp, trajectory.max_timestamp)
 
     def get_shifted_min(self) -> tuple[float, float]:
-        #Bearing: South (180), West (270)
+        # Bearing: South (180), West (270)
         shift_distance = config.CELL_SIZE * floor(config.NEIGHBORHOOD_SIZE / 2)
 
         # Shift min point south and west
@@ -82,9 +89,9 @@ class TrajectoryPointCloud:
         shifted_point = DistanceCalculator.shift_point_with_bearing(shifted_point, shift_distance, config.SOUTH)
 
         return shifted_point
-    
+
     def get_shifted_max(self) -> tuple[float, float]:
-        #Bearing: North (0), East (90)
+        # Bearing: North (0), East (90)
         shift_distance = config.CELL_SIZE * floor(config.NEIGHBORHOOD_SIZE / 2)
 
         # Shift max point north and east
@@ -94,9 +101,9 @@ class TrajectoryPointCloud:
         return shifted_point
 
     # Bounding rectangle is defined by the tuples (min_lon, min_lat) and (max_lon, max_lat) with some padding added
-    def get_bounding_rectangle(self) -> tuple[tuple[float, float], tuple[float,float]]:
+    def get_bounding_rectangle(self) -> tuple[tuple[float, float], tuple[float, float]]:
         return (self.get_shifted_min(), self.get_shifted_max())
-    
+
     # Geopy utilizes geodesic distance - shortest distance on the surface of an elipsoid earth model
     def calculate_bounding_rectangle_area(self):
         ((min_long, min_lat),(max_long, max_lat)) = self.get_bounding_rectangle()
