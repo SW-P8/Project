@@ -14,6 +14,7 @@ import config
 class GridSystem:
     def __init__(self, pc: TrajectoryPointCloud) -> None:
         self.pc = pc
+        self.max_timestamp = pc.max_timestamp
         self.initialization_point = pc.get_shifted_min()
         self.grid = defaultdict(list)
         self.main_route = set()
@@ -61,7 +62,10 @@ class GridSystem:
         self.route_skeleton = RouteSkeleton.extract_route_skeleton(self.main_route, smooth_radius, filtering_list_radius, distance_interval)
 
     def construct_safe_areas(self, decrease_factor: float = config.decrease_factor):
-        self.safe_areas = ConstructSafeArea.construct_safe_areas(self.route_skeleton, self.grid, decrease_factor, self.initialization_point)
+        safe_areas = ConstructSafeArea.construct_safe_areas(self.route_skeleton, self.grid, decrease_factor, self.initialization_point)
+        for sa in safe_areas.values():
+            sa.timestamp = self.max_timestamp
+        self.safe_areas = safe_areas
 
 
     def incremental_refinement(self, pc: TrajectoryPointCloud):

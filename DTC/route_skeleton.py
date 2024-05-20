@@ -7,16 +7,18 @@ import numpy as np
 import multiprocessing as mp
 from DTC.collection_utils import CollectionUtils
 
+import config
+
 class RouteSkeleton:
     @staticmethod
-    def extract_route_skeleton(main_route: set, smooth_radius: int, filtering_list_radius: int, distance_interval: int):
+    def extract_route_skeleton(main_route: set, smooth_radius: int=config.smooth_radius, filtering_list_radius: int = config.filtering_list_radius, distance_interval: int = config.distance_interval):
         min_pts = ceil(0.0001 * len(main_route))
         smoothed_main_route = RouteSkeleton.smooth_main_route(main_route, smooth_radius)
         contracted_main_route = RouteSkeleton.graph_based_filter(smoothed_main_route, filtering_list_radius, min_pts)
         return RouteSkeleton.filter_sparse_points(contracted_main_route, distance_interval)
 
     @staticmethod
-    def smooth_main_route(main_route: set, radius: int) -> defaultdict[set]:
+    def smooth_main_route(main_route: set, radius: int = config.smooth_radius) -> defaultdict[set]:
         process_count = mp.cpu_count()
         sorted_main_route = CollectionUtils.sort_collection_of_tuples(main_route)
         sub_main_routes =  CollectionUtils.split(sorted_main_route, process_count)
@@ -57,7 +59,7 @@ class RouteSkeleton:
         send_end.send(sub_smoothed_main_route)
 
     @staticmethod
-    def graph_based_filter(data: set, epsilon: float, min_pts) -> set:
+    def graph_based_filter(data: set, epsilon: float = config.filtering_list_radius, min_pts: int = 0) -> set:
         main_route = np.array(list(data))
         dbscan = DBSCAN(eps=epsilon, min_samples=min_pts, metric="euclidean")
         dbscan.fit(main_route)
@@ -65,7 +67,7 @@ class RouteSkeleton:
         return set(zip(filtered_main_route[0], filtered_main_route[1]))
 
     @staticmethod
-    def filter_sparse_points(data: set, distance_threshold):
+    def filter_sparse_points(data: set, distance_threshold: float = config.distance_interval):
         points = list(deepcopy(data))
         kd_tree = KDTree(points)
         filtered_points = set() # Track points to remove

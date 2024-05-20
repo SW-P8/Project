@@ -3,6 +3,7 @@ from DTC.trajectory import Trajectory, TrajectoryPointCloud
 from DTC.gridsystem import GridSystem
 from DTC.noise_correction import NoiseCorrection
 from DTC.distance_calculator import DistanceCalculator
+from datetime import datetime
 import copy
 import config
 
@@ -14,7 +15,7 @@ class TestNoiseCorrection():
         t = Trajectory()
 
         # Add point to use initialization point
-        t.add_point(1, 1)
+        t.add_point(1, 1, timestamp=datetime(2020, 1, 1, 0, 0, 0))
 
         for i in range(1, 5):
             # Shift points 5 meters north and east (should result in 5 points being 1 cell apart in both x and y)
@@ -188,7 +189,7 @@ class TestNoiseCorrection():
         cleaned_points = list()
         trajectory = Trajectory()
         for i in range(10):
-            trajectory.add_point(1.0001348, 1.0001582, False)
+            trajectory.add_point(1.0001348, 1.0001582, noise=False)
 
         # Act
         nc._check_list_trajectory(trajectory, cleaned_points)
@@ -258,7 +259,7 @@ class TestNoiseCorrection():
         cleaned_points = list()
         trajectory = Trajectory()
         for i in range(10):
-            trajectory.add_point(1.0001348, 1.0001582, False)
+            trajectory.add_point(1.0001348, 1.0001582, noise=False)
 
         # Act
         nc._check_list_trajectory(trajectory, cleaned_points, True)
@@ -280,11 +281,11 @@ class TestNoiseCorrection():
         cleaned_points = list()
         trajectory = Trajectory()
         for _ in range(4):
-            trajectory.add_point(1.0001348, 1.0001582, False)
+            trajectory.add_point(1.0001348, 1.0001582, noise=False)
         for _ in range(2):
-            trajectory.add_point(10, 10, True)
+            trajectory.add_point(10, 10, noise=True)
         for _ in range(4):
-            trajectory.add_point(1.0001348, 1.0001582, False)
+            trajectory.add_point(1.0001348, 1.0001582, noise=False)
 
         # Act
         nc._check_list_trajectory(trajectory, cleaned_points, True)
@@ -306,11 +307,11 @@ class TestNoiseCorrection():
         cleaned_points = list()
         trajectory = Trajectory()
         for _ in range(4):
-            trajectory.add_point(10, 10, True)
+            trajectory.add_point(10, 10, noise=True)
         for _ in range(2):
-            trajectory.add_point(1.0001348, 1.0001582, False)
+            trajectory.add_point(1.0001348, 1.0001582, noise=False)
         for _ in range(4):
-            trajectory.add_point(10, 10, True)
+            trajectory.add_point(10, 10, noise=True)
 
         # Act
         nc._check_for_noise_front_back(trajectory, cleaned_points)
@@ -333,7 +334,7 @@ class TestNoiseCorrection():
         triggered = []
         trajectory = Trajectory()
         for _ in range(10):
-            trajectory.add_point(1.0001348, 1.0001582, False)
+            trajectory.add_point(1.0001348, 1.0001582, noise=False)
         for i in range(len(trajectory.points)):
             nn, dist = DistanceCalculator.find_nearest_neighbour_from_candidates_with_kd_tree(trajectory.points[i], nc.safe_areas_keys_list, nc.safe_areas_keys_kd_tree, five_point_grid.initialization_point)
             checked_points.append((trajectory.points[i], nn, dist))
@@ -359,7 +360,7 @@ class TestNoiseCorrection():
         triggered = []
         trajectory = Trajectory()
         for _ in range(10):
-            trajectory.add_point(10, 10, True)
+            trajectory.add_point(10, 10, noise=True)
         for i in range(len(trajectory.points)):
             nn, dist = DistanceCalculator.find_nearest_neighbour_from_candidates_with_kd_tree(
                 trajectory.points[i], nc.safe_areas_keys_list, nc.safe_areas_keys_kd_tree, five_point_grid.initialization_point)
@@ -386,11 +387,11 @@ class TestNoiseCorrection():
         triggered = []
         trajectory = Trajectory()
         for _ in range(4):
-            trajectory.add_point(1.0001348, 1.0001582, False)
+            trajectory.add_point(1.0001348, 1.0001582, noise=False)
         for _ in range(2):
-            trajectory.add_point(50, 50, True)
+            trajectory.add_point(50, 50, noise=True)
         for _ in range(4):
-            trajectory.add_point(1.0001348, 1.0001582, False)
+            trajectory.add_point(1.0001348, 1.0001582, noise=False)
         for i in range(len(trajectory.points)):
             nn, dist = DistanceCalculator.find_nearest_neighbour_from_candidates_with_kd_tree(
                 trajectory.points[i], nc.safe_areas_keys_list, nc.safe_areas_keys_kd_tree, five_point_grid.initialization_point)
@@ -417,8 +418,8 @@ class TestNoiseCorrection():
         triggered = []
         trajectory = Trajectory()
         for _ in range(5):
-            trajectory.add_point(1.0001348, 1.0001582, False)
-            trajectory.add_point(50, 50, True)
+            trajectory.add_point(1.0001348, 1.0001582, noise=False)
+            trajectory.add_point(50, 50, noise=True)
         for i in range(len(trajectory.points)):
             nn, dist = DistanceCalculator.find_nearest_neighbour_from_candidates_with_kd_tree(
                 trajectory.points[i], nc.safe_areas_keys_list, nc.safe_areas_keys_kd_tree, five_point_grid.initialization_point)
