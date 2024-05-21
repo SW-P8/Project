@@ -156,4 +156,4 @@ class TaxiDataHandler:
             with conn.cursor() as cursor:
                 cursor.execute(query)
                 conn.commit()
-        return cursor.fetchall()
+                return cursor.fetchall()
