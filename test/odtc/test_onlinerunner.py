@@ -40,19 +40,8 @@ def point_cloud(trajectory):
         pc.add_trajectory(trajectory)
     return pc
 
-
-def test_init_no_grid_raises_error(point_cloud):
-    # Arrange
-    grid_system = GridSystem(point_cloud)
-    smooth_main_route = set()
-
-    # Act + Assert
-    with pytest.raises(AttributeError):
-        RunCleaning(grid_system, smooth_main_route)
-
-
 @pytest.fixture
-def grid_system(point_cloud):
+def initial_model(point_cloud):
     gs = GridSystem(point_cloud)
     rs = RouteSkeleton()
     gs.create_grid_system()

@@ -37,11 +37,11 @@ def load_initial_model():
         smoothed_main_route = read_set_of_tuples_from_json("first_half_smr.json")
         safe_areas = read_safe_areas_from_json("first_half_sa.json")
         initialization_point = read_set_of_tuples_from_json("first_half_initpoint.json")
-        return smoothed_main_route, safe_areas, initialization_point
+        return smoothed_main_route, safe_areas, tuple(initialization_point)
 
     if not os.path.exists("first_half_pc.json"):
         db_conn = TaxiDataHandler(new_tdrive_db_pool())
-        data = db_conn.execute_query("SELECT * FROM taxidata where longitude > 116.2031 AND longitude < 116.5334 AND latitude > 39.7513 AND latitude < 40.0245 AND date_time <= '2008-02-04 20:35:22'")
+        data = db_conn.execute_query("SELECT * FROM taxidata where longitude > 116.2031 AND longitude < 116.5334 AND latitude > 39.7513 AND latitude < 40.0245 AND date_time <= '2008-02-04 20:35:22' order by date_time")
         pc = create_point_cloud(data)
         write_point_cloud_to_json("first_half_pc.json", pc)
     else:
@@ -65,8 +65,9 @@ def load_point_cloud():
     if os.path.exists("second_half.json"):
         return read_point_cloud_from_json("second_half.json")
     db_conn = TaxiDataHandler(new_tdrive_db_pool())
-    data = db_conn.execute_query("SELECT * FROM taxidata where longitude > 116.2031 AND longitude < 116.5334 AND latitude > 39.7513 AND latitude < 40.0245 AND date_time > '2008-02-04 20:35:22'")
+    data = db_conn.execute_query("SELECT * FROM taxidata where longitude > 116.2031 AND longitude < 116.5334 AND latitude > 39.7513 AND latitude < 40.0245 AND date_time > '2008-02-04 20:35:22' order by date_time")
     pc = create_point_cloud(data)
+    del pc.trajectories[0]
     write_point_cloud_to_json("second_half.json", pc)
     return pc
 
@@ -79,11 +80,13 @@ pc = load_point_cloud()
 
 print('Running incremental ...')
 print('    Creating run cleaning object ...')
-increment_runner = RunCleaning(safe_areas, smoothed_main_route, initialization_point)
-print('    Inserting point cloud ...')
+print(f'    Number of safe areas before incremental: {len(safe_areas)}')
+increment_runner = RunCleaning(safe_areas, initialization_point, smoothed_main_route)
+print('    I1nserting point cloud ...')
 increment_runner.read_trajectories(pc)
 print('    Cleaning and incrementing ...')
 increment_runner.clean_and_increment()
+print(f'    Number of safe areas after incremental: {len(increment_runner.safe_areas)}')
 
 # 4. Mål hvor mange punkter der bliver fjernet fra modellen pga time decay
 # 5. Juster time decay så vi får et antal punkter der giver mening

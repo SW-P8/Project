@@ -214,7 +214,6 @@ class SafeArea:
         #decay = self.sigmoid(time, -0.5, 2) # -0.5 forces the line to go through (0,0) and 2 normalizes the function such that it maps any number to a value between -1 and 1
         decay = self.linear_decay(delta, config.linear_decay)
         decay = max(decay, 0.0)
-        print(f'Anchor = {self.anchor}, delta = {delta}, time decay = {decay}')
         return round(decay, 5)
     
     

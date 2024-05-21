@@ -2,6 +2,7 @@ from DTC.trajectory import TrajectoryPointCloud, Trajectory
 from DTC.noise_correction import NoiseCorrection
 from collections import defaultdict
 from datetime import datetime, timedelta
+from progress.bar import Bar
 
 import config
 
@@ -22,7 +23,9 @@ class RunCleaning():
             self.input_trajectories.append(trajectory)
 
     def clean_and_increment(self):
+        bar = Bar()
         while self.input_trajectories:
+            print(len(self.input_trajectories))
             if self.rebuild:
                 self.cleaner = NoiseCorrection(
                     self.safe_areas,
