@@ -15,7 +15,7 @@ class RunCleaning():
         self.input_trajectories = []
         self.rebuild = True
         self.cleaner = None
-        self.last_check = datetime.now()
+        self.last_check = next(iter(safe_areas))[1].timestamp 
         self.current_time = None
 
     def read_trajectories(self, point_cloud: TrajectoryPointCloud):
@@ -23,9 +23,8 @@ class RunCleaning():
             self.input_trajectories.append(trajectory)
 
     def clean_and_increment(self):
-        bar = Bar()
+        bar = Bar('Incrementing... ', max=len(self.input_trajectories), suffix=' %(index)d/%(max)d - %(percent).1f%% - avg %(avg).1fs - elapsed %(elapsed)ds - ETA %(eta)ds')
         while self.input_trajectories:
-            print(len(self.input_trajectories))
             if self.rebuild:
                 self.cleaner = NoiseCorrection(
                     self.safe_areas,
@@ -37,7 +36,9 @@ class RunCleaning():
             self.current_time = trajectory.points[len(trajectory.points) - 1].timestamp
             self.cleaner.noise_detection(trajectory, self._rebuild_listener)
             self._check_time_call_update(self.current_time)
-            self._append_to_json(trajectory)
+            #self._append_to_json(trajectory)
+            bar.next()
+        bar.finish()
 
     def _append_to_json(self, trajectory: Trajectory):
         if trajectory.points == []:

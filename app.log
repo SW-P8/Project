@@ -60,3 +60,10 @@ INFO:DTC.noise_correction:Safe-areas: dict_keys([(4323.87, 2979.69), (4298.88, 2
 INFO:DTC.noise_correction:Safe-areas updated in  20.20 seconds
 INFO:DTC.noise_correction:Created the safe-areas: dict_keys([(4309.27, 2971.65)])
 INFO:DTC.noise_correction:Safe-areas: dict_keys([(4302.29, 2930.52), (4250.67, 2931.33), (4236.02, 2904.44), (4234.88, 2852.21), (4234.9, 2920.61), (4235.05, 2936.02), (4063.5, 2790.61), (4066.17, 2809.03), (4039.01, 3054.71), (3957.72, 3137.29), (3943.12, 3141.48), (3909.78, 3131.09), (3878.25, 3111.49), (3860.53, 3131.52), (3850.51, 3115.07), (3878.2, 2928.3), (3855.2, 2922.23), (3731.66, 2514.61), (3635.71, 2596.34), (3619.04, 2606.23), (3775.8, 2632.52), (3905.81, 2624.0), (3986.38, 2621.96), (4036.5, 2704.44), (4053.34, 2952.5), (4032.4, 3198.07), (3851.82, 4091.7), (3859.65, 4040.46), (3737.01, 3415.59), (3733.3, 3390.4), (3593.33, 3299.91), (3594.14, 3120.05), (3593.62, 3000.67), (3632.62, 2857.5), (3638.66, 2754.01), (3635.61, 2631.87), (3644.01, 2534.73), (3643.75, 2508.06), (3513.85, 2322.89), (3412.77, 2325.04)]) have been removed in  0.00 seconds
+INFO:DTC.noise_correction:Safe-areas: dict_keys([(3662.39, 3214.57), (3636.77, 3213.23), (3696.62, 3384.54)]) have been removed in  0.00 seconds
+INFO:DTC.noise_correction:Safe-areas updated in  18.71 seconds
+INFO:DTC.noise_correction:Created the safe-areas: dict_keys([(3699.17, 3380.5), (3658.83, 3209.5), (3643.5, 3211.5)])
+INFO:DTC.noise_correction:Safe-areas: dict_keys([(1504.55, 2966.94)]) have been removed in  0.00 seconds
+INFO:DTC.noise_correction:Safe-areas updated in  18.47 seconds
+INFO:DTC.noise_correction:Created the safe-areas: dict_keys([])
+INFO:DTC.noise_correction:Safe-areas: dict_keys([(36.4, 1971.7), (1353.19, 1969.26), (1442.73, 1809.96), (1456.02, 2527.81)]) have been removed in  0.00 seconds

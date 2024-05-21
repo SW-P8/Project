@@ -39,21 +39,23 @@ def load_initial_model():
         initialization_point = read_set_of_tuples_from_json("first_half_initpoint.json")
         return smoothed_main_route, safe_areas, tuple(initialization_point)
 
-    if not os.path.exists("first_half_pc.json"):
+    if not os.path.exists("first_half_sa.json"):
         db_conn = TaxiDataHandler(new_tdrive_db_pool())
         data = db_conn.execute_query("SELECT * FROM taxidata where longitude > 116.2031 AND longitude < 116.5334 AND latitude > 39.7513 AND latitude < 40.0245 AND date_time <= '2008-02-04 20:35:22' order by date_time")
         pc = create_point_cloud(data)
         write_point_cloud_to_json("first_half_pc.json", pc)
     else:
         pc = read_point_cloud_from_json("first_half_pc.json")
-
+    print('    Creating grid system ...')
     gs = GridSystem(pc)
     gs.create_grid_system()
-    print(gs.initialization_point)
+    print('    Constructing main route ...')
     main_route = ConstructMainRoute.extract_main_route(gs.grid)
     smoothed_main_route = RouteSkeleton.smooth_main_route(main_route)
     filtered_main_route = RouteSkeleton.graph_based_filter(smoothed_main_route, config.filtering_list_radius, ceil(0.0001 * len(main_route)))
+    print('    Creating route skeleton ...')
     route_skeleton = RouteSkeleton.filter_sparse_points(filtered_main_route)
+    print('    Creating safe areas ...')
     safe_areas = ConstructSafeArea.construct_safe_areas(route_skeleton, gs.grid)
     
     write_set_of_tuples_to_json("first_half_smr.json", smoothed_main_route)
@@ -65,7 +67,7 @@ def load_point_cloud():
     if os.path.exists("second_half.json"):
         return read_point_cloud_from_json("second_half.json")
     db_conn = TaxiDataHandler(new_tdrive_db_pool())
-    data = db_conn.execute_query("SELECT * FROM taxidata where longitude > 116.2031 AND longitude < 116.5334 AND latitude > 39.7513 AND latitude < 40.0245 AND date_time > '2008-02-04 20:35:22' order by date_time")
+    data = db_conn.execute_query("SELECT * FROM taxidata where longitude > 116.2031 AND longitude < 116.5334 AND latitude > 39.7513 AND latitude < 40.0245 AND date_time > '2008-02-06 20:35:22' order by date_time LIMIT 100000")
     pc = create_point_cloud(data)
     del pc.trajectories[0]
     write_point_cloud_to_json("second_half.json", pc)
@@ -82,7 +84,7 @@ print('Running incremental ...')
 print('    Creating run cleaning object ...')
 print(f'    Number of safe areas before incremental: {len(safe_areas)}')
 increment_runner = RunCleaning(safe_areas, initialization_point, smoothed_main_route)
-print('    I1nserting point cloud ...')
+print('    Inserting point cloud ...')
 increment_runner.read_trajectories(pc)
 print('    Cleaning and incrementing ...')
 increment_runner.clean_and_increment()
