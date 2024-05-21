@@ -149,4 +149,11 @@ class TaxiDataHandler:
             with conn.cursor() as cursor:
                 cursor.execute(sql, (trajectory_id,))
                 conn.commit()
-
+    
+    def execute_query(self, query):
+        """ Executes any query on the database """
+        with self.__connection_pool.getconn() as conn:
+            with conn.cursor() as cursor:
+                cursor.execute(query)
+                conn.commit()
+        return cursor.fetchall()
