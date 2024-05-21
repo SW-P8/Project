@@ -10,6 +10,7 @@ from onlinedtc.onlinerunner import RunCleaning
 from math import ceil
 from DTC.gridsystem import GridSystem
 from DTC.route_skeleton import RouteSkeleton
+from DTC.construct_safe_area import ConstructSafeArea
 from DTC.trajectory import TrajectoryPointCloud, Trajectory
 from DTC.noise_correction import NoiseCorrection
 from DTC.distance_calculator import DistanceCalculator
@@ -43,32 +44,31 @@ def point_cloud(trajectory):
 @pytest.fixture
 def initial_model(point_cloud):
     gs = GridSystem(point_cloud)
-    rs = RouteSkeleton()
     gs.create_grid_system()
     gs.extract_main_route()
     min_pts = ceil(len(gs.main_route) * config.min_pts_from_mr)
-    smr = rs.smooth_main_route(gs.main_route)
-    fmr = rs.graph_based_filter(data=smr, min_pts=min_pts)
-    gs.route_skeleton = rs.filter_sparse_points(fmr, config.distance_interval)
-    gs.construct_safe_areas()
-    return gs, smr
+    smoothed_main_route = RouteSkeleton.smooth_main_route(gs.main_route)
+    filtered_main_route = RouteSkeleton.graph_based_filter(data=smoothed_main_route, min_pts=min_pts)
+    route_skeleton = RouteSkeleton.filter_sparse_points(filtered_main_route, config.distance_interval)
+    safe_areas = ConstructSafeArea.construct_safe_areas(route_skeleton, gs.grid)
+    return safe_areas, gs.initialization_point, smoothed_main_route
 
-
-def test_init_when_filled_grid_should_build_class(grid_system):
+def test_init_when_filled_grid_should_build_class(initial_model):
     # Arrange
-    gs, smr = grid_system
+    safe_areas, initialization_point, smoothed_main_route = initial_model
 
     # Act
-    result = RunCleaning(gs, smr)
+    result = RunCleaning(safe_areas, initialization_point, smoothed_main_route)
 
     # Assert
     assert result is not None
 
 
 @pytest.fixture
-def clean_runner(grid_system):
-    gs, smr = grid_system
-    cr = RunCleaning(gs, smr)
+def clean_runner(initial_model):
+    safe_areas, initialization_point, smoothed_main_route = initial_model
+
+    cr = RunCleaning(safe_areas, initialization_point, smoothed_main_route)
     return cr
 
 
@@ -168,12 +168,12 @@ def test_clean_and_iterate_delete_unused_safe_areas(clean_runner):
     local_points_cloud.add_trajectory(t2)
 
     clean_runner.read_trajectories(local_points_cloud)
-    old_safe_areas = deepcopy(clean_runner.grid_system.safe_areas)
+    old_safe_areas = deepcopy(clean_runner.safe_areas)
 
     clean_runner.clean_and_increment()
 
-    assert clean_runner.grid_system.safe_areas != old_safe_areas
-    assert len(clean_runner.grid_system.safe_areas) == 1
+    assert clean_runner.safe_areas != old_safe_areas
+    assert len(clean_runner.safe_areas) == 1
 
 def test_clean_and_iterate_add_appendage_road(clean_runner):
     # Arrange
