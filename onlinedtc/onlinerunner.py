@@ -15,7 +15,7 @@ class RunCleaning():
         self.input_trajectories = []
         self.rebuild = True
         self.cleaner = None
-        self.last_check = next(iter(safe_areas))[1].timestamp 
+        self.last_check = next(iter(safe_areas.values())).timestamp 
         self.current_time = None
 
     def read_trajectories(self, point_cloud: TrajectoryPointCloud):

@@ -135,7 +135,7 @@ class SafeArea:
     
     @classmethod
     def from_meta_data(cls, anchor: tuple[float, float], radius: float, cardinality: float, timestamp: datetime, confidence_change: float = config.confidence_change, cardinality_squish: float = config.cardinality_squish, max_confidence_change: float = config.max_confidence_change):
-        return cls(anchor, radius, cardinality, timestamp, cardinality_squish, max_confidence_change)
+        return cls(anchor, radius, cardinality, timestamp, confidence_change, cardinality_squish, max_confidence_change)
 
        
     @staticmethod   

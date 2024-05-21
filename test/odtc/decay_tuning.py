@@ -56,7 +56,7 @@ def load_initial_model():
     print('    Creating route skeleton ...')
     route_skeleton = RouteSkeleton.filter_sparse_points(filtered_main_route)
     print('    Creating safe areas ...')
-    safe_areas = ConstructSafeArea.construct_safe_areas(route_skeleton, gs.grid)
+    safe_areas = ConstructSafeArea.construct_safe_areas(route_skeleton, gs.grid, max_timestamp=gs.max_timestamp)
     
     write_set_of_tuples_to_json("first_half_smr.json", smoothed_main_route)
     write_set_of_tuples_to_json("first_half_initpoint.json", gs.initialization_point)
