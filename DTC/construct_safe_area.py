@@ -151,6 +151,9 @@ class SafeArea:
             filtered_cover_set = {(p, d) for (p, d) in filtered_cover_set if d <= radius}
             removed_count = cover_set_size - len(filtered_cover_set)
 
+        if radius > config.max_radius:
+            radius = config.max_radius
+
         return radius
 
     def get_current_confidence(self, timestamp: datetime) -> tuple[float, datetime]:

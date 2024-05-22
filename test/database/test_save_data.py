@@ -23,7 +23,7 @@ class TestSaveData():
         gs.create_grid_system()
 
         gs.route_skeleton = {(2, 2), (7, 7)}
-        gs.construct_safe_areas()        
+        gs.construct_safe_areas(0.01)        
         return gs 
     
     @pytest.fixture
