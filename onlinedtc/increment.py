@@ -17,7 +17,7 @@ def update_safe_area(safe_areas: dict[SafeArea], initialization_point, old_smoot
 
     graphed_main_route = filter_smoothed_main_route(
         merged_smoothed_main_route, new_smoothed_main_route, min_pts)
-    
+
     # Check if any anchors remain. If not return empty.
     if len(graphed_main_route) == 0:
         return dict()

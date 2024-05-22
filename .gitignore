@@ -4,7 +4,7 @@ __pycache__/
 .coverage
 taxi_log_2008_by_id/
 online_dtc.egg-info
-*.png
+visuals/*.png
 *.jpeg
 *.jpg
 *.json
