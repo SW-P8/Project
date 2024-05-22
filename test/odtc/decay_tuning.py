@@ -19,7 +19,7 @@ def create_point_cloud(records):
     trajectory = Trajectory()
     pc = TrajectoryPointCloud()
 
-    for _, timestamp, longitude, latitude, tid in records:
+    for _, timestamp, longitude, latitude, tid, _ in records:
         # Separate points into trajectories based on their trajectory ids
         if tid != tid_of_existing_trajectory:
             pc.add_trajectory(trajectory)
@@ -29,7 +29,7 @@ def create_point_cloud(records):
     pc.add_trajectory(trajectory)
     return pc
 
-# 1. Sorter trajectories by time, brug det sidste punkts tidspunkt i et trajectory. Median time: '2008-02-04 23:26:44' found using scientific querying
+# 1. Sorter trajectories by time, brug det sidste punkts tidspunkt i et trajectory. Median time: '2008-02-04 20:35:22' found using scientific querying
 # 2. Smid 50% af trajectories ind i modellen
 def load_initial_model():
     print('    Loading point cloud ...')
@@ -66,8 +66,8 @@ def load_initial_model():
 def load_point_cloud():
     if os.path.exists("second_half.json"):
         return read_point_cloud_from_json("second_half.json")
-    db_conn = TaxiDataHandler(new_tdrive_db_pool())
-    data = db_conn.execute_query("SELECT * FROM taxidata where longitude > 116.2031 AND longitude < 116.5334 AND latitude > 39.7513 AND latitude < 40.0245 AND date_time > '2008-02-06 20:35:22' order by date_time LIMIT 100000")
+    db_conn = TaxiDataHandler(new_tdrive_db_pool()) #
+    data = db_conn.execute_query("with next_traj_id as (select trajectory_id as tid, min(date_time) as m from taxidata group by trajectory_id order by m) SELECT taxi_id, date_time, longitude, latitude, trajectory_id, next_traj_id.m FROM taxidata inner join next_traj_id on trajectory_id = tid where m > '2008-02-04 20:35:22' order by m asc, trajectory_id asc, date_time asc limit 100000") #SELECT * FROM taxidata where longitude > 116.2031 AND longitude < 116.5334 AND latitude > 39.7513 AND latitude < 40.0245 AND date_time > '2008-02-04 20:35:22' order by date_time ASC, trajectory_id ASC  LIMIT 100000
     pc = create_point_cloud(data)
     del pc.trajectories[0]
     write_point_cloud_to_json("second_half.json", pc)

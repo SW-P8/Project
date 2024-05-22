@@ -32,3 +32,8 @@ distance_interval = 15  # Distance for sampling.
 # Main Route
 distance_scale = 0.2
 '''Multiplier for distance away from neighborhood in main route extraction.'''
+
+
+# Incremental
+update_time = 24 * 3600 # System updates confidence of all safe-areas every 12 hours, timedelta uses seconds for unit.
+

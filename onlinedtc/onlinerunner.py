@@ -25,6 +25,7 @@ class RunCleaning():
     def clean_and_increment(self):
         bar = Bar('Incrementing... ', max=len(self.input_trajectories), suffix=' %(index)d/%(max)d - %(percent).1f%% - avg %(avg).1fs - elapsed %(elapsed)ds - ETA %(eta)ds')
         while self.input_trajectories:
+            #print(len(self.safe_areas))
             if self.rebuild:
                 self.cleaner = NoiseCorrection(
                     self.safe_areas,
@@ -64,9 +65,8 @@ class RunCleaning():
         self.current_time + timedelta(days=days, hours=hours, minutes=minutes, seconds=seconds)
 
     def _check_time_call_update(self, time: datetime):
-        update_time = 24 * 3600 # System updates confidence of all safe-areas every 12 hours, timedelta uses seconds for unit.
         unused_safe_areas = []
-        if (time - self.last_check).total_seconds() > update_time:
+        if (time - self.last_check).total_seconds() > config.update_time:
             for safe_area in self.safe_areas.values():
                 safe_area.get_current_confidence(time)
                 if safe_area.confidence < config.confidence_threshold:
