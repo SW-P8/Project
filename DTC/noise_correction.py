@@ -44,8 +44,8 @@ class NoiseCorrection:
                     self.correct_noisy_point(trajectory, i)
 
                 else:
-                    labels_of_cleaned_points.append(point.noise)
                     discard_after_run = True
+                    break
 
         if len(low_confidence_safe_areas):
             if event_listener is not None:
@@ -123,7 +123,7 @@ class NoiseCorrection:
                         copy(trajectory.points[iterator])
                     )
                 list_of_cleaned_points.append(
-                    deepcopy(trajectory.points[iterator].noise)
+                    copy(trajectory.points[iterator].noise)
                 )
                 del trajectory.points[iterator]
                 if fromBack:
