@@ -10,16 +10,16 @@ import pytest
 def test_safe_areas_can_be_updated():
     # Arrange
     data1 = read_point_cloud_from_json(
-        "test/odtc/integration/testresources/1milcityPC.json")
+        "data/City area/1milcityPC.json")
     data2 = read_point_cloud_from_json(
-        "test/odtc/integration/testresources/1milcityPC.json")
+        "data/City area/1milcityPC.json")
     test_data = data2.trajectories[:100]
     grid_system = GridSystem(data1)
 
     grid_system.grid_system = read_grid_from_json(
-        "test/odtc/integration/testresources/1milcityGrid.json")
+        "data/City area/1milcityGrid.json")
     grid_system.main_route = read_set_of_tuples_from_json(
-        "test/odtc/integration/testresources/1milcityMR.json")
+        "data/City area/1milcityMR.json")
 
     route_skeleton = RouteSkeleton()
     smoothed_main_route = route_skeleton.smooth_main_route(
@@ -35,7 +35,7 @@ def test_safe_areas_can_be_updated():
     )
 
     grid_system.safe_areas = read_safe_areas_from_json(
-        "test/odtc/integration/testresources/1milcitySA.json", max_confidence_change=0.001)
+        "data/City area/1milcitySA.json", max_confidence_change=0.001)
 
     for trajectory in tqdm(test_data, desc="Cleaning trajectories"):
         cleaner = NoiseCorrection(

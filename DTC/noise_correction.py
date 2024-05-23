@@ -12,12 +12,11 @@ logger = logging.getLogger(__name__)
 
 
 class NoiseCorrection:
-    def __init__(self, safe_areas, init_point, smoothed_main_route=set(), with_iteration: bool = True):
+    def __init__(self, safe_areas, init_point, with_iteration: bool = True):
         self.safe_areas = safe_areas
         self.safe_areas_keys_list = list(safe_areas.keys())
         self.safe_areas_keys_kd_tree = KDTree(self.safe_areas_keys_list)
         self.initialization_point = init_point
-        self.smoothed_main_route = smoothed_main_route
         self.with_iteration = with_iteration
 
     def noise_detection(self, trajectory: Trajectory, event_listener=None):
@@ -83,8 +82,7 @@ class NoiseCorrection:
         start_time = time.time()
 
         updated_areas = update_safe_area(low_confidence_safe_areas,
-                                         self.initialization_point,
-                                         self.smoothed_main_route)
+                                         self.initialization_point)
 
         end_time = time.time()
         duration = end_time - start_time

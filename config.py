@@ -16,6 +16,7 @@ decay_factor = 1 / (60*60*24)
 confidence_change = 0.01
 cardinality_squish = 0.01
 max_confidence_change = 0.1
+linear_decay = 1 / 86400
 confidence_threshold = 0.5
 
 
