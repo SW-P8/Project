@@ -9,3 +9,4 @@ online_dtc.egg-info
 *.jpg
 *.json
 data/
+*.log

@@ -87,7 +87,8 @@ class NoiseCorrection:
 
         logger.info(f"Safe-areas updated in {duration: .2f} seconds")
         logger.info(f"Created the safe-areas: {updated_areas.keys()}")
-
+        logger.info(f'Number of remaining safe areas: {len(self.safe_areas)}')
+        
         for safe_area in updated_areas.values():
             self.safe_areas[safe_area.anchor] = safe_area
 

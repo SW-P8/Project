@@ -34,6 +34,9 @@ class RunCleaning():
                     )
                 self.rebuild = True
             trajectory = self.input_trajectories.pop(0)
+            if not trajectory.points:
+                print(f"Empty trajectory: {trajectory}")
+                continue
             self.current_time = trajectory.points[len(trajectory.points) - 1].timestamp
             self.cleaner.noise_detection(trajectory, self._rebuild_listener)
             self._check_time_call_update(self.current_time)

@@ -34,7 +34,7 @@ def create_point_cloud(records):
 # 2. Smid 50% af trajectories ind i modellen
 def load_initial_model():
     print('    Loading point cloud ...')
-    if os.path.exists("first_half_smr.json"):
+    if os.path.exists("first_half_sa.json"):
         smoothed_main_route = read_set_of_tuples_from_json("first_half_smr.json")
         safe_areas = read_safe_areas_from_json("first_half_sa.json")
         initialization_point = read_set_of_tuples_from_json("first_half_initpoint.json")
@@ -68,7 +68,7 @@ def load_point_cloud():
     if os.path.exists("second_half.json"):
         return read_point_cloud_from_json("second_half.json")
     db_conn = TaxiDataHandler(new_tdrive_db_pool()) #
-    data = db_conn.execute_query("with next_traj_id as (select trajectory_id as tid, min(date_time) as m from taxidata group by trajectory_id order by m) SELECT taxi_id, date_time, longitude, latitude, trajectory_id, next_traj_id.m FROM taxidata inner join next_traj_id on trajectory_id = tid where m > '2008-02-04 20:35:22' order by m asc, trajectory_id asc, date_time asc limit 1000000") #SELECT * FROM taxidata where longitude > 116.2031 AND longitude < 116.5334 AND latitude > 39.7513 AND latitude < 40.0245 AND date_time > '2008-02-04 20:35:22' order by date_time ASC, trajectory_id ASC  LIMIT 100000
+    data = db_conn.execute_query("with next_traj_id as (select trajectory_id as tid, max(date_time) as m from taxidata group by trajectory_id order by m) SELECT taxi_id, date_time, longitude, latitude, trajectory_id, next_traj_id.m FROM taxidata inner join next_traj_id on trajectory_id = tid where m > '2008-02-04 20:35:22' AND longitude > 116.2031 AND longitude < 116.5334 AND latitude > 39.7513 AND latitude < 40.0245 order by m asc, trajectory_id asc, date_time asc limit 50000") #SELECT * FROM taxidata where longitude > 116.2031 AND longitude < 116.5334 AND latitude > 39.7513 AND latitude < 40.0245 AND date_time > '2008-02-04 20:35:22' order by date_time ASC, trajectory_id ASC  LIMIT 100000
     pc = create_point_cloud(data)
     del pc.trajectories[0]
     write_point_cloud_to_json("second_half.json", pc)
@@ -80,6 +80,13 @@ smoothed_main_route, safe_areas, initialization_point = load_initial_model()
 print('Loading second half of point cloud ...')
 # 3. Smid resten ind i et increments
 pc = load_point_cloud()
+
+# Horrible hack to simplify debug process
+# pc.trajectories = pc.trajectories[16500:27000]
+
+# for anchor, sa in safe_areas.items():
+#     sa.timestamp = pc.trajectories[0].points[0].timestamp
+
 
 print('Running incremental ...')
 print('    Creating run cleaning object ...')
