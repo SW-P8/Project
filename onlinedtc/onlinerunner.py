@@ -36,7 +36,6 @@ class RunCleaning():
             self.current_time = trajectory.points[len(trajectory.points) - 1].timestamp
             self.cleaner.noise_detection(trajectory, self._rebuild_listener)
             self._check_time_call_update(self.current_time)
-            #self._append_to_json(trajectory)
             bar.next()
         bar.finish()
 

@@ -50,7 +50,7 @@ def initial_model(point_cloud):
     smoothed_main_route = RouteSkeleton.smooth_main_route(gs.main_route)
     filtered_main_route = RouteSkeleton.graph_based_filter(data=smoothed_main_route, min_pts=min_pts)
     route_skeleton = RouteSkeleton.filter_sparse_points(filtered_main_route, config.distance_interval)
-    safe_areas = ConstructSafeArea.construct_safe_areas(route_skeleton, gs.grid)
+    safe_areas = ConstructSafeArea.construct_safe_areas(route_skeleton, gs.grid, max_timestamp=point_cloud.max_timestamp)
     return safe_areas, gs.initialization_point, smoothed_main_route
 
 def test_init_when_filled_grid_should_build_class(initial_model):
@@ -109,12 +109,10 @@ def test_clean_and_increment_calls_noise_detection(clean_runner, point_cloud):
 
     # Act
     with patch.object(NoiseCorrection, 'noise_detection') as mock_noise_detection:
-        with patch.object(RunCleaning, '_append_to_json') as mock_append_to_json:
-            clean_runner.clean_and_increment()
+        clean_runner.clean_and_increment()
 
     # Assert
     assert 10 == mock_noise_detection.call_count
-    assert 10 == mock_append_to_json.call_count
 
 
 def test_append_to_json_creates_file(clean_runner, trajectory):

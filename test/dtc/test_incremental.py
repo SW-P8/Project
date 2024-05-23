@@ -33,17 +33,9 @@ class TestIncremental():
         pc.add_trajectory(t)
         gs = GridSystem(pc)
         gs.create_grid_system()
-        
-        cs1 = set()
-        cs1.add((0,0))
 
-        cs2 = set()
-        cs2.add((20,20))
-
-        gs.safe_areas[(4,4)] = SafeArea.from_cover_set(cs1, (4,4), 0)
-        gs.safe_areas[(4,4)].radius = 1
-        gs.safe_areas[(8,8)] = SafeArea.from_cover_set(cs2, (8,8), 0)
-        gs.safe_areas[(8,8)].radius = 1
+        gs.safe_areas[(4,4)] = SafeArea.from_meta_data((4,4), 1, 1, datetime.now())
+        gs.safe_areas[(8,8)] = SafeArea.from_meta_data((8,8), 1, 1, datetime.now())
 
         return gs
 

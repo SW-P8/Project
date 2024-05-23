@@ -12,28 +12,17 @@ def update_safe_area(safe_areas: dict[SafeArea], initialization_point, old_smoot
 
     new_smoothed_main_route, merged_smoothed_main_route = smooth_new_main_route(
         grid_system.main_route, old_smoothed_main_route)
+
     if new_smoothed_main_route is None or len(new_smoothed_main_route) == 0:
         return dict()
 
-    min_pts = ceil(len(old_smoothed_main_route) * config.min_pts_from_mr)
-
     old_smoothed_main_route = merged_smoothed_main_route
 
-    #graphed_main_route = filter_smoothed_main_route(
-        #merged_smoothed_main_route, new_smoothed_main_route, min_pts)
-
-    # Check if any anchors remain. If not return empty.
-    #if len(graphed_main_route) == 0:
-        #return dict()
-
-    # 20 is the radius points cannot be within eachother.
     route_skeleton_ancors = RouteSkeleton.filter_sparse_points(
         new_smoothed_main_route, config.distance_interval)
-    # 0.01 is the decrease factor used other places in the code base
+
     new_safe_areas = ConstructSafeArea.construct_safe_areas(
-        route_skeleton_ancors, grid_system.grid, config.decrease_factor, initialization_point)
-    for safe_area in new_safe_areas.values():
-        safe_area.timestamp = grid_system.max_timestamp
+        route_skeleton_ancors, grid_system.grid, config.decrease_factor, initialization_point, grid_system.max_timestamp)
 
     return new_safe_areas
 

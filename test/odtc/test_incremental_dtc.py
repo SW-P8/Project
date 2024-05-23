@@ -4,6 +4,7 @@ from onlinedtc.increment import update_safe_area
 from DTC.trajectory import Trajectory, TrajectoryPointCloud, Point
 from DTC.gridsystem import GridSystem
 from DTC.construct_safe_area import SafeArea
+from datetime import datetime
 import pytest
 # I am lazy, so no mocking will happen here >:(
 
@@ -13,7 +14,7 @@ def test_create_trajectory_point_cloud_with_non_empty():
     trajectory = Trajectory()
     for i in range(20):
         trajectory.add_point(1 + 0.1 * i, 1)
-    safe_area = SafeArea.from_meta_data((0, 0), 1, 10)
+    safe_area = SafeArea.from_meta_data((0, 0), 1, 10, datetime.now())
     safe_area.points_in_safe_area = trajectory
     safe_areas = dict()
     safe_areas[safe_area.anchor] = safe_area
@@ -29,7 +30,7 @@ def test_create_trajectory_point_cloud_with_non_empty():
 def test_create_trajectory_point_cloud_with_empty():
     # Arrange
     trajectory = Trajectory()
-    safe_area = SafeArea.from_meta_data((0, 0), 1, 10)
+    safe_area = SafeArea.from_meta_data((0, 0), 1, 10, datetime.now())
     safe_area.points_in_safe_area = trajectory
     safe_areas = dict()
     safe_areas[safe_area.anchor] = safe_area
@@ -176,7 +177,7 @@ def test_update_safe_area():
     initialization_point = (1, 1)
     old_smoothed_main_route = {(1, 1), (1, 1), (2, 1), (2, 2)}
     expected_anchor = (11, 0.5)
-    safe_area = SafeArea.from_meta_data(expected_anchor, 10, 2)
+    safe_area = SafeArea.from_meta_data(expected_anchor, 10, 2, datetime.now())
 
     for i in range(100):
         point = Point(1 + 0.00001 * i, 1)
