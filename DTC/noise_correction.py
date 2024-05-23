@@ -21,6 +21,9 @@ class NoiseCorrection:
         self.with_iteration = with_iteration
 
     def noise_detection(self, trajectory: Trajectory, event_listener=None):
+        if not trajectory.points:
+            return
+
         labels_of_cleaned_points = []
         low_confidence_safe_areas = {}
 
@@ -55,7 +58,7 @@ class NoiseCorrection:
         if discard_after_run:
             labels_of_correct_points_discarded = [False for point in trajectory.points if not point.noise]
             labels_of_cleaned_points.extend(labels_of_correct_points_discarded)
-            trajectory.points = None
+            trajectory.points = []
 
         return labels_of_cleaned_points
 
