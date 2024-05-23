@@ -26,7 +26,6 @@ def process_results(dir_path):
     with open("Outputs/PerpendicularDistances/Details/sortedcombinationkeys.json", "w") as keysoutfile:
         json.dump(sorted_files_with_count, keysoutfile, indent=4)
 
-
 if __name__ == '__main__':
     dir_path = "Outputs/PerpendicularDistances"
     process_results(dir_path)

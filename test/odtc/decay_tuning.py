@@ -15,6 +15,8 @@ from copy import deepcopy
 import matplotlib.pyplot as plt
 import matplotlib.patches as patches
 import os
+import sys
+
 
 def draw_circle(ax, point, radius):
     circle = plt.Circle(point, radius, color='blue', fill=False)
@@ -73,54 +75,71 @@ def load_initial_model():
 def load_point_cloud():
     if os.path.exists("second_half.json"):
         return read_point_cloud_from_json("second_half.json")
-    db_conn = TaxiDataHandler(new_tdrive_db_pool()) #
-    data = db_conn.execute_query("with next_traj_id as (select trajectory_id as tid, max(date_time) as m from taxidata group by trajectory_id order by m) SELECT taxi_id, date_time, longitude, latitude, trajectory_id, next_traj_id.m FROM taxidata inner join next_traj_id on trajectory_id = tid where m > '2008-02-04 20:35:22' AND longitude > 116.2031 AND longitude < 116.5334 AND latitude > 39.7513 AND latitude < 40.0245 order by m asc, trajectory_id asc, date_time asc limit 10000") #SELECT * FROM taxidata where longitude > 116.2031 AND longitude < 116.5334 AND latitude > 39.7513 AND latitude < 40.0245 AND date_time > '2008-02-04 20:35:22' order by date_time ASC, trajectory_id ASC  LIMIT 100000
+    db_conn = TaxiDataHandler(new_tdrive_db_pool())
+    data = db_conn.execute_query("with next_traj_id as (select trajectory_id as tid, max(date_time) as m from taxidata group by trajectory_id order by m) SELECT taxi_id, date_time, longitude, latitude, trajectory_id, next_traj_id.m FROM taxidata inner join next_traj_id on trajectory_id = tid where m > '2008-02-04 20:35:22' AND longitude > 116.2031 AND longitude < 116.5334 AND latitude > 39.7513 AND latitude < 40.0245 order by m asc, trajectory_id asc, date_time asc limit 1000000") #SELECT * FROM taxidata where longitude > 116.2031 AND longitude < 116.5334 AND latitude > 39.7513 AND latitude < 40.0245 AND date_time > '2008-02-04 20:35:22' order by date_time ASC, trajectory_id ASC  LIMIT 100000
     pc = create_point_cloud(data)
     del pc.trajectories[0]
     write_point_cloud_to_json("second_half.json", pc)
     return pc
 
-print('Loading first half of point cloud ...')
-smoothed_main_route, safe_areas, initialization_point = load_initial_model()
+def run_decay_tuning(postfix: str):
+    print('Loading first half of point cloud ...')
+    smoothed_main_route, safe_areas, initialization_point = load_initial_model()
 
-print('Loading second half of point cloud ...')
-# 3. Smid resten ind i et increments
-pc = load_point_cloud()
+    print('Loading second half of point cloud ...')
+    # 3. Smid resten ind i et increments
+    pc = load_point_cloud()
 
-# Horrible hack to simplify debug process
-# pc.trajectories = pc.trajectories[16500:27000]
+    # Horrible hack to simplify debug process
+    # pc.trajectories = pc.trajectories[16500:27000]
 
-# for anchor, sa in safe_areas.items():
-#     sa.timestamp = pc.trajectories[0].points[0].timestamp
+    # for anchor, sa in safe_areas.items():
+    #     sa.timestamp = pc.trajectories[0].points[0].timestamp
 
+    if os.path.exists("app.log"):
+        os.remove("app.log")
 
-print('Running incremental ...')
-print('    Creating run cleaning object ...')
-print(f'    Number of safe areas before incremental: {len(safe_areas)}')
-increment_runner = RunCleaning(deepcopy(safe_areas), initialization_point, smoothed_main_route)
-print('    Inserting point cloud ...')
-increment_runner.read_trajectories(pc)
-print('    Cleaning and incrementing ...')
-increment_runner.clean_and_increment()
-print(f'Number of safe areas after incremental: {len(increment_runner.safe_areas)}')
-safe_areas_in_common = len(safe_areas.keys() & increment_runner.safe_areas.keys())
-removed = len(safe_areas.keys()) - safe_areas_in_common
-added = len(increment_runner.safe_areas.keys()) - safe_areas_in_common
-print(f'Number of safe areas in common: {safe_areas_in_common} - number of SAs removed {removed} - number of SAs added {added}')
-print("Creating figure")
-fig, axs = plt.subplots(1, 2)
+    print('Running incremental ...')
+    print('    Creating run cleaning object ...')
+    print(f'    Number of safe areas before incremental: {len(safe_areas)}')
+    increment_runner = RunCleaning(deepcopy(safe_areas), initialization_point, smoothed_main_route)
+    print('    Inserting point cloud ...')
+    increment_runner.read_trajectories(pc)
+    print('    Cleaning and incrementing ...')
+    increment_runner.clean_and_increment()
+    print(f'Number of safe areas after incremental: {len(increment_runner.safe_areas)}')
+    safe_areas_in_common = len(safe_areas.keys() & increment_runner.safe_areas.keys())
+    removed = len(safe_areas.keys()) - safe_areas_in_common
+    added = len(increment_runner.safe_areas.keys()) - safe_areas_in_common
+    print(f'Number of safe areas in common: {safe_areas_in_common} - number of SAs removed {removed} - number of SAs added {added}')
+    print("Creating figure")
+    fig, axs = plt.subplots(1, 2)
 
-axs[0].scatter(*zip(*safe_areas.keys()), color='g', s=0.01)
-axs[1].scatter(*zip(*increment_runner.safe_areas.keys()), color='g', s=0.01)
+    axs[0].scatter(*zip(*safe_areas.keys()), color='g', s=0.01)
+    axs[1].scatter(*zip(*increment_runner.safe_areas.keys()), color='g', s=0.01)
 
-axs[0].set_ylim(0, 7000)
-axs[0].set_xlim(0, 7000)
-axs[1].set_ylim(0, 7000)
-axs[1].set_xlim(0, 7000)
-axs[0].set_aspect('equal', 'box')
-axs[1].set_aspect('equal', 'box')
-plt.savefig("safe_areas.png", dpi=900)
+    axs[0].set_ylim(0, 7000)
+    axs[0].set_xlim(0, 7000)
+    axs[1].set_ylim(0, 7000)
+    axs[1].set_xlim(0, 7000)
+    axs[0].set_aspect('equal', 'box')
+    axs[1].set_aspect('equal', 'box')
+    plt.savefig(f"Results/pngs/safe_areas_{postfix}.png", dpi=900)
+
+    write_set_of_tuples_to_json(f"Results/safe_areas_before_incremental_{postfix}.json", safe_areas.keys())
+    write_set_of_tuples_to_json(f"Results/safe_areas_after_incremental_{postfix}.json", increment_runner.safe_areas.keys())
 
 # 4. Mål hvor mange punkter der bliver fjernet fra modellen pga time decay
 # 5. Juster time decay så vi får et antal punkter der giver mening
 
+
+if __name__ == '__main__':
+    if len(sys.argv) == 5:
+        config.confidence_increase = float(sys.argv[1])
+        config.confidence_decrease_scale_factor = float(sys.argv[2])
+        config.max_confidence_decrease = float(sys.argv[3])
+        config.confidence_threshold = float(sys.argv[4])
+    else:
+        print("Running with default values")
+    postfix = f"{config.confidence_increase}_{config.confidence_decrease_scale_factor}_{config.max_confidence_decrease}_{config.confidence_threshold}"
+    run_decay_tuning(postfix)

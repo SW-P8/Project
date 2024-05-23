@@ -8,6 +8,7 @@ visuals/*.png
 *.jpeg
 *.jpg
 *.json
+*.png
 data/
 *.html
 *.log

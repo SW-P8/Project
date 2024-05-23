@@ -234,4 +234,4 @@ class SafeArea:
         return a*x
 
     def calculate_confidence_decrease(self, delta):
-        return min((config.decrease_scale_factor * (delta / self.radius)), config.max_confidence_decrease)
+        return min((config.confidence_decrease_scale_factor * (delta / self.radius)), config.max_confidence_decrease)
