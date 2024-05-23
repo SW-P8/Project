@@ -83,7 +83,6 @@ class TestThroughputBenchmark:
         grid_system = GridSystem(block_point_cloud)
         grid_system.create_grid_system()
         grid_system.extract_main_route()
-        old_smoothed_main_route = RouteSkeleton.smooth_main_route(grid_system.main_route)
         grid_system.extract_route_skeleton(distance_interval=10)
         grid_system.construct_safe_areas()
         print("Incrementing ",len(grid_system.route_skeleton), " safe areas with ", points_in_sa_pc, " points in each")
@@ -108,11 +107,11 @@ class TestThroughputBenchmark:
 
         def update_safe_area_wrapper():
             current_safe_areas = list_of_safe_areas[index[0]]
-            update_safe_area(current_safe_areas, grid_system.initialization_point, old_smoothed_main_route)
+            update_safe_area(current_safe_areas, grid_system.initialization_point)
             index[0] += 1
-#
+
         benchmark.pedantic(update_safe_area_wrapper, rounds=rounds, iterations=iterations, warmup_rounds=warmup_rounds)
-#
+
     @pytest.fixture
     def block_point_cloud(self):
         min_long, min_lat = (0,1)
