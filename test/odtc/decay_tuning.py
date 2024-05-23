@@ -74,7 +74,7 @@ def load_point_cloud():
     if os.path.exists("second_half.json"):
         return read_point_cloud_from_json("second_half.json")
     db_conn = TaxiDataHandler(new_tdrive_db_pool()) #
-    data = db_conn.execute_query("with next_traj_id as (select trajectory_id as tid, max(date_time) as m from taxidata group by trajectory_id order by m) SELECT taxi_id, date_time, longitude, latitude, trajectory_id, next_traj_id.m FROM taxidata inner join next_traj_id on trajectory_id = tid where m > '2008-02-04 20:35:22' AND longitude > 116.2031 AND longitude < 116.5334 AND latitude > 39.7513 AND latitude < 40.0245 order by m asc, trajectory_id asc, date_time asc limit 50000") #SELECT * FROM taxidata where longitude > 116.2031 AND longitude < 116.5334 AND latitude > 39.7513 AND latitude < 40.0245 AND date_time > '2008-02-04 20:35:22' order by date_time ASC, trajectory_id ASC  LIMIT 100000
+    data = db_conn.execute_query("with next_traj_id as (select trajectory_id as tid, max(date_time) as m from taxidata group by trajectory_id order by m) SELECT taxi_id, date_time, longitude, latitude, trajectory_id, next_traj_id.m FROM taxidata inner join next_traj_id on trajectory_id = tid where m > '2008-02-04 20:35:22' AND longitude > 116.2031 AND longitude < 116.5334 AND latitude > 39.7513 AND latitude < 40.0245 order by m asc, trajectory_id asc, date_time asc limit 10000") #SELECT * FROM taxidata where longitude > 116.2031 AND longitude < 116.5334 AND latitude > 39.7513 AND latitude < 40.0245 AND date_time > '2008-02-04 20:35:22' order by date_time ASC, trajectory_id ASC  LIMIT 100000
     pc = create_point_cloud(data)
     del pc.trajectories[0]
     write_point_cloud_to_json("second_half.json", pc)
@@ -102,22 +102,24 @@ print('    Inserting point cloud ...')
 increment_runner.read_trajectories(pc)
 print('    Cleaning and incrementing ...')
 increment_runner.clean_and_increment()
-print(f'    Number of safe areas after incremental: {len(increment_runner.safe_areas)}')
-print(f'Number of safe areas in common: {len(safe_areas.keys() & increment_runner.safe_areas.keys())}')
-
+print(f'Number of safe areas after incremental: {len(increment_runner.safe_areas)}')
+safe_areas_in_common = len(safe_areas.keys() & increment_runner.safe_areas.keys())
+removed = len(safe_areas.keys()) - safe_areas_in_common
+added = len(increment_runner.safe_areas.keys()) - safe_areas_in_common
+print(f'Number of safe areas in common: {safe_areas_in_common} - number of SAs removed {removed} - number of SAs added {added}')
 print("Creating figure")
-fig, axs = plt.subplots(2, 1)
+fig, axs = plt.subplots(1, 2)
 
-axs[0].scatter(*zip(*safe_areas.keys()), color='g', s=0.1)
-axs[1].scatter(*zip(*increment_runner.safe_areas.keys()), color='g', s=0.1)
+axs[0].scatter(*zip(*safe_areas.keys()), color='g', s=0.01)
+axs[1].scatter(*zip(*increment_runner.safe_areas.keys()), color='g', s=0.01)
 
-axs[0].set_ylim(0, 8000)
-axs[0].set_xlim(0, 8000)
-axs[1].set_ylim(0, 8000)
-axs[1].set_xlim(0, 8000)
+axs[0].set_ylim(0, 7000)
+axs[0].set_xlim(0, 7000)
+axs[1].set_ylim(0, 7000)
+axs[1].set_xlim(0, 7000)
 axs[0].set_aspect('equal', 'box')
 axs[1].set_aspect('equal', 'box')
-plt.savefig("safe_areas.png")
+plt.savefig("safe_areas.png", dpi=900)
 
 # 4. Mål hvor mange punkter der bliver fjernet fra modellen pga time decay
 # 5. Juster time decay så vi får et antal punkter der giver mening
