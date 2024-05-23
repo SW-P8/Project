@@ -61,7 +61,7 @@ class TestThroughputBenchmark:
         old_smoothed_main_route = RouteSkeleton.smooth_main_route(grid_system.main_route)
         noise_corrector = NoiseCorrection(grid_system.safe_areas, grid_system.initialization_point)
 
-        # Make every second point noisy
+        # Make every point noisy to ensure creation of 10 new safe areas
         for i in range(1000):
             trajectory.points[i].latitude = DistanceCalculator.shift_point_with_bearing(trajectory.points[i], 105, config.SOUTH)[1]
 
@@ -74,7 +74,7 @@ class TestThroughputBenchmark:
         total_iterations = (rounds + warmup_rounds) * iterations + 1
 
         # Pre-create deepcopies of trajectory
-        list_of_lists_of_safe_areas_and_smr = [[(deepcopy(grid_system.safe_areas), deepcopy(old_smoothed_main_route)) for _ in range(10)] for _ in range(total_iterations)]
+        list_of_lists_of_safe_areas_and_smr = [[(deepcopy(grid_system.safe_areas), deepcopy(old_smoothed_main_route)) for _ in range(20)] for _ in range(total_iterations)]
     
         # Index to track the current deepcopy to use
         index = [0]
