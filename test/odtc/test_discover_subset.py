@@ -26,6 +26,7 @@ def setup_point_clouds():
     train_set = TrajectoryPointCloud()
     for t in train_trajectories:
         train_set.add_trajectory(t)
+    print(len(train_set.trajectories))
     return p1, model_set, train_set
 
 
