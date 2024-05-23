@@ -9,7 +9,7 @@ def addVerticalLines(min, max, stepsize):
     for i in range(min, max, stepsize):
         plt.axhline(i, linewidth=0.3, color="k", zorder=1)
 
-steps = ["5%", "10%", "$15%", "20%"]
+steps = ["5%", "10%", "15%", "20%"]
 time = [213, 112.1885, 64.7481, 86.8979]
 addVerticalLines(20, 140, 20)
 plt.bar(steps, time, width=0.4)
