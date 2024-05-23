@@ -9,3 +9,5 @@ visuals/*.png
 *.jpg
 *.json
 data/
+*.html
+*.log
