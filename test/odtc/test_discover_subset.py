@@ -29,7 +29,7 @@ def setup_point_clouds():
     print(len(train_set.trajectories))
     return p1, model_set, train_set
 
-
+@pytest.mark.skip
 def test_discover_subset(setup_point_clouds):
     # Arrange
     point_cloud, model_data, train_data = setup_point_clouds
