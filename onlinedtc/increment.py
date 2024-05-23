@@ -15,9 +15,11 @@ def update_safe_area(safe_areas: dict[SafeArea], initialization_point, old_smoot
 
     min_pts = ceil(len(old_smoothed_main_route) * config.min_pts_from_mr)
 
+    old_smoothed_main_route = merged_smoothed_main_route
+
     graphed_main_route = filter_smoothed_main_route(
         merged_smoothed_main_route, new_smoothed_main_route, min_pts)
-    
+
     # Check if any anchors remain. If not return empty.
     if len(graphed_main_route) == 0:
         return dict()

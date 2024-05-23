@@ -81,7 +81,7 @@ class TaxiDataHandler:
                 cursor.execute(sql, (n,))
                 return cursor.fetchall()
             
-    def read_n_records_inside_bbb(self, n: int, city: bool = False):
+    def read_n_records_inside_bbb(self, n: int, city: bool = False, test_area: bool = False):
         """
         Retrieves n records from the TaxiData table which is contained inside the Beijing Bounding Box
 
@@ -104,6 +104,12 @@ class TaxiDataHandler:
                     city_min_lat = 39.7513
                     city_max_lat = 40.0245
                     cursor.execute(sql, (city_min_lat, city_max_lat, city_max_long, city_min_long, n))
+                elif test_area:
+                    min_long = 116.4101028
+                    max_long = 116.4573097
+                    min_lat = 39.9462660
+                    max_lat = 39.9688981
+                    cursor.execute(sql, (min_lat, max_lat, min_long, max_long, n))
                 else:
                     cursor.execute(sql, (BBB_MIN_LAT, BBB_MAX_LAT, BBB_MAX_LONG, BBB_MIN_LONG, n))
                 return cursor.fetchall()
