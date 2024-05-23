@@ -55,10 +55,10 @@ def initial_model(point_cloud):
 
 def test_init_when_filled_grid_should_build_class(initial_model):
     # Arrange
-    safe_areas, initialization_point, smoothed_main_route = initial_model
+    safe_areas, initialization_point, _ = initial_model
 
     # Act
-    result = RunCleaning(safe_areas, initialization_point, smoothed_main_route)
+    result = RunCleaning(safe_areas, initialization_point)
 
     # Assert
     assert result is not None
@@ -66,9 +66,9 @@ def test_init_when_filled_grid_should_build_class(initial_model):
 
 @pytest.fixture
 def clean_runner(initial_model):
-    safe_areas, initialization_point, smoothed_main_route = initial_model
+    safe_areas, initialization_point, _ = initial_model
 
-    cr = RunCleaning(safe_areas, initialization_point, smoothed_main_route)
+    cr = RunCleaning(safe_areas, initialization_point)
     return cr
 
 

@@ -2,27 +2,24 @@ from DTC.trajectory import TrajectoryPointCloud
 from DTC.gridsystem import GridSystem
 from DTC.route_skeleton import RouteSkeleton
 from DTC.construct_safe_area import ConstructSafeArea, SafeArea
-from math import ceil
 import config
 
 
-def update_safe_area(safe_areas: dict[SafeArea], initialization_point, old_smoothed_main_route: set):
+def update_safe_area(safe_areas: dict[SafeArea], initialization_point):
     point_cloud = create_trajectory_point_cloud(safe_areas)
     grid_system = build_grid_system(point_cloud, initialization_point)
 
-    new_smoothed_main_route, merged_smoothed_main_route = smooth_new_main_route(
-        grid_system.main_route, old_smoothed_main_route)
+    smoothed_main_route = RouteSkeleton.smooth_main_route(
+        grid_system.main_route, config.smooth_radius)
 
-    if new_smoothed_main_route is None or len(new_smoothed_main_route) == 0:
+    if smoothed_main_route is None or len(smoothed_main_route) == 0:
         return dict()
 
-    old_smoothed_main_route = merged_smoothed_main_route
-
-    route_skeleton_ancors = RouteSkeleton.filter_sparse_points(
-        new_smoothed_main_route, config.distance_interval)
+    route_skeleton_anchors = RouteSkeleton.filter_sparse_points(
+        smoothed_main_route, config.distance_interval)
 
     new_safe_areas = ConstructSafeArea.construct_safe_areas(
-        route_skeleton_ancors, grid_system.grid, config.decrease_factor, initialization_point, grid_system.max_timestamp)
+        route_skeleton_anchors, grid_system.grid, config.decrease_factor, initialization_point, grid_system.max_timestamp)
 
     return new_safe_areas
 

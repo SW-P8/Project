@@ -175,7 +175,6 @@ def test_filter_smooth_main_route_return_partial_new_route():
 def test_update_safe_area():
     # Arrange
     initialization_point = (1, 1)
-    old_smoothed_main_route = {(1, 1), (1, 1), (2, 1), (2, 2)}
     expected_anchor = (11, 0.5)
     safe_area = SafeArea.from_meta_data(expected_anchor, 10, 2, datetime.now())
 
@@ -187,7 +186,7 @@ def test_update_safe_area():
 
     # Act
     result = update_safe_area(safe_areas,
-                              initialization_point, old_smoothed_main_route)
+                              initialization_point)
 
     # Assert
     assert dict == type(result)
