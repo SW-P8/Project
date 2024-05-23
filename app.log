@@ -1,474 +1,1077 @@
 INFO:DTC.noise_correction:Safe-areas: dict_keys([(4566.56, 4468.02), (4114.31, 3785.89), (4641.48, 4990.39), (3643.35, 5220.66), (4522.39, 4440.78)]) have been removed in  0.00 seconds
-INFO:DTC.noise_correction:Safe-areas updated in  27.46 seconds
+INFO:DTC.noise_correction:Safe-areas updated in  18.50 seconds
 INFO:DTC.noise_correction:Created the safe-areas: dict_keys([(4645.17, 4981.5), (4571.0, 4468.5), (4517.9, 4441.7), (3642.0, 5219.5), (4118.75, 3785.0)])
 INFO:DTC.noise_correction:Number of remaining safe areas: 10829
 INFO:DTC.noise_correction:Safe-areas: dict_keys([(3578.77, 4948.81)]) have been removed in  0.00 seconds
-INFO:DTC.noise_correction:Safe-areas updated in  23.27 seconds
+INFO:DTC.noise_correction:Safe-areas updated in  18.18 seconds
 INFO:DTC.noise_correction:Created the safe-areas: dict_keys([(3572.75, 4952.5)])
 INFO:DTC.noise_correction:Number of remaining safe areas: 10833
 INFO:DTC.noise_correction:Safe-areas: dict_keys([(3863.99, 3787.9), (3859.65, 4040.46), (3899.45, 4029.24), (3808.49, 4021.41)]) have been removed in  0.00 seconds
-INFO:DTC.noise_correction:Safe-areas updated in  26.34 seconds
+INFO:DTC.noise_correction:Safe-areas updated in  18.50 seconds
 INFO:DTC.noise_correction:Created the safe-areas: dict_keys([(3865.0, 3784.5), (3858.5, 4046.0), (3897.0, 4024.75), (3812.0, 4022.5)])
 INFO:DTC.noise_correction:Number of remaining safe areas: 10830
 INFO:DTC.noise_correction:Safe-areas: dict_keys([(4275.83, 4361.38)]) have been removed in  0.00 seconds
-INFO:DTC.noise_correction:Safe-areas updated in  58.41 seconds
+INFO:DTC.noise_correction:Safe-areas updated in  18.34 seconds
 INFO:DTC.noise_correction:Created the safe-areas: dict_keys([(4277.5, 4364.5)])
 INFO:DTC.noise_correction:Number of remaining safe areas: 10833
 INFO:DTC.noise_correction:Safe-areas: dict_keys([(3374.35, 4984.71)]) have been removed in  0.00 seconds
-INFO:DTC.noise_correction:Safe-areas updated in  24.34 seconds
+INFO:DTC.noise_correction:Safe-areas updated in  18.69 seconds
 INFO:DTC.noise_correction:Created the safe-areas: dict_keys([(3370.5, 4984.5)])
 INFO:DTC.noise_correction:Number of remaining safe areas: 10833
 INFO:DTC.noise_correction:Safe-areas: dict_keys([(4279.5, 4503.71)]) have been removed in  0.00 seconds
-INFO:DTC.noise_correction:Safe-areas updated in  23.39 seconds
+INFO:DTC.noise_correction:Safe-areas updated in  18.03 seconds
 INFO:DTC.noise_correction:Created the safe-areas: dict_keys([(4281.0, 4500.5)])
 INFO:DTC.noise_correction:Number of remaining safe areas: 10833
 INFO:DTC.noise_correction:Safe-areas: dict_keys([(3684.9, 3620.98), (2975.47, 5222.88)]) have been removed in  0.00 seconds
-INFO:DTC.noise_correction:Safe-areas updated in  25.11 seconds
+INFO:DTC.noise_correction:Safe-areas updated in  18.34 seconds
 INFO:DTC.noise_correction:Created the safe-areas: dict_keys([(3690.0, 3621.0), (2980.0, 5228.5)])
 INFO:DTC.noise_correction:Number of remaining safe areas: 10832
 INFO:DTC.noise_correction:Safe-areas: dict_keys([(3733.3, 3390.4)]) have been removed in  0.00 seconds
-INFO:DTC.noise_correction:Safe-areas updated in  26.19 seconds
+INFO:DTC.noise_correction:Safe-areas updated in  18.88 seconds
 INFO:DTC.noise_correction:Created the safe-areas: dict_keys([(3736.5, 3387.0)])
 INFO:DTC.noise_correction:Number of remaining safe areas: 10833
 INFO:DTC.noise_correction:Safe-areas: dict_keys([(4347.9, 4535.22)]) have been removed in  0.00 seconds
-INFO:DTC.noise_correction:Safe-areas updated in  21.22 seconds
+INFO:DTC.noise_correction:Safe-areas updated in  17.80 seconds
 INFO:DTC.noise_correction:Created the safe-areas: dict_keys([])
 INFO:DTC.noise_correction:Number of remaining safe areas: 10833
 INFO:DTC.noise_correction:Safe-areas: dict_keys([(4664.88, 1048.94)]) have been removed in  0.00 seconds
-INFO:DTC.noise_correction:Safe-areas updated in  23.04 seconds
-INFO:DTC.noise_correction:Created the safe-areas: dict_keys([])
-INFO:DTC.noise_correction:Number of remaining safe areas: 10832
-INFO:DTC.noise_correction:Safe-areas: dict_keys([(3553.07, 5471.24)]) have been removed in  0.00 seconds
-INFO:DTC.noise_correction:Safe-areas updated in  22.09 seconds
-INFO:DTC.noise_correction:Created the safe-areas: dict_keys([(3555.0, 5473.0)])
-INFO:DTC.noise_correction:Number of remaining safe areas: 10831
-INFO:DTC.noise_correction:Safe-areas: dict_keys([(4882.65, 4874.08)]) have been removed in  0.00 seconds
-INFO:DTC.noise_correction:Safe-areas updated in  21.85 seconds
-INFO:DTC.noise_correction:Created the safe-areas: dict_keys([])
-INFO:DTC.noise_correction:Number of remaining safe areas: 10831
-INFO:DTC.noise_correction:Safe-areas: dict_keys([(5044.76, 4897.06), (5049.0, 4882.68), (4130.28, 4017.23)]) have been removed in  0.00 seconds
-INFO:DTC.noise_correction:Safe-areas updated in  26.14 seconds
-INFO:DTC.noise_correction:Created the safe-areas: dict_keys([(5050.0, 4872.5), (4129.0, 4019.5)])
-INFO:DTC.noise_correction:Number of remaining safe areas: 10828
-INFO:DTC.noise_correction:Safe-areas: dict_keys([(4449.9, 5358.29)]) have been removed in  0.00 seconds
-INFO:DTC.noise_correction:Safe-areas updated in  23.91 seconds
-INFO:DTC.noise_correction:Created the safe-areas: dict_keys([(4448.17, 5354.83)])
-INFO:DTC.noise_correction:Number of remaining safe areas: 10829
-INFO:DTC.noise_correction:Safe-areas: dict_keys([(3705.84, 4449.82)]) have been removed in  0.00 seconds
-INFO:DTC.noise_correction:Safe-areas updated in  22.56 seconds
-INFO:DTC.noise_correction:Created the safe-areas: dict_keys([(3705.0, 4448.0)])
-INFO:DTC.noise_correction:Number of remaining safe areas: 10829
-INFO:DTC.noise_correction:Safe-areas: dict_keys([(3171.73, 4992.06)]) have been removed in  0.00 seconds
-INFO:DTC.noise_correction:Safe-areas updated in  23.01 seconds
-INFO:DTC.noise_correction:Created the safe-areas: dict_keys([(3171.17, 4990.83)])
-INFO:DTC.noise_correction:Number of remaining safe areas: 10829
-INFO:DTC.noise_correction:Safe-areas: dict_keys([(5135.17, 1056.79)]) have been removed in  0.00 seconds
-INFO:DTC.noise_correction:Safe-areas updated in  22.43 seconds
-INFO:DTC.noise_correction:Created the safe-areas: dict_keys([])
-INFO:DTC.noise_correction:Number of remaining safe areas: 10829
-INFO:DTC.noise_correction:Safe-areas: dict_keys([(5039.74, 5747.49)]) have been removed in  0.00 seconds
-INFO:DTC.noise_correction:Safe-areas updated in  25.18 seconds
-INFO:DTC.noise_correction:Created the safe-areas: dict_keys([(5044.5, 5746.5)])
-INFO:DTC.noise_correction:Number of remaining safe areas: 10828
-INFO:DTC.noise_correction:Safe-areas: dict_keys([(3629.28, 5233.71)]) have been removed in  0.00 seconds
-INFO:DTC.noise_correction:Safe-areas updated in  25.65 seconds
-INFO:DTC.noise_correction:Created the safe-areas: dict_keys([(3634.5, 5237.0)])
-INFO:DTC.noise_correction:Number of remaining safe areas: 10828
-INFO:DTC.noise_correction:Safe-areas: dict_keys([(4636.62, 5465.95), (4403.42, 5233.04)]) have been removed in  0.00 seconds
-INFO:DTC.noise_correction:Safe-areas updated in  28.52 seconds
-INFO:DTC.noise_correction:Created the safe-areas: dict_keys([(4400.9, 5237.7), (4627.0, 5454.0)])
-INFO:DTC.noise_correction:Number of remaining safe areas: 10827
-INFO:DTC.noise_correction:Safe-areas: dict_keys([(3858.57, 4006.65), (2978.41, 4980.87)]) have been removed in  0.00 seconds
-INFO:DTC.noise_correction:Safe-areas updated in  25.14 seconds
-INFO:DTC.noise_correction:Created the safe-areas: dict_keys([(2975.5, 4981.17), (3860.5, 4011.5)])
-INFO:DTC.noise_correction:Number of remaining safe areas: 10827
-INFO:DTC.noise_correction:Safe-areas: dict_keys([(4736.84, 4952.58), (4929.64, 3787.73)]) have been removed in  0.00 seconds
-INFO:DTC.noise_correction:Safe-areas updated in  23.21 seconds
-INFO:DTC.noise_correction:Created the safe-areas: dict_keys([(4737.0, 4952.0)])
-INFO:DTC.noise_correction:Number of remaining safe areas: 10827
-INFO:DTC.noise_correction:Safe-areas: dict_keys([(3058.52, 5200.16)]) have been removed in  0.00 seconds
-INFO:DTC.noise_correction:Safe-areas updated in  24.20 seconds
-INFO:DTC.noise_correction:Created the safe-areas: dict_keys([(3062.5, 5200.17)])
-INFO:DTC.noise_correction:Number of remaining safe areas: 10827
-INFO:DTC.noise_correction:Safe-areas: dict_keys([(3576.96, 4836.65), (3849.54, 4207.03), (3874.72, 3565.61), (5286.61, 3795.82)]) have been removed in  0.00 seconds
-INFO:DTC.noise_correction:Safe-areas updated in  27.37 seconds
-INFO:DTC.noise_correction:Created the safe-areas: dict_keys([(5273.5, 3791.5), (3875.5, 3556.0), (3846.83, 4208.83), (5290.5, 3803.5), (3577.0, 4836.0)])
-INFO:DTC.noise_correction:Number of remaining safe areas: 10824
-INFO:DTC.noise_correction:Safe-areas: dict_keys([(5284.93, 4199.67)]) have been removed in  0.00 seconds
-INFO:DTC.noise_correction:Safe-areas updated in  22.34 seconds
-INFO:DTC.noise_correction:Created the safe-areas: dict_keys([])
-INFO:DTC.noise_correction:Number of remaining safe areas: 10828
-INFO:DTC.noise_correction:Safe-areas: dict_keys([(3804.46, 3003.88), (4339.45, 4025.18), (5024.31, 3902.93)]) have been removed in  0.00 seconds
-INFO:DTC.noise_correction:Safe-areas updated in  24.82 seconds
-INFO:DTC.noise_correction:Created the safe-areas: dict_keys([(4343.5, 4026.17), (3804.17, 3003.17), (5023.5, 3910.5)])
-INFO:DTC.noise_correction:Number of remaining safe areas: 10825
-INFO:DTC.noise_correction:Safe-areas: dict_keys([(3989.44, 3464.24), (3955.4, 3809.66), (3846.85, 4351.73), (3804.33, 2926.66)]) have been removed in  0.00 seconds
-INFO:DTC.noise_correction:Safe-areas updated in  27.82 seconds
-INFO:DTC.noise_correction:Created the safe-areas: dict_keys([(3846.5, 4355.0), (3983.5, 3460.5), (3806.0, 2930.0), (3952.5, 3808.0)])
-INFO:DTC.noise_correction:Number of remaining safe areas: 10824
-INFO:DTC.noise_correction:Safe-areas: dict_keys([(4138.63, 4191.63), (4339.64, 4375.12)]) have been removed in  0.00 seconds
-INFO:DTC.noise_correction:Safe-areas updated in  25.41 seconds
-INFO:DTC.noise_correction:Created the safe-areas: dict_keys([(4138.75, 4192.5), (4327.5, 4370.5)])
-INFO:DTC.noise_correction:Number of remaining safe areas: 10826
-INFO:DTC.noise_correction:Safe-areas: dict_keys([(5264.33, 3621.67), (4992.82, 4873.37)]) have been removed in  0.00 seconds
-INFO:DTC.noise_correction:Safe-areas updated in  29.40 seconds
-INFO:DTC.noise_correction:Created the safe-areas: dict_keys([(4991.5, 4873.5)])
-INFO:DTC.noise_correction:Number of remaining safe areas: 10826
-INFO:DTC.noise_correction:Safe-areas: dict_keys([(2984.35, 1125.34), (4814.74, 3954.71)]) have been removed in  0.00 seconds
-INFO:DTC.noise_correction:Safe-areas updated in  29.06 seconds
-INFO:DTC.noise_correction:Created the safe-areas: dict_keys([(4816.17, 3952.83), (2979.5, 1128.5)])
-INFO:DTC.noise_correction:Number of remaining safe areas: 10825
-INFO:DTC.noise_correction:Safe-areas: dict_keys([(4650.92, 5024.59), (4810.98, 4899.43), (5040.36, 4768.56), (2379.0, 2398.97)]) have been removed in  0.00 seconds
-INFO:DTC.noise_correction:Safe-areas updated in  27.34 seconds
-INFO:DTC.noise_correction:Created the safe-areas: dict_keys([(4806.5, 4892.5), (2377.17, 2396.5), (4649.5, 5026.0)])
-INFO:DTC.noise_correction:Number of remaining safe areas: 10823
-INFO:DTC.noise_correction:Safe-areas: dict_keys([(1798.3, 4182.73), (2761.97, 4785.66)]) have been removed in  0.00 seconds
-INFO:DTC.noise_correction:Safe-areas updated in  28.02 seconds
-INFO:DTC.noise_correction:Created the safe-areas: dict_keys([(1795.17, 4181.83), (2764.33, 4789.0)])
-INFO:DTC.noise_correction:Number of remaining safe areas: 10824
-INFO:DTC.noise_correction:Safe-areas: dict_keys([(3039.25, 3044.0)]) have been removed in  0.00 seconds
-INFO:DTC.noise_correction:Safe-areas updated in  25.21 seconds
-INFO:DTC.noise_correction:Created the safe-areas: dict_keys([(3042.83, 3044.17)])
-INFO:DTC.noise_correction:Number of remaining safe areas: 10825
-INFO:DTC.noise_correction:Safe-areas: dict_keys([(4336.25, 3482.72)]) have been removed in  0.00 seconds
-INFO:DTC.noise_correction:Safe-areas updated in  24.53 seconds
-INFO:DTC.noise_correction:Created the safe-areas: dict_keys([(4339.5, 3479.0)])
-INFO:DTC.noise_correction:Number of remaining safe areas: 10825
-INFO:DTC.noise_correction:Safe-areas: dict_keys([(4013.6, 3805.26), (4130.91, 3567.65), (5047.69, 3629.04), (5277.79, 3645.58)]) have been removed in  0.00 seconds
-INFO:DTC.noise_correction:Safe-areas updated in  30.11 seconds
-INFO:DTC.noise_correction:Created the safe-areas: dict_keys([(4013.83, 3801.17), (4132.5, 3568.83), (5280.5, 3644.75), (5048.0, 3626.0)])
-INFO:DTC.noise_correction:Number of remaining safe areas: 10822
-INFO:DTC.noise_correction:Safe-areas: dict_keys([(3202.62, 4164.02), (3419.11, 4153.49), (3466.6, 3620.62)]) have been removed in  0.00 seconds
-INFO:DTC.noise_correction:Safe-areas updated in  30.35 seconds
-INFO:DTC.noise_correction:Created the safe-areas: dict_keys([(3203.0, 4160.0), (3420.17, 4116.83), (3464.5, 3615.5)])
-INFO:DTC.noise_correction:Number of remaining safe areas: 10823
-INFO:DTC.noise_correction:Safe-areas: dict_keys([(4795.08, 3124.81)]) have been removed in  0.00 seconds
-INFO:DTC.noise_correction:Safe-areas updated in  24.35 seconds
-INFO:DTC.noise_correction:Created the safe-areas: dict_keys([(4784.0, 3127.0)])
-INFO:DTC.noise_correction:Number of remaining safe areas: 10825
-INFO:DTC.noise_correction:Safe-areas: dict_keys([(3869.12, 3635.48)]) have been removed in  0.00 seconds
-INFO:DTC.noise_correction:Safe-areas updated in  23.92 seconds
-INFO:DTC.noise_correction:Created the safe-areas: dict_keys([(3867.5, 3632.17)])
-INFO:DTC.noise_correction:Number of remaining safe areas: 10825
-INFO:DTC.noise_correction:Safe-areas: dict_keys([(3892.8, 4141.05), (4224.55, 4323.66), (4616.85, 5753.74), (4452.64, 5191.37)]) have been removed in  0.00 seconds
-INFO:DTC.noise_correction:Safe-areas updated in  31.10 seconds
-INFO:DTC.noise_correction:Created the safe-areas: dict_keys([(4624.5, 5754.5), (4230.5, 4323.9), (4454.17, 5191.83), (3893.67, 4146.67)])
-INFO:DTC.noise_correction:Number of remaining safe areas: 10822
-INFO:DTC.noise_correction:Safe-areas: dict_keys([(4799.43, 4575.76)]) have been removed in  0.00 seconds
-INFO:DTC.noise_correction:Safe-areas: dict_keys([(4566.56, 4468.02), (4114.31, 3785.89), (4641.48, 4990.39), (3643.35, 5220.66), (4522.39, 4440.78)]) have been removed in  0.00 seconds
-INFO:DTC.noise_correction:Safe-areas updated in  18.66 seconds
-INFO:DTC.noise_correction:Created the safe-areas: dict_keys([(4645.17, 4981.5), (4571.0, 4468.5), (4517.9, 4441.7), (3642.0, 5219.5), (4118.75, 3785.0)])
-INFO:DTC.noise_correction:Number of remaining safe areas: 10829
-INFO:DTC.noise_correction:Safe-areas: dict_keys([(3578.77, 4948.81)]) have been removed in  0.00 seconds
-INFO:DTC.noise_correction:Safe-areas updated in  18.82 seconds
-INFO:DTC.noise_correction:Created the safe-areas: dict_keys([(3572.75, 4952.5)])
-INFO:DTC.noise_correction:Number of remaining safe areas: 10833
-INFO:DTC.noise_correction:Safe-areas: dict_keys([(3863.99, 3787.9), (3859.65, 4040.46), (3899.45, 4029.24), (3808.49, 4021.41)]) have been removed in  0.00 seconds
-INFO:DTC.noise_correction:Safe-areas updated in  19.69 seconds
-INFO:DTC.noise_correction:Created the safe-areas: dict_keys([(3865.0, 3784.5), (3858.5, 4046.0), (3897.0, 4024.75), (3812.0, 4022.5)])
-INFO:DTC.noise_correction:Number of remaining safe areas: 10830
-INFO:DTC.noise_correction:Safe-areas: dict_keys([(4275.83, 4361.38)]) have been removed in  0.00 seconds
-INFO:DTC.noise_correction:Safe-areas updated in  18.86 seconds
-INFO:DTC.noise_correction:Created the safe-areas: dict_keys([(4277.5, 4364.5)])
-INFO:DTC.noise_correction:Number of remaining safe areas: 10833
-INFO:DTC.noise_correction:Safe-areas: dict_keys([(3374.35, 4984.71)]) have been removed in  0.00 seconds
-INFO:DTC.noise_correction:Safe-areas updated in  18.62 seconds
-INFO:DTC.noise_correction:Created the safe-areas: dict_keys([(3370.5, 4984.5)])
-INFO:DTC.noise_correction:Number of remaining safe areas: 10833
-INFO:DTC.noise_correction:Safe-areas: dict_keys([(4279.5, 4503.71)]) have been removed in  0.00 seconds
-INFO:DTC.noise_correction:Safe-areas updated in  18.54 seconds
-INFO:DTC.noise_correction:Created the safe-areas: dict_keys([(4281.0, 4500.5)])
-INFO:DTC.noise_correction:Number of remaining safe areas: 10833
-INFO:DTC.noise_correction:Safe-areas: dict_keys([(3684.9, 3620.98), (2975.47, 5222.88)]) have been removed in  0.00 seconds
-INFO:DTC.noise_correction:Safe-areas updated in  18.77 seconds
-INFO:DTC.noise_correction:Created the safe-areas: dict_keys([(3690.0, 3621.0), (2980.0, 5228.5)])
-INFO:DTC.noise_correction:Number of remaining safe areas: 10832
-INFO:DTC.noise_correction:Safe-areas: dict_keys([(3733.3, 3390.4)]) have been removed in  0.00 seconds
-INFO:DTC.noise_correction:Safe-areas updated in  19.29 seconds
-INFO:DTC.noise_correction:Created the safe-areas: dict_keys([(3736.5, 3387.0)])
-INFO:DTC.noise_correction:Number of remaining safe areas: 10833
-INFO:DTC.noise_correction:Safe-areas: dict_keys([(4347.9, 4535.22)]) have been removed in  0.00 seconds
-INFO:DTC.noise_correction:Safe-areas updated in  18.28 seconds
-INFO:DTC.noise_correction:Created the safe-areas: dict_keys([])
-INFO:DTC.noise_correction:Number of remaining safe areas: 10833
-INFO:DTC.noise_correction:Safe-areas: dict_keys([(4664.88, 1048.94)]) have been removed in  0.00 seconds
-INFO:DTC.noise_correction:Safe-areas updated in  18.99 seconds
-INFO:DTC.noise_correction:Created the safe-areas: dict_keys([])
-INFO:DTC.noise_correction:Number of remaining safe areas: 10832
-INFO:DTC.noise_correction:Safe-areas: dict_keys([(3553.07, 5471.24)]) have been removed in  0.00 seconds
-INFO:DTC.noise_correction:Safe-areas updated in  18.41 seconds
-INFO:DTC.noise_correction:Created the safe-areas: dict_keys([(3555.0, 5473.0)])
-INFO:DTC.noise_correction:Number of remaining safe areas: 10831
-INFO:DTC.noise_correction:Safe-areas: dict_keys([(4882.65, 4874.08)]) have been removed in  0.00 seconds
 INFO:DTC.noise_correction:Safe-areas updated in  18.38 seconds
 INFO:DTC.noise_correction:Created the safe-areas: dict_keys([])
+INFO:DTC.noise_correction:Number of remaining safe areas: 10832
+INFO:DTC.noise_correction:Safe-areas: dict_keys([(3553.07, 5471.24)]) have been removed in  0.00 seconds
+INFO:DTC.noise_correction:Safe-areas updated in  17.93 seconds
+INFO:DTC.noise_correction:Created the safe-areas: dict_keys([(3555.0, 5473.0)])
+INFO:DTC.noise_correction:Number of remaining safe areas: 10831
+INFO:DTC.noise_correction:Safe-areas: dict_keys([(4882.65, 4874.08)]) have been removed in  0.00 seconds
+INFO:DTC.noise_correction:Safe-areas updated in  17.91 seconds
+INFO:DTC.noise_correction:Created the safe-areas: dict_keys([])
 INFO:DTC.noise_correction:Number of remaining safe areas: 10831
 INFO:DTC.noise_correction:Safe-areas: dict_keys([(5044.76, 4897.06), (5049.0, 4882.68), (4130.28, 4017.23)]) have been removed in  0.00 seconds
-INFO:DTC.noise_correction:Safe-areas updated in  19.54 seconds
+INFO:DTC.noise_correction:Safe-areas updated in  18.59 seconds
 INFO:DTC.noise_correction:Created the safe-areas: dict_keys([(5050.0, 4872.5), (4129.0, 4019.5)])
 INFO:DTC.noise_correction:Number of remaining safe areas: 10828
 INFO:DTC.noise_correction:Safe-areas: dict_keys([(4449.9, 5358.29)]) have been removed in  0.00 seconds
-INFO:DTC.noise_correction:Safe-areas updated in  18.70 seconds
+INFO:DTC.noise_correction:Safe-areas updated in  18.12 seconds
 INFO:DTC.noise_correction:Created the safe-areas: dict_keys([(4448.17, 5354.83)])
 INFO:DTC.noise_correction:Number of remaining safe areas: 10829
 INFO:DTC.noise_correction:Safe-areas: dict_keys([(3705.84, 4449.82)]) have been removed in  0.00 seconds
-INFO:DTC.noise_correction:Safe-areas updated in  18.47 seconds
+INFO:DTC.noise_correction:Safe-areas updated in  18.02 seconds
 INFO:DTC.noise_correction:Created the safe-areas: dict_keys([(3705.0, 4448.0)])
 INFO:DTC.noise_correction:Number of remaining safe areas: 10829
 INFO:DTC.noise_correction:Safe-areas: dict_keys([(3171.73, 4992.06)]) have been removed in  0.00 seconds
-INFO:DTC.noise_correction:Safe-areas updated in  18.46 seconds
+INFO:DTC.noise_correction:Safe-areas updated in  17.94 seconds
 INFO:DTC.noise_correction:Created the safe-areas: dict_keys([(3171.17, 4990.83)])
 INFO:DTC.noise_correction:Number of remaining safe areas: 10829
 INFO:DTC.noise_correction:Safe-areas: dict_keys([(5135.17, 1056.79)]) have been removed in  0.00 seconds
-INFO:DTC.noise_correction:Safe-areas updated in  18.97 seconds
+INFO:DTC.noise_correction:Safe-areas updated in  18.42 seconds
 INFO:DTC.noise_correction:Created the safe-areas: dict_keys([])
 INFO:DTC.noise_correction:Number of remaining safe areas: 10829
 INFO:DTC.noise_correction:Safe-areas: dict_keys([(5039.74, 5747.49)]) have been removed in  0.00 seconds
-INFO:DTC.noise_correction:Safe-areas updated in  18.83 seconds
+INFO:DTC.noise_correction:Safe-areas updated in  18.66 seconds
 INFO:DTC.noise_correction:Created the safe-areas: dict_keys([(5044.5, 5746.5)])
 INFO:DTC.noise_correction:Number of remaining safe areas: 10828
 INFO:DTC.noise_correction:Safe-areas: dict_keys([(3629.28, 5233.71)]) have been removed in  0.00 seconds
-INFO:DTC.noise_correction:Safe-areas updated in  18.87 seconds
+INFO:DTC.noise_correction:Safe-areas updated in  18.05 seconds
 INFO:DTC.noise_correction:Created the safe-areas: dict_keys([(3634.5, 5237.0)])
 INFO:DTC.noise_correction:Number of remaining safe areas: 10828
 INFO:DTC.noise_correction:Safe-areas: dict_keys([(4636.62, 5465.95), (4403.42, 5233.04)]) have been removed in  0.00 seconds
-INFO:DTC.noise_correction:Safe-areas updated in  19.43 seconds
+INFO:DTC.noise_correction:Safe-areas updated in  18.63 seconds
 INFO:DTC.noise_correction:Created the safe-areas: dict_keys([(4400.9, 5237.7), (4627.0, 5454.0)])
 INFO:DTC.noise_correction:Number of remaining safe areas: 10827
 INFO:DTC.noise_correction:Safe-areas: dict_keys([(3858.57, 4006.65), (2978.41, 4980.87)]) have been removed in  0.00 seconds
-INFO:DTC.noise_correction:Safe-areas updated in  19.23 seconds
+INFO:DTC.noise_correction:Safe-areas updated in  18.67 seconds
 INFO:DTC.noise_correction:Created the safe-areas: dict_keys([(2975.5, 4981.17), (3860.5, 4011.5)])
 INFO:DTC.noise_correction:Number of remaining safe areas: 10827
 INFO:DTC.noise_correction:Safe-areas: dict_keys([(4736.84, 4952.58), (4929.64, 3787.73)]) have been removed in  0.00 seconds
-INFO:DTC.noise_correction:Safe-areas updated in  19.02 seconds
+INFO:DTC.noise_correction:Safe-areas updated in  18.74 seconds
 INFO:DTC.noise_correction:Created the safe-areas: dict_keys([(4737.0, 4952.0)])
 INFO:DTC.noise_correction:Number of remaining safe areas: 10827
 INFO:DTC.noise_correction:Safe-areas: dict_keys([(3058.52, 5200.16)]) have been removed in  0.00 seconds
-INFO:DTC.noise_correction:Safe-areas updated in  19.06 seconds
+INFO:DTC.noise_correction:Safe-areas updated in  18.42 seconds
 INFO:DTC.noise_correction:Created the safe-areas: dict_keys([(3062.5, 5200.17)])
 INFO:DTC.noise_correction:Number of remaining safe areas: 10827
 INFO:DTC.noise_correction:Safe-areas: dict_keys([(3576.96, 4836.65), (3849.54, 4207.03), (3874.72, 3565.61), (5286.61, 3795.82)]) have been removed in  0.00 seconds
-INFO:DTC.noise_correction:Safe-areas updated in  19.90 seconds
+INFO:DTC.noise_correction:Safe-areas updated in  18.26 seconds
 INFO:DTC.noise_correction:Created the safe-areas: dict_keys([(5273.5, 3791.5), (3875.5, 3556.0), (3846.83, 4208.83), (5290.5, 3803.5), (3577.0, 4836.0)])
 INFO:DTC.noise_correction:Number of remaining safe areas: 10824
 INFO:DTC.noise_correction:Safe-areas: dict_keys([(5284.93, 4199.67)]) have been removed in  0.00 seconds
-INFO:DTC.noise_correction:Safe-areas updated in  18.63 seconds
+INFO:DTC.noise_correction:Safe-areas updated in  18.11 seconds
 INFO:DTC.noise_correction:Created the safe-areas: dict_keys([])
 INFO:DTC.noise_correction:Number of remaining safe areas: 10828
 INFO:DTC.noise_correction:Safe-areas: dict_keys([(3804.46, 3003.88), (4339.45, 4025.18), (5024.31, 3902.93)]) have been removed in  0.00 seconds
-INFO:DTC.noise_correction:Safe-areas updated in  20.05 seconds
+INFO:DTC.noise_correction:Safe-areas updated in  18.41 seconds
 INFO:DTC.noise_correction:Created the safe-areas: dict_keys([(4343.5, 4026.17), (3804.17, 3003.17), (5023.5, 3910.5)])
 INFO:DTC.noise_correction:Number of remaining safe areas: 10825
 INFO:DTC.noise_correction:Safe-areas: dict_keys([(3989.44, 3464.24), (3955.4, 3809.66), (3846.85, 4351.73), (3804.33, 2926.66)]) have been removed in  0.00 seconds
-INFO:DTC.noise_correction:Safe-areas updated in  19.87 seconds
+INFO:DTC.noise_correction:Safe-areas updated in  18.45 seconds
+INFO:DTC.noise_correction:Created the safe-areas: dict_keys([(3846.5, 4355.0), (3983.5, 3460.5), (3806.0, 2930.0), (3952.5, 3808.0)])
+INFO:DTC.noise_correction:Number of remaining safe areas: 10824
+INFO:DTC.noise_correction:Safe-areas: dict_keys([(4566.56, 4468.02), (4114.31, 3785.89), (4641.48, 4990.39), (3643.35, 5220.66), (4522.39, 4440.78)]) have been removed in  0.00 seconds
+INFO:DTC.noise_correction:Safe-areas updated in  18.40 seconds
+INFO:DTC.noise_correction:Created the safe-areas: dict_keys([(4645.17, 4981.5), (4571.0, 4468.5), (4517.9, 4441.7), (3642.0, 5219.5), (4118.75, 3785.0)])
+INFO:DTC.noise_correction:Number of remaining safe areas: 10829
+INFO:DTC.noise_correction:Safe-areas: dict_keys([(3578.77, 4948.81)]) have been removed in  0.00 seconds
+INFO:DTC.noise_correction:Safe-areas updated in  18.59 seconds
+INFO:DTC.noise_correction:Created the safe-areas: dict_keys([(3572.75, 4952.5)])
+INFO:DTC.noise_correction:Number of remaining safe areas: 10833
+INFO:DTC.noise_correction:Safe-areas: dict_keys([(3863.99, 3787.9), (3859.65, 4040.46), (3899.45, 4029.24), (3808.49, 4021.41)]) have been removed in  0.00 seconds
+INFO:DTC.noise_correction:Safe-areas updated in  18.71 seconds
+INFO:DTC.noise_correction:Created the safe-areas: dict_keys([(3865.0, 3784.5), (3858.5, 4046.0), (3897.0, 4024.75), (3812.0, 4022.5)])
+INFO:DTC.noise_correction:Number of remaining safe areas: 10830
+INFO:DTC.noise_correction:Safe-areas: dict_keys([(4275.83, 4361.38)]) have been removed in  0.00 seconds
+INFO:DTC.noise_correction:Safe-areas updated in  18.12 seconds
+INFO:DTC.noise_correction:Created the safe-areas: dict_keys([(4277.5, 4364.5)])
+INFO:DTC.noise_correction:Number of remaining safe areas: 10833
+INFO:DTC.noise_correction:Safe-areas: dict_keys([(3374.35, 4984.71)]) have been removed in  0.00 seconds
+INFO:DTC.noise_correction:Safe-areas updated in  18.17 seconds
+INFO:DTC.noise_correction:Created the safe-areas: dict_keys([(3370.5, 4984.5)])
+INFO:DTC.noise_correction:Number of remaining safe areas: 10833
+INFO:DTC.noise_correction:Safe-areas: dict_keys([(4279.5, 4503.71)]) have been removed in  0.00 seconds
+INFO:DTC.noise_correction:Safe-areas updated in  17.99 seconds
+INFO:DTC.noise_correction:Created the safe-areas: dict_keys([(4281.0, 4500.5)])
+INFO:DTC.noise_correction:Number of remaining safe areas: 10833
+INFO:DTC.noise_correction:Safe-areas: dict_keys([(3684.9, 3620.98), (2975.47, 5222.88)]) have been removed in  0.00 seconds
+INFO:DTC.noise_correction:Safe-areas updated in  19.04 seconds
+INFO:DTC.noise_correction:Created the safe-areas: dict_keys([(3690.0, 3621.0), (2980.0, 5228.5)])
+INFO:DTC.noise_correction:Number of remaining safe areas: 10832
+INFO:DTC.noise_correction:Safe-areas: dict_keys([(3733.3, 3390.4)]) have been removed in  0.00 seconds
+INFO:DTC.noise_correction:Safe-areas updated in  19.09 seconds
+INFO:DTC.noise_correction:Created the safe-areas: dict_keys([(3736.5, 3387.0)])
+INFO:DTC.noise_correction:Number of remaining safe areas: 10833
+INFO:DTC.noise_correction:Safe-areas: dict_keys([(4347.9, 4535.22)]) have been removed in  0.00 seconds
+INFO:DTC.noise_correction:Safe-areas updated in  17.79 seconds
+INFO:DTC.noise_correction:Created the safe-areas: dict_keys([])
+INFO:DTC.noise_correction:Number of remaining safe areas: 10833
+INFO:DTC.noise_correction:Safe-areas: dict_keys([(4664.88, 1048.94)]) have been removed in  0.00 seconds
+INFO:DTC.noise_correction:Safe-areas updated in  18.51 seconds
+INFO:DTC.noise_correction:Created the safe-areas: dict_keys([])
+INFO:DTC.noise_correction:Number of remaining safe areas: 10832
+INFO:DTC.noise_correction:Safe-areas: dict_keys([(3553.07, 5471.24)]) have been removed in  0.00 seconds
+INFO:DTC.noise_correction:Safe-areas updated in  18.09 seconds
+INFO:DTC.noise_correction:Created the safe-areas: dict_keys([(3555.0, 5473.0)])
+INFO:DTC.noise_correction:Number of remaining safe areas: 10831
+INFO:DTC.noise_correction:Safe-areas: dict_keys([(4882.65, 4874.08)]) have been removed in  0.00 seconds
+INFO:DTC.noise_correction:Safe-areas updated in  17.88 seconds
+INFO:DTC.noise_correction:Created the safe-areas: dict_keys([])
+INFO:DTC.noise_correction:Number of remaining safe areas: 10831
+INFO:DTC.noise_correction:Safe-areas: dict_keys([(5044.76, 4897.06), (5049.0, 4882.68), (4130.28, 4017.23)]) have been removed in  0.00 seconds
+INFO:DTC.noise_correction:Safe-areas updated in  18.34 seconds
+INFO:DTC.noise_correction:Created the safe-areas: dict_keys([(5050.0, 4872.5), (4129.0, 4019.5)])
+INFO:DTC.noise_correction:Number of remaining safe areas: 10828
+INFO:DTC.noise_correction:Safe-areas: dict_keys([(4449.9, 5358.29)]) have been removed in  0.00 seconds
+INFO:DTC.noise_correction:Safe-areas updated in  18.08 seconds
+INFO:DTC.noise_correction:Created the safe-areas: dict_keys([(4448.17, 5354.83)])
+INFO:DTC.noise_correction:Number of remaining safe areas: 10829
+INFO:DTC.noise_correction:Safe-areas: dict_keys([(3705.84, 4449.82)]) have been removed in  0.00 seconds
+INFO:DTC.noise_correction:Safe-areas updated in  18.27 seconds
+INFO:DTC.noise_correction:Created the safe-areas: dict_keys([(3705.0, 4448.0)])
+INFO:DTC.noise_correction:Number of remaining safe areas: 10829
+INFO:DTC.noise_correction:Safe-areas: dict_keys([(3171.73, 4992.06)]) have been removed in  0.00 seconds
+INFO:DTC.noise_correction:Safe-areas updated in  18.43 seconds
+INFO:DTC.noise_correction:Created the safe-areas: dict_keys([(3171.17, 4990.83)])
+INFO:DTC.noise_correction:Number of remaining safe areas: 10829
+INFO:DTC.noise_correction:Safe-areas: dict_keys([(5135.17, 1056.79)]) have been removed in  0.00 seconds
+INFO:DTC.noise_correction:Safe-areas updated in  18.47 seconds
+INFO:DTC.noise_correction:Created the safe-areas: dict_keys([])
+INFO:DTC.noise_correction:Number of remaining safe areas: 10829
+INFO:DTC.noise_correction:Safe-areas: dict_keys([(5039.74, 5747.49)]) have been removed in  0.00 seconds
+INFO:DTC.noise_correction:Safe-areas updated in  18.36 seconds
+INFO:DTC.noise_correction:Created the safe-areas: dict_keys([(5044.5, 5746.5)])
+INFO:DTC.noise_correction:Number of remaining safe areas: 10828
+INFO:DTC.noise_correction:Safe-areas: dict_keys([(3629.28, 5233.71)]) have been removed in  0.00 seconds
+INFO:DTC.noise_correction:Safe-areas updated in  18.13 seconds
+INFO:DTC.noise_correction:Created the safe-areas: dict_keys([(3634.5, 5237.0)])
+INFO:DTC.noise_correction:Number of remaining safe areas: 10828
+INFO:DTC.noise_correction:Safe-areas: dict_keys([(4636.62, 5465.95), (4403.42, 5233.04)]) have been removed in  0.00 seconds
+INFO:DTC.noise_correction:Safe-areas updated in  18.67 seconds
+INFO:DTC.noise_correction:Created the safe-areas: dict_keys([(4400.9, 5237.7), (4627.0, 5454.0)])
+INFO:DTC.noise_correction:Number of remaining safe areas: 10827
+INFO:DTC.noise_correction:Safe-areas: dict_keys([(3858.57, 4006.65), (2978.41, 4980.87)]) have been removed in  0.00 seconds
+INFO:DTC.noise_correction:Safe-areas updated in  18.51 seconds
+INFO:DTC.noise_correction:Created the safe-areas: dict_keys([(2975.5, 4981.17), (3860.5, 4011.5)])
+INFO:DTC.noise_correction:Number of remaining safe areas: 10827
+INFO:DTC.noise_correction:Safe-areas: dict_keys([(4736.84, 4952.58), (4929.64, 3787.73)]) have been removed in  0.00 seconds
+INFO:DTC.noise_correction:Safe-areas updated in  17.99 seconds
+INFO:DTC.noise_correction:Created the safe-areas: dict_keys([(4737.0, 4952.0)])
+INFO:DTC.noise_correction:Number of remaining safe areas: 10827
+INFO:DTC.noise_correction:Safe-areas: dict_keys([(3058.52, 5200.16)]) have been removed in  0.00 seconds
+INFO:DTC.noise_correction:Safe-areas updated in  18.02 seconds
+INFO:DTC.noise_correction:Created the safe-areas: dict_keys([(3062.5, 5200.17)])
+INFO:DTC.noise_correction:Number of remaining safe areas: 10827
+INFO:DTC.noise_correction:Safe-areas: dict_keys([(3576.96, 4836.65), (3849.54, 4207.03), (3874.72, 3565.61), (5286.61, 3795.82)]) have been removed in  0.00 seconds
+INFO:DTC.noise_correction:Safe-areas updated in  18.10 seconds
+INFO:DTC.noise_correction:Created the safe-areas: dict_keys([(5273.5, 3791.5), (3875.5, 3556.0), (3846.83, 4208.83), (5290.5, 3803.5), (3577.0, 4836.0)])
+INFO:DTC.noise_correction:Number of remaining safe areas: 10824
+INFO:DTC.noise_correction:Safe-areas: dict_keys([(5284.93, 4199.67)]) have been removed in  0.00 seconds
+INFO:DTC.noise_correction:Safe-areas updated in  17.80 seconds
+INFO:DTC.noise_correction:Created the safe-areas: dict_keys([])
+INFO:DTC.noise_correction:Number of remaining safe areas: 10828
+INFO:DTC.noise_correction:Safe-areas: dict_keys([(3804.46, 3003.88), (4339.45, 4025.18), (5024.31, 3902.93)]) have been removed in  0.00 seconds
+INFO:DTC.noise_correction:Safe-areas updated in  18.20 seconds
+INFO:DTC.noise_correction:Created the safe-areas: dict_keys([(4343.5, 4026.17), (3804.17, 3003.17), (5023.5, 3910.5)])
+INFO:DTC.noise_correction:Number of remaining safe areas: 10825
+INFO:DTC.noise_correction:Safe-areas: dict_keys([(3989.44, 3464.24), (3955.4, 3809.66), (3846.85, 4351.73), (3804.33, 2926.66)]) have been removed in  0.00 seconds
+INFO:DTC.noise_correction:Safe-areas updated in  18.23 seconds
+INFO:DTC.noise_correction:Created the safe-areas: dict_keys([(3846.5, 4355.0), (3983.5, 3460.5), (3806.0, 2930.0), (3952.5, 3808.0)])
+INFO:DTC.noise_correction:Number of remaining safe areas: 10824
+INFO:DTC.noise_correction:Safe-areas: dict_keys([(4566.56, 4468.02), (4114.31, 3785.89), (4641.48, 4990.39), (3643.35, 5220.66), (4522.39, 4440.78)]) have been removed in  0.00 seconds
+INFO:DTC.noise_correction:Safe-areas updated in  18.38 seconds
+INFO:DTC.noise_correction:Created the safe-areas: dict_keys([(4645.17, 4981.5), (4571.0, 4468.5), (4517.9, 4441.7), (3642.0, 5219.5), (4118.75, 3785.0)])
+INFO:DTC.noise_correction:Number of remaining safe areas: 10829
+INFO:DTC.noise_correction:Safe-areas: dict_keys([(3578.77, 4948.81)]) have been removed in  0.00 seconds
+INFO:DTC.noise_correction:Safe-areas updated in  18.42 seconds
+INFO:DTC.noise_correction:Created the safe-areas: dict_keys([(3572.75, 4952.5)])
+INFO:DTC.noise_correction:Number of remaining safe areas: 10833
+INFO:DTC.noise_correction:Safe-areas: dict_keys([(3863.99, 3787.9), (3859.65, 4040.46), (3899.45, 4029.24), (3808.49, 4021.41)]) have been removed in  0.00 seconds
+INFO:DTC.noise_correction:Safe-areas updated in  19.56 seconds
+INFO:DTC.noise_correction:Created the safe-areas: dict_keys([(3865.0, 3784.5), (3858.5, 4046.0), (3897.0, 4024.75), (3812.0, 4022.5)])
+INFO:DTC.noise_correction:Number of remaining safe areas: 10830
+INFO:DTC.noise_correction:Safe-areas: dict_keys([(4275.83, 4361.38)]) have been removed in  0.00 seconds
+INFO:DTC.noise_correction:Safe-areas updated in  20.09 seconds
+INFO:DTC.noise_correction:Created the safe-areas: dict_keys([(4277.5, 4364.5)])
+INFO:DTC.noise_correction:Number of remaining safe areas: 10833
+INFO:DTC.noise_correction:Safe-areas: dict_keys([(3374.35, 4984.71)]) have been removed in  0.00 seconds
+INFO:DTC.noise_correction:Safe-areas updated in  19.11 seconds
+INFO:DTC.noise_correction:Created the safe-areas: dict_keys([(3370.5, 4984.5)])
+INFO:DTC.noise_correction:Number of remaining safe areas: 10833
+INFO:DTC.noise_correction:Safe-areas: dict_keys([(4279.5, 4503.71)]) have been removed in  0.00 seconds
+INFO:DTC.noise_correction:Safe-areas updated in  18.30 seconds
+INFO:DTC.noise_correction:Created the safe-areas: dict_keys([(4281.0, 4500.5)])
+INFO:DTC.noise_correction:Number of remaining safe areas: 10833
+INFO:DTC.noise_correction:Safe-areas: dict_keys([(3684.9, 3620.98), (2975.47, 5222.88)]) have been removed in  0.00 seconds
+INFO:DTC.noise_correction:Safe-areas updated in  18.43 seconds
+INFO:DTC.noise_correction:Created the safe-areas: dict_keys([(3690.0, 3621.0), (2980.0, 5228.5)])
+INFO:DTC.noise_correction:Number of remaining safe areas: 10832
+INFO:DTC.noise_correction:Safe-areas: dict_keys([(3733.3, 3390.4)]) have been removed in  0.00 seconds
+INFO:DTC.noise_correction:Safe-areas updated in  18.89 seconds
+INFO:DTC.noise_correction:Created the safe-areas: dict_keys([(3736.5, 3387.0)])
+INFO:DTC.noise_correction:Number of remaining safe areas: 10833
+INFO:DTC.noise_correction:Safe-areas: dict_keys([(4347.9, 4535.22)]) have been removed in  0.00 seconds
+INFO:DTC.noise_correction:Safe-areas updated in  18.61 seconds
+INFO:DTC.noise_correction:Created the safe-areas: dict_keys([])
+INFO:DTC.noise_correction:Number of remaining safe areas: 10833
+INFO:DTC.noise_correction:Safe-areas: dict_keys([(4664.88, 1048.94)]) have been removed in  0.00 seconds
+INFO:DTC.noise_correction:Safe-areas updated in  18.53 seconds
+INFO:DTC.noise_correction:Created the safe-areas: dict_keys([])
+INFO:DTC.noise_correction:Number of remaining safe areas: 10832
+INFO:DTC.noise_correction:Safe-areas: dict_keys([(3553.07, 5471.24)]) have been removed in  0.00 seconds
+INFO:DTC.noise_correction:Safe-areas updated in  18.69 seconds
+INFO:DTC.noise_correction:Created the safe-areas: dict_keys([(3555.0, 5473.0)])
+INFO:DTC.noise_correction:Number of remaining safe areas: 10831
+INFO:DTC.noise_correction:Safe-areas: dict_keys([(4882.65, 4874.08)]) have been removed in  0.00 seconds
+INFO:DTC.noise_correction:Safe-areas updated in  18.18 seconds
+INFO:DTC.noise_correction:Created the safe-areas: dict_keys([])
+INFO:DTC.noise_correction:Number of remaining safe areas: 10831
+INFO:DTC.noise_correction:Safe-areas: dict_keys([(5044.76, 4897.06), (5049.0, 4882.68), (4130.28, 4017.23)]) have been removed in  0.00 seconds
+INFO:DTC.noise_correction:Safe-areas updated in  18.61 seconds
+INFO:DTC.noise_correction:Created the safe-areas: dict_keys([(5050.0, 4872.5), (4129.0, 4019.5)])
+INFO:DTC.noise_correction:Number of remaining safe areas: 10828
+INFO:DTC.noise_correction:Safe-areas: dict_keys([(4449.9, 5358.29)]) have been removed in  0.00 seconds
+INFO:DTC.noise_correction:Safe-areas updated in  18.25 seconds
+INFO:DTC.noise_correction:Created the safe-areas: dict_keys([(4448.17, 5354.83)])
+INFO:DTC.noise_correction:Number of remaining safe areas: 10829
+INFO:DTC.noise_correction:Safe-areas: dict_keys([(3705.84, 4449.82)]) have been removed in  0.00 seconds
+INFO:DTC.noise_correction:Safe-areas updated in  18.34 seconds
+INFO:DTC.noise_correction:Created the safe-areas: dict_keys([(3705.0, 4448.0)])
+INFO:DTC.noise_correction:Number of remaining safe areas: 10829
+INFO:DTC.noise_correction:Safe-areas: dict_keys([(3171.73, 4992.06)]) have been removed in  0.00 seconds
+INFO:DTC.noise_correction:Safe-areas updated in  18.21 seconds
+INFO:DTC.noise_correction:Created the safe-areas: dict_keys([(3171.17, 4990.83)])
+INFO:DTC.noise_correction:Number of remaining safe areas: 10829
+INFO:DTC.noise_correction:Safe-areas: dict_keys([(5135.17, 1056.79)]) have been removed in  0.00 seconds
+INFO:DTC.noise_correction:Safe-areas updated in  18.63 seconds
+INFO:DTC.noise_correction:Created the safe-areas: dict_keys([])
+INFO:DTC.noise_correction:Number of remaining safe areas: 10829
+INFO:DTC.noise_correction:Safe-areas: dict_keys([(5039.74, 5747.49)]) have been removed in  0.00 seconds
+INFO:DTC.noise_correction:Safe-areas updated in  18.53 seconds
+INFO:DTC.noise_correction:Created the safe-areas: dict_keys([(5044.5, 5746.5)])
+INFO:DTC.noise_correction:Number of remaining safe areas: 10828
+INFO:DTC.noise_correction:Safe-areas: dict_keys([(3629.28, 5233.71)]) have been removed in  0.00 seconds
+INFO:DTC.noise_correction:Safe-areas updated in  18.08 seconds
+INFO:DTC.noise_correction:Created the safe-areas: dict_keys([(3634.5, 5237.0)])
+INFO:DTC.noise_correction:Number of remaining safe areas: 10828
+INFO:DTC.noise_correction:Safe-areas: dict_keys([(4636.62, 5465.95), (4403.42, 5233.04)]) have been removed in  0.00 seconds
+INFO:DTC.noise_correction:Safe-areas updated in  19.25 seconds
+INFO:DTC.noise_correction:Created the safe-areas: dict_keys([(4400.9, 5237.7), (4627.0, 5454.0)])
+INFO:DTC.noise_correction:Number of remaining safe areas: 10827
+INFO:DTC.noise_correction:Safe-areas: dict_keys([(3858.57, 4006.65), (2978.41, 4980.87)]) have been removed in  0.00 seconds
+INFO:DTC.noise_correction:Safe-areas updated in  19.16 seconds
+INFO:DTC.noise_correction:Created the safe-areas: dict_keys([(2975.5, 4981.17), (3860.5, 4011.5)])
+INFO:DTC.noise_correction:Number of remaining safe areas: 10827
+INFO:DTC.noise_correction:Safe-areas: dict_keys([(4736.84, 4952.58), (4929.64, 3787.73)]) have been removed in  0.00 seconds
+INFO:DTC.noise_correction:Safe-areas updated in  19.33 seconds
+INFO:DTC.noise_correction:Created the safe-areas: dict_keys([(4737.0, 4952.0)])
+INFO:DTC.noise_correction:Number of remaining safe areas: 10827
+INFO:DTC.noise_correction:Safe-areas: dict_keys([(3058.52, 5200.16)]) have been removed in  0.00 seconds
+INFO:DTC.noise_correction:Safe-areas updated in  19.36 seconds
+INFO:DTC.noise_correction:Created the safe-areas: dict_keys([(3062.5, 5200.17)])
+INFO:DTC.noise_correction:Number of remaining safe areas: 10827
+INFO:DTC.noise_correction:Safe-areas: dict_keys([(3576.96, 4836.65), (3849.54, 4207.03), (3874.72, 3565.61), (5286.61, 3795.82)]) have been removed in  0.00 seconds
+INFO:DTC.noise_correction:Safe-areas updated in  18.79 seconds
+INFO:DTC.noise_correction:Created the safe-areas: dict_keys([(5273.5, 3791.5), (3875.5, 3556.0), (3846.83, 4208.83), (5290.5, 3803.5), (3577.0, 4836.0)])
+INFO:DTC.noise_correction:Number of remaining safe areas: 10824
+INFO:DTC.noise_correction:Safe-areas: dict_keys([(5284.93, 4199.67)]) have been removed in  0.00 seconds
+INFO:DTC.noise_correction:Safe-areas updated in  18.60 seconds
+INFO:DTC.noise_correction:Created the safe-areas: dict_keys([])
+INFO:DTC.noise_correction:Number of remaining safe areas: 10828
+INFO:DTC.noise_correction:Safe-areas: dict_keys([(3804.46, 3003.88), (4339.45, 4025.18), (5024.31, 3902.93)]) have been removed in  0.00 seconds
+INFO:DTC.noise_correction:Safe-areas updated in  19.15 seconds
+INFO:DTC.noise_correction:Created the safe-areas: dict_keys([(4343.5, 4026.17), (3804.17, 3003.17), (5023.5, 3910.5)])
+INFO:DTC.noise_correction:Number of remaining safe areas: 10825
+INFO:DTC.noise_correction:Safe-areas: dict_keys([(3989.44, 3464.24), (3955.4, 3809.66), (3846.85, 4351.73), (3804.33, 2926.66)]) have been removed in  0.00 seconds
+INFO:DTC.noise_correction:Safe-areas updated in  20.12 seconds
 INFO:DTC.noise_correction:Created the safe-areas: dict_keys([(3846.5, 4355.0), (3983.5, 3460.5), (3806.0, 2930.0), (3952.5, 3808.0)])
 INFO:DTC.noise_correction:Number of remaining safe areas: 10824
 INFO:DTC.noise_correction:Safe-areas: dict_keys([(4138.63, 4191.63), (4339.64, 4375.12)]) have been removed in  0.00 seconds
-INFO:DTC.noise_correction:Safe-areas updated in  19.28 seconds
+INFO:DTC.noise_correction:Safe-areas updated in  19.31 seconds
 INFO:DTC.noise_correction:Created the safe-areas: dict_keys([(4138.75, 4192.5), (4327.5, 4370.5)])
 INFO:DTC.noise_correction:Number of remaining safe areas: 10826
 INFO:DTC.noise_correction:Safe-areas: dict_keys([(5264.33, 3621.67), (4992.82, 4873.37)]) have been removed in  0.00 seconds
-INFO:DTC.noise_correction:Safe-areas updated in  20.26 seconds
+INFO:DTC.noise_correction:Safe-areas updated in  19.11 seconds
 INFO:DTC.noise_correction:Created the safe-areas: dict_keys([(4991.5, 4873.5)])
 INFO:DTC.noise_correction:Number of remaining safe areas: 10826
 INFO:DTC.noise_correction:Safe-areas: dict_keys([(2984.35, 1125.34), (4814.74, 3954.71)]) have been removed in  0.00 seconds
-INFO:DTC.noise_correction:Safe-areas updated in  19.82 seconds
+INFO:DTC.noise_correction:Safe-areas updated in  18.86 seconds
 INFO:DTC.noise_correction:Created the safe-areas: dict_keys([(4816.17, 3952.83), (2979.5, 1128.5)])
 INFO:DTC.noise_correction:Number of remaining safe areas: 10825
 INFO:DTC.noise_correction:Safe-areas: dict_keys([(4650.92, 5024.59), (4810.98, 4899.43), (5040.36, 4768.56), (2379.0, 2398.97)]) have been removed in  0.00 seconds
-INFO:DTC.noise_correction:Safe-areas updated in  19.53 seconds
+INFO:DTC.noise_correction:Safe-areas updated in  18.65 seconds
 INFO:DTC.noise_correction:Created the safe-areas: dict_keys([(4806.5, 4892.5), (2377.17, 2396.5), (4649.5, 5026.0)])
 INFO:DTC.noise_correction:Number of remaining safe areas: 10823
 INFO:DTC.noise_correction:Safe-areas: dict_keys([(1798.3, 4182.73), (2761.97, 4785.66)]) have been removed in  0.00 seconds
-INFO:DTC.noise_correction:Safe-areas updated in  20.01 seconds
+INFO:DTC.noise_correction:Safe-areas updated in  18.47 seconds
 INFO:DTC.noise_correction:Created the safe-areas: dict_keys([(1795.17, 4181.83), (2764.33, 4789.0)])
 INFO:DTC.noise_correction:Number of remaining safe areas: 10824
 INFO:DTC.noise_correction:Safe-areas: dict_keys([(3039.25, 3044.0)]) have been removed in  0.00 seconds
-INFO:DTC.noise_correction:Safe-areas updated in  19.48 seconds
+INFO:DTC.noise_correction:Safe-areas updated in  18.25 seconds
 INFO:DTC.noise_correction:Created the safe-areas: dict_keys([(3042.83, 3044.17)])
 INFO:DTC.noise_correction:Number of remaining safe areas: 10825
 INFO:DTC.noise_correction:Safe-areas: dict_keys([(4336.25, 3482.72)]) have been removed in  0.00 seconds
-INFO:DTC.noise_correction:Safe-areas updated in  18.81 seconds
+INFO:DTC.noise_correction:Safe-areas updated in  18.34 seconds
 INFO:DTC.noise_correction:Created the safe-areas: dict_keys([(4339.5, 3479.0)])
 INFO:DTC.noise_correction:Number of remaining safe areas: 10825
 INFO:DTC.noise_correction:Safe-areas: dict_keys([(4013.6, 3805.26), (4130.91, 3567.65), (5047.69, 3629.04), (5277.79, 3645.58)]) have been removed in  0.00 seconds
-INFO:DTC.noise_correction:Safe-areas updated in  20.41 seconds
+INFO:DTC.noise_correction:Safe-areas updated in  18.68 seconds
 INFO:DTC.noise_correction:Created the safe-areas: dict_keys([(4013.83, 3801.17), (4132.5, 3568.83), (5280.5, 3644.75), (5048.0, 3626.0)])
 INFO:DTC.noise_correction:Number of remaining safe areas: 10822
 INFO:DTC.noise_correction:Safe-areas: dict_keys([(3202.62, 4164.02), (3419.11, 4153.49), (3466.6, 3620.62)]) have been removed in  0.00 seconds
-INFO:DTC.noise_correction:Safe-areas updated in  20.66 seconds
+INFO:DTC.noise_correction:Safe-areas updated in  18.66 seconds
 INFO:DTC.noise_correction:Created the safe-areas: dict_keys([(3203.0, 4160.0), (3420.17, 4116.83), (3464.5, 3615.5)])
 INFO:DTC.noise_correction:Number of remaining safe areas: 10823
 INFO:DTC.noise_correction:Safe-areas: dict_keys([(4795.08, 3124.81)]) have been removed in  0.00 seconds
-INFO:DTC.noise_correction:Safe-areas updated in  19.31 seconds
+INFO:DTC.noise_correction:Safe-areas updated in  18.29 seconds
 INFO:DTC.noise_correction:Created the safe-areas: dict_keys([(4784.0, 3127.0)])
 INFO:DTC.noise_correction:Number of remaining safe areas: 10825
 INFO:DTC.noise_correction:Safe-areas: dict_keys([(3869.12, 3635.48)]) have been removed in  0.00 seconds
-INFO:DTC.noise_correction:Safe-areas updated in  18.71 seconds
+INFO:DTC.noise_correction:Safe-areas updated in  18.22 seconds
 INFO:DTC.noise_correction:Created the safe-areas: dict_keys([(3867.5, 3632.17)])
 INFO:DTC.noise_correction:Number of remaining safe areas: 10825
 INFO:DTC.noise_correction:Safe-areas: dict_keys([(3892.8, 4141.05), (4224.55, 4323.66), (4616.85, 5753.74), (4452.64, 5191.37)]) have been removed in  0.00 seconds
-INFO:DTC.noise_correction:Safe-areas updated in  19.53 seconds
+INFO:DTC.noise_correction:Safe-areas updated in  18.58 seconds
 INFO:DTC.noise_correction:Created the safe-areas: dict_keys([(4624.5, 5754.5), (4230.5, 4323.9), (4454.17, 5191.83), (3893.67, 4146.67)])
 INFO:DTC.noise_correction:Number of remaining safe areas: 10822
 INFO:DTC.noise_correction:Safe-areas: dict_keys([(4799.43, 4575.76)]) have been removed in  0.00 seconds
-INFO:DTC.noise_correction:Safe-areas updated in  19.01 seconds
+INFO:DTC.noise_correction:Safe-areas updated in  18.31 seconds
 INFO:DTC.noise_correction:Created the safe-areas: dict_keys([(4792.5, 4576.0)])
 INFO:DTC.noise_correction:Number of remaining safe areas: 10825
 INFO:DTC.noise_correction:Safe-areas: dict_keys([(3401.11, 5327.66), (3408.72, 4807.82)]) have been removed in  0.00 seconds
-INFO:DTC.noise_correction:Safe-areas updated in  19.18 seconds
+INFO:DTC.noise_correction:Safe-areas updated in  18.58 seconds
 INFO:DTC.noise_correction:Created the safe-areas: dict_keys([(3405.5, 5329.5), (3407.83, 4807.17)])
 INFO:DTC.noise_correction:Number of remaining safe areas: 10824
 INFO:DTC.noise_correction:Safe-areas: dict_keys([(4321.0, 3498.36), (4434.65, 2878.46), (3679.96, 3459.24)]) have been removed in  0.00 seconds
-INFO:DTC.noise_correction:Safe-areas updated in  19.26 seconds
+INFO:DTC.noise_correction:Safe-areas updated in  18.81 seconds
 INFO:DTC.noise_correction:Created the safe-areas: dict_keys([(3683.25, 3462.0), (4325.0, 3493.75)])
 INFO:DTC.noise_correction:Number of remaining safe areas: 10823
 INFO:DTC.noise_correction:Safe-areas: dict_keys([(4130.17, 3873.68), (3578.97, 4804.1), (3690.17, 5071.39), (3433.49, 3885.77), (3702.68, 4652.66)]) have been removed in  0.00 seconds
-INFO:DTC.noise_correction:Safe-areas updated in  20.40 seconds
+INFO:DTC.noise_correction:Safe-areas updated in  19.03 seconds
 INFO:DTC.noise_correction:Created the safe-areas: dict_keys([(3583.0, 4801.5), (3689.0, 5066.0), (3439.5, 3881.5), (3702.0, 4662.0), (4132.75, 3874.25)])
 INFO:DTC.noise_correction:Number of remaining safe areas: 10820
 INFO:DTC.noise_correction:Safe-areas: dict_keys([(3700.45, 3622.07), (1736.55, 3511.44)]) have been removed in  0.00 seconds
-INFO:DTC.noise_correction:Safe-areas updated in  19.18 seconds
+INFO:DTC.noise_correction:Safe-areas updated in  18.34 seconds
 INFO:DTC.noise_correction:Created the safe-areas: dict_keys([(1730.5, 3508.83), (3704.1, 3622.3)])
 INFO:DTC.noise_correction:Number of remaining safe areas: 10823
 INFO:DTC.noise_correction:Safe-areas: dict_keys([(5165.38, 3435.07), (4015.46, 3134.79), (3867.81, 4598.22), (4136.59, 4030.93), (5287.38, 3813.45), (4520.59, 4027.09), (4795.96, 4025.11)]) have been removed in  0.00 seconds
-INFO:DTC.noise_correction:Safe-areas updated in  19.73 seconds
+INFO:DTC.noise_correction:Safe-areas updated in  18.62 seconds
 INFO:DTC.noise_correction:Created the safe-areas: dict_keys([(4018.5, 3136.0), (4798.3, 4025.3), (5171.5, 3446.5), (3864.0, 4598.75), (4522.5, 4026.0)])
 INFO:DTC.noise_correction:Number of remaining safe areas: 10818
 INFO:DTC.noise_correction:Safe-areas: dict_keys([(4079.59, 4667.82)]) have been removed in  0.00 seconds
-INFO:DTC.noise_correction:Safe-areas updated in  18.72 seconds
+INFO:DTC.noise_correction:Safe-areas updated in  18.16 seconds
 INFO:DTC.noise_correction:Created the safe-areas: dict_keys([(4076.5, 4671.83)])
 INFO:DTC.noise_correction:Number of remaining safe areas: 10822
 INFO:DTC.noise_correction:Safe-areas: dict_keys([(2884.41, 3778.59)]) have been removed in  0.00 seconds
-INFO:DTC.noise_correction:Safe-areas updated in  18.61 seconds
+INFO:DTC.noise_correction:Safe-areas updated in  17.98 seconds
 INFO:DTC.noise_correction:Created the safe-areas: dict_keys([(2888.17, 3775.83)])
 INFO:DTC.noise_correction:Number of remaining safe areas: 10822
 INFO:DTC.noise_correction:Safe-areas: dict_keys([(3505.71, 3599.46), (3206.92, 4037.61), (3166.39, 4334.21)]) have been removed in  0.00 seconds
-INFO:DTC.noise_correction:Safe-areas updated in  19.29 seconds
+INFO:DTC.noise_correction:Safe-areas updated in  18.35 seconds
 INFO:DTC.noise_correction:Created the safe-areas: dict_keys([(3511.0, 3601.5), (3166.83, 4341.83)])
 INFO:DTC.noise_correction:Number of remaining safe areas: 10820
 INFO:DTC.noise_correction:Safe-areas: dict_keys([(3407.16, 5677.72)]) have been removed in  0.00 seconds
-INFO:DTC.noise_correction:Safe-areas updated in  19.05 seconds
+INFO:DTC.noise_correction:Safe-areas updated in  18.04 seconds
 INFO:DTC.noise_correction:Created the safe-areas: dict_keys([(3410.5, 5688.5)])
 INFO:DTC.noise_correction:Number of remaining safe areas: 10821
 INFO:DTC.noise_correction:Safe-areas: dict_keys([(3860.42, 3464.03)]) have been removed in  0.00 seconds
-INFO:DTC.noise_correction:Safe-areas updated in  21.33 seconds
+INFO:DTC.noise_correction:Safe-areas updated in  17.80 seconds
 INFO:DTC.noise_correction:Created the safe-areas: dict_keys([(3865.5, 3468.0)])
 INFO:DTC.noise_correction:Number of remaining safe areas: 10821
 INFO:DTC.noise_correction:Safe-areas: dict_keys([(3936.64, 3427.37)]) have been removed in  0.00 seconds
-INFO:DTC.noise_correction:Safe-areas updated in  21.29 seconds
+INFO:DTC.noise_correction:Safe-areas updated in  18.03 seconds
 INFO:DTC.noise_correction:Created the safe-areas: dict_keys([(3934.5, 3427.0)])
 INFO:DTC.noise_correction:Number of remaining safe areas: 10821
 INFO:DTC.noise_correction:Safe-areas: dict_keys([(3403.58, 5120.89), (2792.57, 5472.12), (2888.84, 5284.53)]) have been removed in  0.00 seconds
-INFO:DTC.noise_correction:Safe-areas updated in  21.97 seconds
+INFO:DTC.noise_correction:Safe-areas updated in  18.65 seconds
 INFO:DTC.noise_correction:Created the safe-areas: dict_keys([(3401.5, 5124.33), (2787.5, 5483.5), (2892.5, 5279.5)])
 INFO:DTC.noise_correction:Number of remaining safe areas: 10819
 INFO:DTC.noise_correction:Safe-areas: dict_keys([(4815.79, 4276.67)]) have been removed in  0.00 seconds
-INFO:DTC.noise_correction:Safe-areas updated in  19.98 seconds
+INFO:DTC.noise_correction:Safe-areas updated in  17.87 seconds
 INFO:DTC.noise_correction:Created the safe-areas: dict_keys([(4819.5, 4281.17)])
 INFO:DTC.noise_correction:Number of remaining safe areas: 10821
 INFO:DTC.noise_correction:Safe-areas: dict_keys([(4633.95, 4972.25), (4245.99, 3459.87), (4190.47, 3465.1), (3593.62, 5180.39), (4848.57, 3625.79), (4825.22, 3616.63)]) have been removed in  0.00 seconds
-INFO:DTC.noise_correction:Safe-areas updated in  20.00 seconds
+INFO:DTC.noise_correction:Safe-areas updated in  18.44 seconds
 INFO:DTC.noise_correction:Created the safe-areas: dict_keys([(3582.0, 5181.0), (4246.7, 3464.1), (4636.0, 4977.5), (4198.5, 3463.5), (4827.0, 3622.5)])
 INFO:DTC.noise_correction:Number of remaining safe areas: 10816
 INFO:DTC.noise_correction:Safe-areas: dict_keys([(3565.3, 4022.86)]) have been removed in  0.00 seconds
-INFO:DTC.noise_correction:Safe-areas updated in  19.02 seconds
+INFO:DTC.noise_correction:Safe-areas updated in  17.98 seconds
 INFO:DTC.noise_correction:Created the safe-areas: dict_keys([(3571.83, 4025.17)])
 INFO:DTC.noise_correction:Number of remaining safe areas: 10820
 INFO:DTC.noise_correction:Safe-areas: dict_keys([(2544.36, 3041.35), (1742.14, 3478.38), (2511.28, 4202.98), (3863.72, 3979.46), (3884.76, 3811.94), (2724.4, 3992.99)]) have been removed in  0.00 seconds
-INFO:DTC.noise_correction:Safe-areas updated in  19.55 seconds
+INFO:DTC.noise_correction:Safe-areas updated in  18.79 seconds
 INFO:DTC.noise_correction:Created the safe-areas: dict_keys([(2723.5, 3987.5), (3860.17, 3979.5), (2514.17, 4203.83), (2542.75, 3042.25), (1743.83, 3481.17), (3876.0, 3815.0)])
 INFO:DTC.noise_correction:Number of remaining safe areas: 10815
 INFO:DTC.noise_correction:Safe-areas: dict_keys([(3123.5, 4794.62), (3124.63, 4017.51)]) have been removed in  0.00 seconds
-INFO:DTC.noise_correction:Safe-areas updated in  19.08 seconds
+INFO:DTC.noise_correction:Safe-areas updated in  18.14 seconds
 INFO:DTC.noise_correction:Created the safe-areas: dict_keys([(3122.83, 4799.83), (3123.5, 4019.0)])
 INFO:DTC.noise_correction:Number of remaining safe areas: 10819
 INFO:DTC.noise_correction:Safe-areas: dict_keys([(3237.24, 4018.42), (3556.52, 3482.98), (3531.88, 3501.05)]) have been removed in  0.00 seconds
-INFO:DTC.noise_correction:Safe-areas updated in  19.07 seconds
+INFO:DTC.noise_correction:Safe-areas updated in  18.45 seconds
 INFO:DTC.noise_correction:Created the safe-areas: dict_keys([(3553.17, 3487.83), (3527.5, 3507.5)])
 INFO:DTC.noise_correction:Number of remaining safe areas: 10818
 INFO:DTC.noise_correction:Safe-areas: dict_keys([(1960.4, 4460.42)]) have been removed in  0.00 seconds
-INFO:DTC.noise_correction:Safe-areas updated in  18.59 seconds
+INFO:DTC.noise_correction:Safe-areas updated in  17.92 seconds
 INFO:DTC.noise_correction:Created the safe-areas: dict_keys([(1970.5, 4461.5)])
 INFO:DTC.noise_correction:Number of remaining safe areas: 10819
 INFO:DTC.noise_correction:Safe-areas: dict_keys([(4139.09, 4004.58), (4118.79, 4505.12)]) have been removed in  0.00 seconds
-INFO:DTC.noise_correction:Safe-areas updated in  18.75 seconds
+INFO:DTC.noise_correction:Safe-areas updated in  17.78 seconds
 INFO:DTC.noise_correction:Created the safe-areas: dict_keys([(4115.5, 4505.5)])
 INFO:DTC.noise_correction:Number of remaining safe areas: 10818
 INFO:DTC.noise_correction:Safe-areas: dict_keys([(3414.74, 4651.48), (4687.89, 4549.48), (4812.91, 4805.33)]) have been removed in  0.00 seconds
-INFO:DTC.noise_correction:Safe-areas updated in  19.09 seconds
+INFO:DTC.noise_correction:Safe-areas updated in  18.07 seconds
 INFO:DTC.noise_correction:Created the safe-areas: dict_keys([(3412.5, 4652.5), (4686.75, 4548.5)])
 INFO:DTC.noise_correction:Number of remaining safe areas: 10816
 INFO:DTC.noise_correction:Safe-areas: dict_keys([(2961.64, 5445.78)]) have been removed in  0.00 seconds
-INFO:DTC.noise_correction:Safe-areas updated in  18.96 seconds
+INFO:DTC.noise_correction:Safe-areas updated in  17.87 seconds
 INFO:DTC.noise_correction:Created the safe-areas: dict_keys([(2950.5, 5446.5)])
 INFO:DTC.noise_correction:Number of remaining safe areas: 10817
 INFO:DTC.noise_correction:Safe-areas: dict_keys([(3570.15, 3941.83)]) have been removed in  0.00 seconds
-INFO:DTC.noise_correction:Safe-areas updated in  18.63 seconds
+INFO:DTC.noise_correction:Safe-areas updated in  17.91 seconds
 INFO:DTC.noise_correction:Created the safe-areas: dict_keys([(3570.0, 3945.0)])
 INFO:DTC.noise_correction:Number of remaining safe areas: 10817
 INFO:DTC.noise_correction:Safe-areas: dict_keys([(4330.94, 4176.53), (1156.45, 4316.09), (1281.5, 3816.12)]) have been removed in  0.00 seconds
-INFO:DTC.noise_correction:Safe-areas updated in  19.46 seconds
+INFO:DTC.noise_correction:Safe-areas updated in  18.66 seconds
 INFO:DTC.noise_correction:Created the safe-areas: dict_keys([(1222.5, 4312.83), (4335.5, 4180.83), (1289.0, 3819.0), (1149.5, 4315.5)])
 INFO:DTC.noise_correction:Number of remaining safe areas: 10815
 INFO:DTC.noise_correction:Safe-areas: dict_keys([(3529.05, 2004.44)]) have been removed in  0.00 seconds
-INFO:DTC.noise_correction:Safe-areas updated in  18.66 seconds
+INFO:DTC.noise_correction:Safe-areas updated in  17.92 seconds
 INFO:DTC.noise_correction:Created the safe-areas: dict_keys([(3532.0, 2000.5)])
 INFO:DTC.noise_correction:Number of remaining safe areas: 10818
 INFO:DTC.noise_correction:Safe-areas: dict_keys([(3405.12, 5702.9)]) have been removed in  0.00 seconds
-INFO:DTC.noise_correction:Safe-areas updated in  18.42 seconds
+INFO:DTC.noise_correction:Safe-areas updated in  17.92 seconds
 INFO:DTC.noise_correction:Created the safe-areas: dict_keys([(3410.5, 5699.5)])
 INFO:DTC.noise_correction:Number of remaining safe areas: 10818
 INFO:DTC.noise_correction:Safe-areas: dict_keys([(3825.27, 4593.76)]) have been removed in  0.00 seconds
-INFO:DTC.noise_correction:Safe-areas updated in  18.77 seconds
+INFO:DTC.noise_correction:Safe-areas updated in  17.99 seconds
 INFO:DTC.noise_correction:Created the safe-areas: dict_keys([(3821.12, 4591.0)])
 INFO:DTC.noise_correction:Number of remaining safe areas: 10818
 INFO:DTC.noise_correction:Safe-areas: dict_keys([(4694.23, 4525.5)]) have been removed in  0.00 seconds
-INFO:DTC.noise_correction:Safe-areas updated in  18.66 seconds
+INFO:DTC.noise_correction:Safe-areas updated in  17.95 seconds
 INFO:DTC.noise_correction:Created the safe-areas: dict_keys([(4695.0, 4522.0)])
 INFO:DTC.noise_correction:Number of remaining safe areas: 10818
 INFO:DTC.noise_correction:Safe-areas: dict_keys([(2326.54, 3996.93), (2166.61, 3902.16)]) have been removed in  0.00 seconds
-INFO:DTC.noise_correction:Safe-areas updated in  18.73 seconds
+INFO:DTC.noise_correction:Safe-areas updated in  17.95 seconds
 INFO:DTC.noise_correction:Created the safe-areas: dict_keys([(2329.0, 3997.5), (2164.0, 3902.0)])
 INFO:DTC.noise_correction:Number of remaining safe areas: 10817
 INFO:DTC.noise_correction:Safe-areas: dict_keys([(3832.47, 2355.85)]) have been removed in  0.00 seconds
-INFO:DTC.noise_correction:Safe-areas updated in  18.51 seconds
+INFO:DTC.noise_correction:Safe-areas updated in  19.20 seconds
 INFO:DTC.noise_correction:Created the safe-areas: dict_keys([(3825.0, 2356.75)])
 INFO:DTC.noise_correction:Number of remaining safe areas: 10818
 INFO:DTC.noise_correction:Safe-areas: dict_keys([(3599.5, 5990.3)]) have been removed in  0.00 seconds
-INFO:DTC.noise_correction:Safe-areas updated in  18.74 seconds
+INFO:DTC.noise_correction:Safe-areas updated in  18.40 seconds
 INFO:DTC.noise_correction:Created the safe-areas: dict_keys([])
 INFO:DTC.noise_correction:Number of remaining safe areas: 10818
 INFO:DTC.noise_correction:Safe-areas: dict_keys([(2782.52, 3504.38)]) have been removed in  0.00 seconds
-INFO:DTC.noise_correction:Safe-areas updated in  18.32 seconds
+INFO:DTC.noise_correction:Safe-areas updated in  18.30 seconds
 INFO:DTC.noise_correction:Created the safe-areas: dict_keys([(2778.5, 3507.0)])
 INFO:DTC.noise_correction:Number of remaining safe areas: 10817
 INFO:DTC.noise_correction:Safe-areas: dict_keys([(1274.78, 3312.8)]) have been removed in  0.00 seconds
-INFO:DTC.noise_correction:Safe-areas updated in  18.46 seconds
+INFO:DTC.noise_correction:Safe-areas updated in  18.01 seconds
 INFO:DTC.noise_correction:Created the safe-areas: dict_keys([])
 INFO:DTC.noise_correction:Number of remaining safe areas: 10817
 INFO:DTC.noise_correction:Safe-areas: dict_keys([(3975.61, 3641.05)]) have been removed in  0.00 seconds
-INFO:DTC.noise_correction:Safe-areas updated in  18.59 seconds
+INFO:DTC.noise_correction:Safe-areas updated in  17.90 seconds
 INFO:DTC.noise_correction:Created the safe-areas: dict_keys([(3975.5, 3640.5)])
 INFO:DTC.noise_correction:Number of remaining safe areas: 10816
 INFO:DTC.noise_correction:Safe-areas: dict_keys([(2523.12, 4174.7), (3716.15, 4269.89)]) have been removed in  0.00 seconds
-INFO:DTC.noise_correction:Safe-areas updated in  18.55 seconds
+INFO:DTC.noise_correction:Safe-areas updated in  17.85 seconds
 INFO:DTC.noise_correction:Created the safe-areas: dict_keys([(2523.5, 4179.5), (3713.5, 4268.0)])
 INFO:DTC.noise_correction:Number of remaining safe areas: 10815
 INFO:DTC.noise_correction:Safe-areas: dict_keys([(3216.96, 4018.68)]) have been removed in  0.00 seconds
-INFO:DTC.noise_correction:Safe-areas updated in  18.44 seconds
+INFO:DTC.noise_correction:Safe-areas updated in  17.78 seconds
 INFO:DTC.noise_correction:Created the safe-areas: dict_keys([(3216.5, 4020.0)])
 INFO:DTC.noise_correction:Number of remaining safe areas: 10816
 INFO:DTC.noise_correction:Safe-areas: dict_keys([(2689.43, 4782.57), (1817.38, 4173.1)]) have been removed in  0.00 seconds
-INFO:DTC.noise_correction:Safe-areas updated in  18.99 seconds
+INFO:DTC.noise_correction:Safe-areas updated in  18.21 seconds
 INFO:DTC.noise_correction:Created the safe-areas: dict_keys([(2689.1, 4787.1), (1816.17, 4175.17)])
 INFO:DTC.noise_correction:Number of remaining safe areas: 10815
 INFO:DTC.noise_correction:Safe-areas: dict_keys([(4817.35, 4029.03)]) have been removed in  0.00 seconds
-INFO:DTC.noise_correction:Safe-areas updated in  19.44 seconds
+INFO:DTC.noise_correction:Safe-areas updated in  18.24 seconds
 INFO:DTC.noise_correction:Created the safe-areas: dict_keys([(4812.75, 4032.0)])
 INFO:DTC.noise_correction:Number of remaining safe areas: 10816
 INFO:DTC.noise_correction:Safe-areas: dict_keys([(4341.69, 2933.4), (2931.59, 4008.04)]) have been removed in  0.00 seconds
-INFO:DTC.noise_correction:Safe-areas updated in  20.25 seconds
+INFO:DTC.noise_correction:Safe-areas updated in  18.33 seconds
 INFO:DTC.noise_correction:Created the safe-areas: dict_keys([(2932.21, 4010.93), (4337.0, 2934.0)])
 INFO:DTC.noise_correction:Number of remaining safe areas: 10815
 INFO:DTC.noise_correction:Safe-areas: dict_keys([(4138.41, 4635.05)]) have been removed in  0.00 seconds
+INFO:DTC.noise_correction:Safe-areas updated in  18.22 seconds
+INFO:DTC.noise_correction:Created the safe-areas: dict_keys([(4138.0, 4643.5)])
+INFO:DTC.noise_correction:Number of remaining safe areas: 10816
+INFO:DTC.noise_correction:Safe-areas: dict_keys([(3278.34, 1438.99)]) have been removed in  0.00 seconds
+INFO:DTC.noise_correction:Safe-areas updated in  18.05 seconds
+INFO:DTC.noise_correction:Created the safe-areas: dict_keys([(3280.5, 1433.5)])
+INFO:DTC.noise_correction:Number of remaining safe areas: 10816
+INFO:DTC.noise_correction:Safe-areas: dict_keys([(2447.4, 4166.05), (2756.57, 4963.28)]) have been removed in  0.00 seconds
+INFO:DTC.noise_correction:Safe-areas updated in  18.38 seconds
+INFO:DTC.noise_correction:Created the safe-areas: dict_keys([(2759.5, 4965.5), (2456.5, 4164.5)])
+INFO:DTC.noise_correction:Number of remaining safe areas: 10815
+INFO:DTC.noise_correction:Safe-areas: dict_keys([(4314.57, 3132.2)]) have been removed in  0.00 seconds
+INFO:DTC.noise_correction:Safe-areas updated in  18.01 seconds
+INFO:DTC.noise_correction:Created the safe-areas: dict_keys([(4315.83, 3130.33)])
+INFO:DTC.noise_correction:Number of remaining safe areas: 10816
+INFO:DTC.noise_correction:Safe-areas: dict_keys([(3599.98, 4812.73)]) have been removed in  0.00 seconds
+INFO:DTC.noise_correction:Safe-areas updated in  18.27 seconds
+INFO:DTC.noise_correction:Created the safe-areas: dict_keys([(3599.5, 4816.0)])
+INFO:DTC.noise_correction:Number of remaining safe areas: 10816
+INFO:DTC.noise_correction:Safe-areas: dict_keys([(3820.88, 3461.95), (4826.08, 3549.09)]) have been removed in  0.00 seconds
+INFO:DTC.noise_correction:Safe-areas updated in  18.62 seconds
+INFO:DTC.noise_correction:Created the safe-areas: dict_keys([(4820.0, 3542.0), (3813.5, 3466.5)])
+INFO:DTC.noise_correction:Number of remaining safe areas: 10815
+INFO:DTC.noise_correction:Safe-areas: dict_keys([(1862.49, 5175.82)]) have been removed in  0.00 seconds
+INFO:DTC.noise_correction:Safe-areas updated in  18.28 seconds
+INFO:DTC.noise_correction:Created the safe-areas: dict_keys([])
+INFO:DTC.noise_correction:Number of remaining safe areas: 10816
+INFO:DTC.noise_correction:Safe-areas: dict_keys([(3840.42, 3820.44), (4773.98, 5260.84), (4869.25, 5668.57)]) have been removed in  0.00 seconds
+INFO:DTC.noise_correction:Safe-areas updated in  18.63 seconds
+INFO:DTC.noise_correction:Created the safe-areas: dict_keys([(4777.0, 5257.0), (3838.25, 3821.0), (4869.5, 5670.0)])
+INFO:DTC.noise_correction:Number of remaining safe areas: 10813
+INFO:DTC.noise_correction:Safe-areas: dict_keys([(4482.14, 4274.31), (4085.67, 3459.35)]) have been removed in  0.00 seconds
+INFO:DTC.noise_correction:Safe-areas updated in  18.49 seconds
+INFO:DTC.noise_correction:Created the safe-areas: dict_keys([(4077.5, 3457.5), (4487.5, 4271.83)])
+INFO:DTC.noise_correction:Number of remaining safe areas: 10814
+INFO:DTC.noise_correction:Safe-areas: dict_keys([(2407.83, 3902.27)]) have been removed in  0.00 seconds
+INFO:DTC.noise_correction:Safe-areas updated in  17.93 seconds
+INFO:DTC.noise_correction:Created the safe-areas: dict_keys([(2402.0, 3896.5)])
+INFO:DTC.noise_correction:Number of remaining safe areas: 10815
+INFO:DTC.noise_correction:Safe-areas: dict_keys([(4066.23, 4394.36), (4608.37, 5059.91), (4134.2, 3754.48), (4277.5, 4364.5)]) have been removed in  0.00 seconds
+INFO:DTC.noise_correction:Safe-areas updated in  18.38 seconds
+INFO:DTC.noise_correction:Created the safe-areas: dict_keys([(4611.5, 5056.0), (4283.0, 4360.5), (4136.0, 3755.0)])
+INFO:DTC.noise_correction:Number of remaining safe areas: 10812
+INFO:DTC.noise_correction:Safe-areas: dict_keys([(3987.52, 3434.58)]) have been removed in  0.00 seconds
+INFO:DTC.noise_correction:Safe-areas updated in  18.20 seconds
+INFO:DTC.noise_correction:Created the safe-areas: dict_keys([(3981.75, 3434.0)])
+INFO:DTC.noise_correction:Number of remaining safe areas: 10814
+INFO:DTC.noise_correction:Safe-areas: dict_keys([(3396.24, 5235.81), (2689.35, 4178.17)]) have been removed in  0.00 seconds
+INFO:DTC.noise_correction:Safe-areas updated in  18.52 seconds
+INFO:DTC.noise_correction:Created the safe-areas: dict_keys([(3392.0, 5236.0), (2692.0, 4180.0)])
+INFO:DTC.noise_correction:Number of remaining safe areas: 10813
+INFO:DTC.noise_correction:Safe-areas: dict_keys([(3706.97, 4381.6)]) have been removed in  0.00 seconds
+INFO:DTC.noise_correction:Safe-areas updated in  18.29 seconds
+INFO:DTC.noise_correction:Created the safe-areas: dict_keys([(3708.17, 4381.5)])
+INFO:DTC.noise_correction:Number of remaining safe areas: 10814
+INFO:DTC.noise_correction:Safe-areas: dict_keys([(3964.92, 2915.56)]) have been removed in  0.00 seconds
+INFO:DTC.noise_correction:Safe-areas updated in  18.37 seconds
+INFO:DTC.noise_correction:Created the safe-areas: dict_keys([])
+INFO:DTC.noise_correction:Number of remaining safe areas: 10814
+INFO:DTC.noise_correction:Safe-areas: dict_keys([(4384.41, 4025.54)]) have been removed in  0.00 seconds
+INFO:DTC.noise_correction:Safe-areas updated in  18.08 seconds
+INFO:DTC.noise_correction:Created the safe-areas: dict_keys([(4378.0, 4027.5)])
+INFO:DTC.noise_correction:Number of remaining safe areas: 10813
+INFO:DTC.noise_correction:Safe-areas: dict_keys([(4668.32, 3625.37), (4336.7, 3696.59), (3682.12, 4021.96), (3698.39, 4022.37), (3643.15, 4813.37), (3567.77, 5124.83)]) have been removed in  0.00 seconds
+INFO:DTC.noise_correction:Safe-areas updated in  18.81 seconds
+INFO:DTC.noise_correction:Created the safe-areas: dict_keys([(3702.5, 4020.5), (3676.17, 4021.5), (3569.9, 5125.5), (4661.5, 3616.5), (4334.5, 3695.0), (3649.5, 4815.17)])
+INFO:DTC.noise_correction:Number of remaining safe areas: 10808
+INFO:DTC.noise_correction:Safe-areas: dict_keys([(1280.43, 3504.0), (4445.01, 4475.51), (4437.9, 4542.8)]) have been removed in  0.00 seconds
+INFO:DTC.noise_correction:Safe-areas updated in  18.59 seconds
+INFO:DTC.noise_correction:Created the safe-areas: dict_keys([(4445.83, 4473.5), (4438.17, 4539.5), (1276.25, 3497.25)])
+INFO:DTC.noise_correction:Number of remaining safe areas: 10811
+INFO:DTC.noise_correction:Safe-areas: dict_keys([(4610.95, 3649.3)]) have been removed in  0.00 seconds
+INFO:DTC.noise_correction:Safe-areas updated in  18.43 seconds
+INFO:DTC.noise_correction:Created the safe-areas: dict_keys([(4608.83, 3640.83), (4612.17, 3658.17)])
+INFO:DTC.noise_correction:Number of remaining safe areas: 10813
+INFO:DTC.noise_correction:Safe-areas: dict_keys([(4350.08, 5360.27)]) have been removed in  0.00 seconds
+INFO:DTC.noise_correction:Safe-areas updated in  18.23 seconds
+INFO:DTC.noise_correction:Created the safe-areas: dict_keys([(4350.75, 5358.5)])
+INFO:DTC.noise_correction:Number of remaining safe areas: 10814
+INFO:DTC.noise_correction:Safe-areas: dict_keys([(4654.58, 4961.32), (4328.74, 4393.71)]) have been removed in  0.00 seconds
+INFO:DTC.noise_correction:Safe-areas updated in  18.45 seconds
+INFO:DTC.noise_correction:Created the safe-areas: dict_keys([(4331.5, 4392.5)])
+INFO:DTC.noise_correction:Number of remaining safe areas: 10813
+INFO:DTC.noise_correction:Safe-areas: dict_keys([(3365.85, 4612.0)]) have been removed in  0.00 seconds
+INFO:DTC.noise_correction:Safe-areas updated in  18.25 seconds
+INFO:DTC.noise_correction:Created the safe-areas: dict_keys([(3366.5, 4610.3)])
+INFO:DTC.noise_correction:Number of remaining safe areas: 10813
+INFO:DTC.noise_correction:Safe-areas: dict_keys([(2697.5, 3804.92), (2931.34, 4363.0)]) have been removed in  0.00 seconds
+INFO:DTC.noise_correction:Safe-areas updated in  18.32 seconds
+INFO:DTC.noise_correction:Created the safe-areas: dict_keys([(2699.5, 3804.5), (2933.0, 4363.0)])
+INFO:DTC.noise_correction:Number of remaining safe areas: 10812
+INFO:DTC.noise_correction:Safe-areas: dict_keys([(4332.63, 4237.32), (4333.19, 3588.94)]) have been removed in  0.00 seconds
+INFO:DTC.noise_correction:Safe-areas updated in  18.45 seconds
+INFO:DTC.noise_correction:Created the safe-areas: dict_keys([(4336.5, 3585.5), (4334.0, 4238.0)])
+INFO:DTC.noise_correction:Number of remaining safe areas: 10812
+INFO:DTC.noise_correction:Safe-areas: dict_keys([(3569.84, 3888.33)]) have been removed in  0.00 seconds
+INFO:DTC.noise_correction:Safe-areas updated in  18.38 seconds
+INFO:DTC.noise_correction:Created the safe-areas: dict_keys([(3571.5, 3882.0)])
+INFO:DTC.noise_correction:Number of remaining safe areas: 10813
+INFO:DTC.noise_correction:Safe-areas: dict_keys([(4555.42, 4131.02), (4548.67, 4093.75)]) have been removed in  0.00 seconds
+INFO:DTC.noise_correction:Safe-areas updated in  18.32 seconds
+INFO:DTC.noise_correction:Created the safe-areas: dict_keys([(4548.5, 4091.5)])
+INFO:DTC.noise_correction:Number of remaining safe areas: 10812
+INFO:DTC.noise_correction:Safe-areas: dict_keys([(3451.88, 5127.62)]) have been removed in  0.00 seconds
+INFO:DTC.noise_correction:Safe-areas updated in  18.21 seconds
+INFO:DTC.noise_correction:Created the safe-areas: dict_keys([(3454.1, 5129.9)])
+INFO:DTC.noise_correction:Number of remaining safe areas: 10812
+INFO:DTC.noise_correction:Safe-areas: dict_keys([(4809.16, 2972.9), (4419.76, 3130.13)]) have been removed in  0.00 seconds
+INFO:DTC.noise_correction:Safe-areas updated in  18.39 seconds
+INFO:DTC.noise_correction:Created the safe-areas: dict_keys([(4426.5, 3129.5), (4813.0, 2971.0)])
+INFO:DTC.noise_correction:Number of remaining safe areas: 10811
+INFO:DTC.noise_correction:Safe-areas: dict_keys([(4538.52, 4080.04)]) have been removed in  0.00 seconds
+INFO:DTC.noise_correction:Safe-areas updated in  18.18 seconds
+INFO:DTC.noise_correction:Created the safe-areas: dict_keys([(4533.0, 4076.5)])
+INFO:DTC.noise_correction:Number of remaining safe areas: 10812
+INFO:DTC.noise_correction:Safe-areas: dict_keys([(2549.29, 1744.0)]) have been removed in  0.00 seconds
+INFO:DTC.noise_correction:Safe-areas updated in  18.33 seconds
+INFO:DTC.noise_correction:Created the safe-areas: dict_keys([(2552.5, 1738.83)])
+INFO:DTC.noise_correction:Number of remaining safe areas: 10812
+INFO:DTC.noise_correction:Safe-areas: dict_keys([(4615.77, 5669.81)]) have been removed in  0.00 seconds
+INFO:DTC.noise_correction:Safe-areas updated in  18.90 seconds
+INFO:DTC.noise_correction:Created the safe-areas: dict_keys([])
+INFO:DTC.noise_correction:Number of remaining safe areas: 10812
+INFO:DTC.noise_correction:Safe-areas: dict_keys([(4329.97, 3856.34), (4186.6, 4345.5)]) have been removed in  0.00 seconds
+INFO:DTC.noise_correction:Safe-areas updated in  18.51 seconds
+INFO:DTC.noise_correction:Created the safe-areas: dict_keys([(4329.5, 3855.5), (4190.5, 4349.5)])
+INFO:DTC.noise_correction:Number of remaining safe areas: 10810
+INFO:DTC.noise_correction:Safe-areas: dict_keys([(3908.01, 2926.74), (3488.06, 2319.62)]) have been removed in  0.00 seconds
+INFO:DTC.noise_correction:Safe-areas updated in  18.30 seconds
+INFO:DTC.noise_correction:Created the safe-areas: dict_keys([(3492.0, 2319.0), (3908.83, 2927.17)])
+INFO:DTC.noise_correction:Number of remaining safe areas: 10810
+INFO:DTC.noise_correction:Safe-areas: dict_keys([(3723.52, 3782.69), (4281.0, 4500.5)]) have been removed in  0.00 seconds
+INFO:DTC.noise_correction:Safe-areas updated in  18.27 seconds
+INFO:DTC.noise_correction:Created the safe-areas: dict_keys([(3724.0, 3780.5), (4280.5, 4493.83)])
+INFO:DTC.noise_correction:Number of remaining safe areas: 10810
+INFO:DTC.noise_correction:Safe-areas: dict_keys([(3958.83, 3081.93), (3943.12, 3141.48), (3793.29, 3048.55)]) have been removed in  0.00 seconds
+INFO:DTC.noise_correction:Safe-areas updated in  18.46 seconds
+INFO:DTC.noise_correction:Created the safe-areas: dict_keys([(3796.75, 3045.0), (3941.5, 3140.17), (3958.83, 3079.83)])
+INFO:DTC.noise_correction:Number of remaining safe areas: 10809
+INFO:DTC.noise_correction:Safe-areas: dict_keys([(3394.69, 4182.91), (3390.32, 4641.17)]) have been removed in  0.00 seconds
+INFO:DTC.noise_correction:Safe-areas updated in  18.40 seconds
+INFO:DTC.noise_correction:Created the safe-areas: dict_keys([(3347.0, 4182.5), (3381.0, 4637.5)])
+INFO:DTC.noise_correction:Number of remaining safe areas: 10810
+INFO:DTC.noise_correction:Safe-areas: dict_keys([(4391.86, 4619.15), (5038.08, 4868.33), (4623.64, 3127.17), (2817.0, 3829.11)]) have been removed in  0.00 seconds
+INFO:DTC.noise_correction:Safe-areas updated in  18.55 seconds
+INFO:DTC.noise_correction:Created the safe-areas: dict_keys([(2816.5, 3836.0), (5034.0, 4873.0)])
+INFO:DTC.noise_correction:Number of remaining safe areas: 10808
+INFO:DTC.noise_correction:Safe-areas: dict_keys([(3704.18, 2970.55)]) have been removed in  0.00 seconds
+INFO:DTC.noise_correction:Safe-areas updated in  18.06 seconds
+INFO:DTC.noise_correction:Created the safe-areas: dict_keys([])
+INFO:DTC.noise_correction:Number of remaining safe areas: 10809
+INFO:DTC.noise_correction:Safe-areas: dict_keys([(3761.09, 2324.83), (2853.75, 4002.45)]) have been removed in  0.00 seconds
+INFO:DTC.noise_correction:Safe-areas updated in  18.54 seconds
+INFO:DTC.noise_correction:Created the safe-areas: dict_keys([(2855.0, 4003.0)])
+INFO:DTC.noise_correction:Number of remaining safe areas: 10807
+INFO:DTC.noise_correction:Safe-areas: dict_keys([(4712.0, 4967.43)]) have been removed in  0.00 seconds
+INFO:DTC.noise_correction:Safe-areas updated in  18.74 seconds
+INFO:DTC.noise_correction:Created the safe-areas: dict_keys([(4712.36, 4967.5)])
+INFO:DTC.noise_correction:Number of remaining safe areas: 10807
+INFO:DTC.noise_correction:Safe-areas: dict_keys([(2650.36, 4202.01), (2025.31, 3999.69), (1143.19, 3955.13), (1317.05, 3990.93)]) have been removed in  0.00 seconds
+INFO:DTC.noise_correction:Safe-areas updated in  18.49 seconds
+INFO:DTC.noise_correction:Created the safe-areas: dict_keys([(1322.5, 3990.83), (2021.9, 3997.7)])
+INFO:DTC.noise_correction:Number of remaining safe areas: 10804
+INFO:DTC.noise_correction:Safe-areas: dict_keys([(3526.83, 1911.09)]) have been removed in  0.00 seconds
+INFO:DTC.noise_correction:Safe-areas updated in  18.35 seconds
+INFO:DTC.noise_correction:Created the safe-areas: dict_keys([(3524.93, 1915.64)])
+INFO:DTC.noise_correction:Number of remaining safe areas: 10805
+INFO:DTC.noise_correction:Safe-areas: dict_keys([(3491.28, 2503.42)]) have been removed in  0.00 seconds
+INFO:DTC.noise_correction:Safe-areas updated in  18.36 seconds
+INFO:DTC.noise_correction:Created the safe-areas: dict_keys([(3496.75, 2503.75)])
+INFO:DTC.noise_correction:Number of remaining safe areas: 10805
+INFO:DTC.noise_correction:Safe-areas: dict_keys([(3322.28, 4363.54), (5043.17, 4751.83)]) have been removed in  0.00 seconds
+INFO:DTC.noise_correction:Safe-areas updated in  18.17 seconds
+INFO:DTC.noise_correction:Created the safe-areas: dict_keys([(5037.5, 4765.5), (3318.5, 4361.0)])
+INFO:DTC.noise_correction:Number of remaining safe areas: 10804
+INFO:DTC.noise_correction:Safe-areas: dict_keys([(4168.74, 4810.33)]) have been removed in  0.00 seconds
+INFO:DTC.noise_correction:Safe-areas updated in  18.60 seconds
+INFO:DTC.noise_correction:Created the safe-areas: dict_keys([(4179.5, 4806.0)])
+INFO:DTC.noise_correction:Number of remaining safe areas: 10805
+INFO:DTC.noise_correction:Safe-areas: dict_keys([(4298.74, 4022.46), (4330.52, 4357.39), (4328.03, 3514.87), (5251.53, 2621.58)]) have been removed in  0.00 seconds
+INFO:DTC.noise_correction:Safe-areas updated in  18.65 seconds
+INFO:DTC.noise_correction:Created the safe-areas: dict_keys([(4300.0, 4021.25), (4327.5, 3507.5), (4334.0, 4355.5)])
+INFO:DTC.noise_correction:Number of remaining safe areas: 10802
+INFO:DTC.noise_correction:Safe-areas: dict_keys([(3571.42, 3458.72)]) have been removed in  0.00 seconds
+INFO:DTC.noise_correction:Safe-areas updated in  18.44 seconds
+INFO:DTC.noise_correction:Created the safe-areas: dict_keys([(3572.5, 3456.75)])
+INFO:DTC.noise_correction:Number of remaining safe areas: 10804
+INFO:DTC.noise_correction:Safe-areas: dict_keys([(3856.28, 4110.51)]) have been removed in  0.00 seconds
+INFO:DTC.noise_correction:Safe-areas updated in  17.92 seconds
+INFO:DTC.noise_correction:Created the safe-areas: dict_keys([(3854.0, 4109.0)])
+INFO:DTC.noise_correction:Number of remaining safe areas: 10804
+INFO:DTC.noise_correction:Safe-areas: dict_keys([(3721.38, 3864.78), (4024.81, 3475.19), (3727.89, 4377.0), (3715.85, 4031.26), (3721.38, 3815.55), (3755.31, 3132.38), (4449.27, 3130.06)]) have been removed in  0.00 seconds
+INFO:DTC.noise_correction:Safe-areas updated in  18.91 seconds
+INFO:DTC.noise_correction:Created the safe-areas: dict_keys([(3717.25, 4030.25), (4440.5, 3130.83), (3722.5, 3818.5), (4023.0, 3468.5), (3735.5, 4379.5), (3753.25, 3129.0)])
+INFO:DTC.noise_correction:Number of remaining safe areas: 10798
+INFO:DTC.noise_correction:Safe-areas: dict_keys([(3072.98, 5228.46), (3406.52, 5532.92), (4700.69, 4955.29)]) have been removed in  0.00 seconds
+INFO:DTC.noise_correction:Safe-areas updated in  18.29 seconds
+INFO:DTC.noise_correction:Created the safe-areas: dict_keys([(3084.5, 5227.5), (4703.0, 4957.0)])
+INFO:DTC.noise_correction:Number of remaining safe areas: 10801
+INFO:DTC.noise_correction:Safe-areas: dict_keys([(3411.09, 4018.06)]) have been removed in  0.00 seconds
+INFO:DTC.noise_correction:Safe-areas updated in  18.03 seconds
+INFO:DTC.noise_correction:Created the safe-areas: dict_keys([(3416.5, 4017.83)])
+INFO:DTC.noise_correction:Number of remaining safe areas: 10802
+INFO:DTC.noise_correction:Safe-areas: dict_keys([(3911.03, 5062.55), (2105.55, 5186.06), (3685.21, 4656.49)]) have been removed in  0.00 seconds
+INFO:DTC.noise_correction:Safe-areas updated in  18.70 seconds
+INFO:DTC.noise_correction:Created the safe-areas: dict_keys([(3684.5, 4655.5), (2108.25, 5184.75)])
+INFO:DTC.noise_correction:Number of remaining safe areas: 10800
+INFO:DTC.noise_correction:Safe-areas: dict_keys([(3867.48, 3747.72)]) have been removed in  0.00 seconds
+INFO:DTC.noise_correction:Safe-areas updated in  18.50 seconds
+INFO:DTC.noise_correction:Created the safe-areas: dict_keys([(3866.83, 3751.33)])
+INFO:DTC.noise_correction:Number of remaining safe areas: 10801
+INFO:DTC.noise_correction:Safe-areas: dict_keys([(4600.3, 3479.86), (4317.55, 3530.03), (3983.5, 3460.5)]) have been removed in  0.00 seconds
+INFO:DTC.noise_correction:Safe-areas updated in  19.13 seconds
+INFO:DTC.noise_correction:Created the safe-areas: dict_keys([(4316.5, 3541.5), (4326.5, 3521.5), (4607.67, 3478.5), (3980.5, 3458.17)])
+INFO:DTC.noise_correction:Number of remaining safe areas: 10799
+INFO:DTC.noise_correction:Safe-areas: dict_keys([(2003.63, 3986.25)]) have been removed in  0.00 seconds
+INFO:DTC.noise_correction:Safe-areas updated in  18.48 seconds
+INFO:DTC.noise_correction:Created the safe-areas: dict_keys([(2004.83, 3994.5)])
+INFO:DTC.noise_correction:Number of remaining safe areas: 10802
+INFO:DTC.noise_correction:Safe-areas: dict_keys([(2033.74, 4148.67), (3731.66, 2514.61)]) have been removed in  0.00 seconds
+INFO:DTC.noise_correction:Safe-areas updated in  18.24 seconds
+INFO:DTC.noise_correction:Created the safe-areas: dict_keys([(2029.0, 4139.5), (3732.0, 2513.0)])
+INFO:DTC.noise_correction:Number of remaining safe areas: 10801
+INFO:DTC.noise_correction:Safe-areas: dict_keys([(291.83, 2084.23), (981.56, 2501.06), (1381.84, 3814.28)]) have been removed in  0.00 seconds
+INFO:DTC.noise_correction:Safe-areas updated in  18.71 seconds
+INFO:DTC.noise_correction:Created the safe-areas: dict_keys([(287.5, 2085.0), (1378.5, 3814.5), (950.9, 2482.5)])
+INFO:DTC.noise_correction:Number of remaining safe areas: 10800
+INFO:DTC.noise_correction:Safe-areas: dict_keys([(4329.27, 3949.29)]) have been removed in  0.00 seconds
+INFO:DTC.noise_correction:Safe-areas updated in  18.18 seconds
+INFO:DTC.noise_correction:Created the safe-areas: dict_keys([(4329.3, 3953.5)])
+INFO:DTC.noise_correction:Number of remaining safe areas: 10802
+INFO:DTC.noise_correction:Safe-areas: dict_keys([(4329.5, 3855.5), (4322.51, 3704.52), (4235.91, 3143.57), (3961.85, 3017.39)]) have been removed in  0.00 seconds
+INFO:DTC.noise_correction:Safe-areas updated in  18.45 seconds
+INFO:DTC.noise_correction:Created the safe-areas: dict_keys([(4317.5, 3708.5), (3962.0, 3026.0), (4331.0, 3849.0), (4235.83, 3149.17)])
+INFO:DTC.noise_correction:Number of remaining safe areas: 10799
+INFO:DTC.noise_correction:Safe-areas: dict_keys([(4800.42, 4858.28), (4979.05, 4949.8)]) have been removed in  0.00 seconds
+INFO:DTC.noise_correction:Safe-areas updated in  18.65 seconds
+INFO:DTC.noise_correction:Created the safe-areas: dict_keys([(4792.75, 4857.0), (4967.5, 4978.5)])
+INFO:DTC.noise_correction:Number of remaining safe areas: 10801
+INFO:DTC.noise_correction:Safe-areas: dict_keys([(2831.65, 3037.0)]) have been removed in  0.00 seconds
+INFO:DTC.noise_correction:Safe-areas updated in  19.29 seconds
+INFO:DTC.noise_correction:Created the safe-areas: dict_keys([(2835.83, 3040.3)])
+INFO:DTC.noise_correction:Number of remaining safe areas: 10802
+INFO:DTC.noise_correction:Safe-areas: dict_keys([(3383.53, 5384.19)]) have been removed in  0.00 seconds
+INFO:DTC.noise_correction:Safe-areas updated in  17.99 seconds
+INFO:DTC.noise_correction:Created the safe-areas: dict_keys([(3386.0, 5382.5)])
+INFO:DTC.noise_correction:Number of remaining safe areas: 10802
+INFO:DTC.noise_correction:Safe-areas: dict_keys([(2193.59, 5337.65)]) have been removed in  0.00 seconds
+INFO:DTC.noise_correction:Safe-areas updated in  19.70 seconds
+INFO:DTC.noise_correction:Created the safe-areas: dict_keys([(2196.9, 5338.3)])
+INFO:DTC.noise_correction:Number of remaining safe areas: 10802
+INFO:DTC.noise_correction:Safe-areas: dict_keys([(3568.19, 2324.03), (3784.17, 2156.22)]) have been removed in  0.00 seconds
+INFO:DTC.noise_correction:Safe-areas updated in  19.88 seconds
+INFO:DTC.noise_correction:Created the safe-areas: dict_keys([(3561.5, 2325.5)])
+INFO:DTC.noise_correction:Number of remaining safe areas: 10801
+INFO:DTC.noise_correction:Safe-areas: dict_keys([(4076.5, 4671.83)]) have been removed in  0.00 seconds
+INFO:DTC.noise_correction:Safe-areas updated in  18.97 seconds
+INFO:DTC.noise_correction:Created the safe-areas: dict_keys([(4072.83, 4670.17)])
+INFO:DTC.noise_correction:Number of remaining safe areas: 10801
+INFO:DTC.noise_correction:Safe-areas: dict_keys([(1738.52, 3538.22)]) have been removed in  0.00 seconds
+INFO:DTC.noise_correction:Safe-areas updated in  19.47 seconds
+INFO:DTC.noise_correction:Created the safe-areas: dict_keys([(1731.5, 3532.17)])
+INFO:DTC.noise_correction:Number of remaining safe areas: 10801
+INFO:DTC.noise_correction:Safe-areas: dict_keys([(1358.43, 4289.18), (2681.94, 3832.15)]) have been removed in  0.00 seconds
+INFO:DTC.noise_correction:Safe-areas updated in  19.15 seconds
+INFO:DTC.noise_correction:Created the safe-areas: dict_keys([(1358.5, 4292.0), (2678.0, 3827.0)])
+INFO:DTC.noise_correction:Number of remaining safe areas: 10800
+INFO:DTC.noise_correction:Safe-areas: dict_keys([(1743.83, 3481.17)]) have been removed in  0.00 seconds
+INFO:DTC.noise_correction:Safe-areas updated in  18.64 seconds
+INFO:DTC.noise_correction:Created the safe-areas: dict_keys([(1739.0, 3479.75)])
+INFO:DTC.noise_correction:Number of remaining safe areas: 10801
+INFO:DTC.noise_correction:Safe-areas: dict_keys([(4132.5, 3568.83), (4329.25, 3880.38)]) have been removed in  0.00 seconds
+INFO:DTC.noise_correction:Safe-areas updated in  18.54 seconds
+INFO:DTC.noise_correction:Created the safe-areas: dict_keys([(4133.93, 3570.36), (4327.83, 3873.17)])
+INFO:DTC.noise_correction:Number of remaining safe areas: 10800
+INFO:DTC.noise_correction:Safe-areas: dict_keys([(1423.63, 4336.46)]) have been removed in  0.00 seconds
+INFO:DTC.noise_correction:Safe-areas updated in  18.36 seconds
+INFO:DTC.noise_correction:Created the safe-areas: dict_keys([(1425.5, 4341.0)])
+INFO:DTC.noise_correction:Number of remaining safe areas: 10801
+INFO:DTC.noise_correction:Safe-areas: dict_keys([(2398.76, 3595.58), (2513.24, 3239.96), (3006.19, 2154.51), (2909.73, 1922.01)]) have been removed in  0.00 seconds
+INFO:DTC.noise_correction:Safe-areas updated in  18.80 seconds
+INFO:DTC.noise_correction:Created the safe-areas: dict_keys([(2397.25, 3587.25), (2513.3, 3241.7), (3005.5, 2157.5), (2908.17, 1920.83)])
+INFO:DTC.noise_correction:Number of remaining safe areas: 10798
+INFO:DTC.noise_correction:Safe-areas: dict_keys([(2903.09, 5436.49), (3570.68, 5483.57)]) have been removed in  0.00 seconds
+INFO:DTC.noise_correction:Safe-areas updated in  18.54 seconds
+INFO:DTC.noise_correction:Created the safe-areas: dict_keys([(3566.9, 5481.3)])
+INFO:DTC.noise_correction:Number of remaining safe areas: 10800
+INFO:DTC.noise_correction:Safe-areas: dict_keys([(3865.0, 3784.5), (3867.5, 3632.17), (3316.08, 1141.89), (3412.09, 2357.22), (3734.03, 1943.15)]) have been removed in  0.00 seconds
+INFO:DTC.noise_correction:Safe-areas updated in  18.71 seconds
+INFO:DTC.noise_correction:Created the safe-areas: dict_keys([(3864.83, 3782.5), (3317.1, 1136.5), (3732.5, 1954.5), (3869.7, 3633.5), (3419.5, 2360.5)])
+INFO:DTC.noise_correction:Number of remaining safe areas: 10796
+INFO:DTC.noise_correction:Safe-areas: dict_keys([(2446.23, 5349.05)]) have been removed in  0.00 seconds
+INFO:DTC.noise_correction:Safe-areas updated in  18.39 seconds
+INFO:DTC.noise_correction:Created the safe-areas: dict_keys([(2450.83, 5347.5)])
+INFO:DTC.noise_correction:Number of remaining safe areas: 10800
+INFO:DTC.noise_correction:Safe-areas: dict_keys([(3170.15, 4206.34)]) have been removed in  0.00 seconds
+INFO:DTC.noise_correction:Safe-areas updated in  19.36 seconds
+INFO:DTC.noise_correction:Created the safe-areas: dict_keys([(3169.5, 4209.5)])
+INFO:DTC.noise_correction:Number of remaining safe areas: 10800
+INFO:DTC.noise_correction:Safe-areas: dict_keys([(4771.03, 4563.8)]) have been removed in  0.00 seconds
+INFO:DTC.noise_correction:Safe-areas updated in  18.10 seconds
+INFO:DTC.noise_correction:Created the safe-areas: dict_keys([(4772.9, 4561.1)])
+INFO:DTC.noise_correction:Number of remaining safe areas: 10800
+INFO:DTC.noise_correction:Safe-areas: dict_keys([(3347.0, 4182.5)]) have been removed in  0.00 seconds
+INFO:DTC.noise_correction:Safe-areas updated in  20.61 seconds
+INFO:DTC.noise_correction:Created the safe-areas: dict_keys([])
+INFO:DTC.noise_correction:Number of remaining safe areas: 10800
+INFO:DTC.noise_correction:Safe-areas: dict_keys([(3557.61, 3464.59), (4135.95, 3588.88)]) have been removed in  0.00 seconds
+INFO:DTC.noise_correction:Safe-areas updated in  19.81 seconds
+INFO:DTC.noise_correction:Created the safe-areas: dict_keys([(4137.0, 3591.5), (3556.17, 3461.5)])
+INFO:DTC.noise_correction:Number of remaining safe areas: 10798
+INFO:DTC.noise_correction:Safe-areas: dict_keys([(2450.87, 5991.18)]) have been removed in  0.00 seconds
+INFO:DTC.noise_correction:Safe-areas updated in  18.36 seconds
+INFO:DTC.noise_correction:Created the safe-areas: dict_keys([(2447.0, 5993.25)])
+INFO:DTC.noise_correction:Number of remaining safe areas: 10799
+INFO:DTC.noise_correction:Safe-areas: dict_keys([(2674.21, 2184.2)]) have been removed in  0.00 seconds
+INFO:DTC.noise_correction:Safe-areas updated in  18.13 seconds
+INFO:DTC.noise_correction:Created the safe-areas: dict_keys([(2673.83, 2187.5)])
+INFO:DTC.noise_correction:Number of remaining safe areas: 10799
+INFO:DTC.noise_correction:Safe-areas: dict_keys([(4322.58, 2904.66)]) have been removed in  0.00 seconds
+INFO:DTC.noise_correction:Safe-areas updated in  18.41 seconds
+INFO:DTC.noise_correction:Created the safe-areas: dict_keys([(4321.17, 2905.5)])
+INFO:DTC.noise_correction:Number of remaining safe areas: 10799
+INFO:DTC.noise_correction:Safe-areas: dict_keys([(5534.29, 2609.77)]) have been removed in  0.00 seconds
+INFO:DTC.noise_correction:Safe-areas updated in  18.38 seconds
+INFO:DTC.noise_correction:Created the safe-areas: dict_keys([])
+INFO:DTC.noise_correction:Number of remaining safe areas: 10799
+INFO:DTC.noise_correction:Safe-areas: dict_keys([(3577.22, 4819.26)]) have been removed in  0.00 seconds
+INFO:DTC.noise_correction:Safe-areas updated in  18.14 seconds
+INFO:DTC.noise_correction:Created the safe-areas: dict_keys([(3575.1, 4818.7)])
+INFO:DTC.noise_correction:Number of remaining safe areas: 10798
+INFO:DTC.noise_correction:Safe-areas: dict_keys([(3323.52, 4802.88), (4129.0, 4019.5), (3599.5, 4816.0), (3446.57, 5991.88), (5193.76, 5761.5), (3550.88, 3625.44)]) have been removed in  0.00 seconds
+INFO:DTC.noise_correction:Safe-areas updated in  18.64 seconds
+INFO:DTC.noise_correction:Created the safe-areas: dict_keys([(4140.5, 4013.5), (5190.17, 5758.83), (3603.5, 4811.83), (4134.5, 4034.5), (3549.0, 3620.5), (3326.5, 4799.5)])
+INFO:DTC.noise_correction:Number of remaining safe areas: 10793
+INFO:DTC.noise_correction:Safe-areas: dict_keys([(3397.46, 3293.98)]) have been removed in  0.00 seconds
+INFO:DTC.noise_correction:Safe-areas updated in  18.15 seconds
+INFO:DTC.noise_correction:Created the safe-areas: dict_keys([(3396.64, 3292.5)])
+INFO:DTC.noise_correction:Number of remaining safe areas: 10798
+INFO:DTC.noise_correction:Safe-areas: dict_keys([(2770.3, 2181.52)]) have been removed in  0.00 seconds
+INFO:DTC.noise_correction:Safe-areas updated in  17.85 seconds
+INFO:DTC.noise_correction:Created the safe-areas: dict_keys([])
+INFO:DTC.noise_correction:Number of remaining safe areas: 10798
+INFO:DTC.noise_correction:Safe-areas: dict_keys([(2862.22, 3038.23)]) have been removed in  0.00 seconds
+INFO:DTC.noise_correction:Safe-areas updated in  18.08 seconds
+INFO:DTC.noise_correction:Created the safe-areas: dict_keys([(2864.5, 3039.83)])
+INFO:DTC.noise_correction:Number of remaining safe areas: 10797
+INFO:DTC.noise_correction:Safe-areas: dict_keys([(4427.87, 2621.22)]) have been removed in  0.00 seconds
+INFO:DTC.noise_correction:Safe-areas updated in  17.96 seconds
+INFO:DTC.noise_correction:Created the safe-areas: dict_keys([(4434.0, 2618.0)])
+INFO:DTC.noise_correction:Number of remaining safe areas: 10797
+INFO:DTC.noise_correction:Safe-areas: dict_keys([(2934.95, 4790.27), (2790.24, 4405.3)]) have been removed in  0.00 seconds
+INFO:DTC.noise_correction:Safe-areas updated in  18.82 seconds
+INFO:DTC.noise_correction:Created the safe-areas: dict_keys([(2932.72, 4789.39), (2791.17, 4403.83)])
+INFO:DTC.noise_correction:Number of remaining safe areas: 10796
+INFO:DTC.noise_correction:Safe-areas: dict_keys([(4331.64, 4279.51)]) have been removed in  0.00 seconds
+INFO:DTC.noise_correction:Safe-areas updated in  20.27 seconds
+INFO:DTC.noise_correction:Created the safe-areas: dict_keys([(4334.1, 4278.9)])
+INFO:DTC.noise_correction:Number of remaining safe areas: 10797
+INFO:DTC.noise_correction:Safe-areas: dict_keys([(3247.08, 4416.62), (4231.56, 3185.92), (3594.14, 3120.05), (2579.36, 3040.66), (2306.54, 3588.73), (2915.3, 3437.36)]) have been removed in  0.00 seconds
+INFO:DTC.noise_correction:Safe-areas updated in  21.02 seconds
+INFO:DTC.noise_correction:Created the safe-areas: dict_keys([(4235.0, 3187.5), (3589.5, 3114.0), (2303.67, 3585.17), (2914.0, 3434.0), (3249.5, 4415.5), (2575.5, 3034.5)])
+INFO:DTC.noise_correction:Number of remaining safe areas: 10792
+INFO:DTC.noise_correction:Safe-areas: dict_keys([(1764.51, 3996.56)]) have been removed in  0.00 seconds
+INFO:DTC.noise_correction:Safe-areas updated in  19.98 seconds
+INFO:DTC.noise_correction:Created the safe-areas: dict_keys([])
+INFO:DTC.noise_correction:Number of remaining safe areas: 10797
+INFO:DTC.noise_correction:Safe-areas: dict_keys([(3678.93, 3214.26), (3003.33, 3270.87), (4128.28, 3480.21), (3518.84, 3476.37)]) have been removed in  0.00 seconds
+INFO:DTC.noise_correction:Safe-areas updated in  19.14 seconds
+INFO:DTC.noise_correction:Created the safe-areas: dict_keys([(4110.5, 3480.5), (3519.0, 3478.83), (4135.5, 3481.17), (3006.5, 3277.5), (3673.0, 3211.0)])
+INFO:DTC.noise_correction:Number of remaining safe areas: 10793
+INFO:DTC.noise_correction:Safe-areas: dict_keys([(5379.12, 5887.22), (4292.41, 2868.44)]) have been removed in  0.00 seconds
+INFO:DTC.noise_correction:Safe-areas updated in  19.68 seconds
+INFO:DTC.noise_correction:Created the safe-areas: dict_keys([(5370.5, 5884.5), (4299.0, 2866.5)])
+INFO:DTC.noise_correction:Number of remaining safe areas: 10796
+INFO:DTC.noise_correction:Safe-areas: dict_keys([(2820.84, 3500.03), (2884.05, 3751.6), (2641.9, 3436.9), (2518.26, 3585.93)]) have been removed in  0.00 seconds
+INFO:DTC.noise_correction:Safe-areas updated in  19.63 seconds
+INFO:DTC.noise_correction:Created the safe-areas: dict_keys([(2517.75, 3586.5), (2883.5, 3755.0), (2646.0, 3438.0), (2822.7, 3504.1)])
+INFO:DTC.noise_correction:Number of remaining safe areas: 10794
+INFO:DTC.noise_correction:Safe-areas: dict_keys([(2481.56, 5074.32), (2747.69, 5225.07), (3137.78, 4418.42)]) have been removed in  0.00 seconds
+INFO:DTC.noise_correction:Safe-areas updated in  18.58 seconds
+INFO:DTC.noise_correction:Created the safe-areas: dict_keys([(3135.0, 4419.5), (2479.5, 5081.0), (2748.1, 5222.9)])
+INFO:DTC.noise_correction:Number of remaining safe areas: 10795
+INFO:DTC.noise_correction:Safe-areas: dict_keys([(3792.11, 5356.68), (3405.19, 5606.5)]) have been removed in  0.00 seconds
+INFO:DTC.noise_correction:Safe-areas updated in  18.63 seconds
+INFO:DTC.noise_correction:Created the safe-areas: dict_keys([(3792.5, 5359.83), (3405.93, 5610.64)])
+INFO:DTC.noise_correction:Number of remaining safe areas: 10796
+INFO:DTC.noise_correction:Safe-areas: dict_keys([(3959.74, 3829.9), (2296.91, 217.86), (3620.07, 2926.78)]) have been removed in  0.00 seconds
+INFO:DTC.noise_correction:Safe-areas updated in  18.52 seconds
+INFO:DTC.noise_correction:Created the safe-areas: dict_keys([(2315.5, 233.5), (3962.17, 3822.5), (3627.5, 2929.17)])
+INFO:DTC.noise_correction:Number of remaining safe areas: 10795
+INFO:DTC.noise_correction:Safe-areas: dict_keys([(3223.29, 4367.98)]) have been removed in  0.00 seconds
+INFO:DTC.noise_correction:Safe-areas updated in  18.09 seconds
+INFO:DTC.noise_correction:Created the safe-areas: dict_keys([(3224.0, 4363.38)])
+INFO:DTC.noise_correction:Number of remaining safe areas: 10797
+INFO:DTC.noise_correction:Safe-areas: dict_keys([(4135.56, 4168.93), (4209.44, 3575.08)]) have been removed in  0.00 seconds
+INFO:DTC.noise_correction:Safe-areas updated in  18.11 seconds
+INFO:DTC.noise_correction:Created the safe-areas: dict_keys([(4137.25, 4173.0), (4213.5, 3575.5)])
+INFO:DTC.noise_correction:Number of remaining safe areas: 10796
+INFO:DTC.noise_correction:Safe-areas: dict_keys([(3707.37, 4398.27), (3600.13, 2322.36)]) have been removed in  0.00 seconds
+INFO:DTC.noise_correction:Safe-areas updated in  18.38 seconds
+INFO:DTC.noise_correction:Created the safe-areas: dict_keys([(3599.0, 2326.5), (3705.0, 4392.0)])
+INFO:DTC.noise_correction:Number of remaining safe areas: 10796
+INFO:DTC.noise_correction:Safe-areas: dict_keys([(3559.12, 4370.76), (3216.5, 4020.0), (2828.96, 3326.99)]) have been removed in  0.00 seconds
+INFO:DTC.noise_correction:Safe-areas updated in  18.68 seconds
+INFO:DTC.noise_correction:Created the safe-areas: dict_keys([(2828.9, 3317.9), (2829.75, 3333.25), (3559.25, 4367.5), (3207.83, 4032.83)])
+INFO:DTC.noise_correction:Number of remaining safe areas: 10795
+INFO:DTC.noise_correction:Safe-areas: dict_keys([(2441.48, 3545.89)]) have been removed in  0.00 seconds
+INFO:DTC.noise_correction:Safe-areas updated in  18.21 seconds
+INFO:DTC.noise_correction:Created the safe-areas: dict_keys([])
+INFO:DTC.noise_correction:Number of remaining safe areas: 10798
+INFO:DTC.noise_correction:Safe-areas: dict_keys([(4145.88, 3778.57)]) have been removed in  0.00 seconds
+INFO:DTC.noise_correction:Safe-areas updated in  18.42 seconds
+INFO:DTC.noise_correction:Created the safe-areas: dict_keys([(4141.9, 3778.1)])
+INFO:DTC.noise_correction:Number of remaining safe areas: 10797
+INFO:DTC.noise_correction:Safe-areas: dict_keys([(2675.67, 2028.46)]) have been removed in  0.00 seconds
+INFO:DTC.noise_correction:Safe-areas updated in  18.25 seconds
+INFO:DTC.noise_correction:Created the safe-areas: dict_keys([(2672.17, 2026.17)])
+INFO:DTC.noise_correction:Number of remaining safe areas: 10797
+INFO:DTC.noise_correction:Safe-areas: dict_keys([(2723.5, 3987.5), (3707.51, 4415.83), (2513.14, 4004.64), (2255.18, 3050.07)]) have been removed in  0.00 seconds
+INFO:DTC.noise_correction:Safe-areas updated in  18.70 seconds
+INFO:DTC.noise_correction:Created the safe-areas: dict_keys([(2248.0, 3050.5), (2511.75, 4010.25), (2725.83, 3998.17), (3707.5, 4412.5)])
+INFO:DTC.noise_correction:Number of remaining safe areas: 10794
+INFO:DTC.noise_correction:Safe-areas: dict_keys([(4112.04, 292.15), (3599.14, 1119.0), (4318.52, 2701.06), (4034.7, 3170.78), (3990.37, 1162.84), (4149.56, 1171.15), (3640.98, 792.05), (3570.48, 1189.62)]) have been removed in  0.00 seconds
+INFO:DTC.noise_correction:Safe-areas updated in  18.63 seconds
+INFO:DTC.noise_correction:Created the safe-areas: dict_keys([(4038.5, 3167.5), (3566.0, 1194.5), (4321.83, 2701.17)])
+INFO:DTC.noise_correction:Number of remaining safe areas: 10790
+INFO:DTC.noise_correction:Safe-areas: dict_keys([(3912.78, 4805.98), (4153.48, 4604.67), (3283.0, 4800.37), (3705.0, 4448.0)]) have been removed in  0.00 seconds
+INFO:DTC.noise_correction:Safe-areas updated in  18.85 seconds
+INFO:DTC.noise_correction:Created the safe-areas: dict_keys([(3289.21, 4802.07), (4153.83, 4604.17), (3912.5, 4810.64), (3705.5, 4445.0)])
+INFO:DTC.noise_correction:Number of remaining safe areas: 10789
+INFO:DTC.noise_correction:Safe-areas: dict_keys([(4213.73, 5072.34)]) have been removed in  0.00 seconds
+INFO:DTC.noise_correction:Safe-areas updated in  18.82 seconds
+INFO:DTC.noise_correction:Created the safe-areas: dict_keys([(4217.07, 5068.93)])
+INFO:DTC.noise_correction:Number of remaining safe areas: 10792
+INFO:DTC.noise_correction:Safe-areas: dict_keys([(2509.69, 4099.03)]) have been removed in  0.00 seconds
+INFO:DTC.noise_correction:Safe-areas updated in  18.70 seconds
+INFO:DTC.noise_correction:Created the safe-areas: dict_keys([(2510.21, 4102.5)])
+INFO:DTC.noise_correction:Number of remaining safe areas: 10792
+INFO:DTC.noise_correction:Safe-areas: dict_keys([(2050.67, 4770.12)]) have been removed in  0.00 seconds
+INFO:DTC.noise_correction:Safe-areas updated in  18.53 seconds
+INFO:DTC.noise_correction:Created the safe-areas: dict_keys([(2044.5, 4767.17)])
+INFO:DTC.noise_correction:Number of remaining safe areas: 10792
+INFO:DTC.noise_correction:Safe-areas: dict_keys([(1614.59, 3902.28), (2670.06, 4000.07)]) have been removed in  0.00 seconds
+INFO:DTC.noise_correction:Safe-areas updated in  18.65 seconds
+INFO:DTC.noise_correction:Created the safe-areas: dict_keys([(2668.0, 3998.0)])
+INFO:DTC.noise_correction:Number of remaining safe areas: 10791
+INFO:DTC.noise_correction:Safe-areas: dict_keys([(5123.83, 1074.86), (4224.17, 3132.55)]) have been removed in  0.00 seconds
+INFO:DTC.noise_correction:Safe-areas updated in  18.64 seconds
+INFO:DTC.noise_correction:Created the safe-areas: dict_keys([(4223.83, 3132.83), (5128.5, 1081.5), (5135.5, 1056.5)])
+INFO:DTC.noise_correction:Number of remaining safe areas: 10790
+INFO:DTC.noise_correction:Safe-areas: dict_keys([(4329.78, 4415.72), (4365.71, 3378.07), (2474.07, 3690.14)]) have been removed in  0.00 seconds
+INFO:DTC.noise_correction:Safe-areas updated in  19.33 seconds
+INFO:DTC.noise_correction:Created the safe-areas: dict_keys([(4368.0, 3375.83), (4331.83, 4417.39), (2473.7, 3685.7)])
+INFO:DTC.noise_correction:Number of remaining safe areas: 10790
+INFO:DTC.noise_correction:Safe-areas: dict_keys([(3698.51, 3128.31)]) have been removed in  0.00 seconds
+INFO:DTC.noise_correction:Safe-areas updated in  18.99 seconds
+INFO:DTC.noise_correction:Created the safe-areas: dict_keys([(3697.75, 3124.0)])
+INFO:DTC.noise_correction:Number of remaining safe areas: 10792
+INFO:DTC.noise_correction:Safe-areas: dict_keys([(3846.83, 4208.83)]) have been removed in  0.00 seconds
+INFO:DTC.noise_correction:Safe-areas updated in  18.95 seconds
+INFO:DTC.noise_correction:Created the safe-areas: dict_keys([(3850.83, 4205.83)])
+INFO:DTC.noise_correction:Number of remaining safe areas: 10792
+INFO:DTC.noise_correction:Safe-areas: dict_keys([(3277.68, 2327.12), (3618.58, 2002.3), (3511.72, 2481.2), (3261.43, 3421.19)]) have been removed in  0.00 seconds
+INFO:DTC.noise_correction:Safe-areas updated in  19.27 seconds
+INFO:DTC.noise_correction:Created the safe-areas: dict_keys([(3510.5, 2487.5), (3272.5, 2327.7), (3620.36, 2000.64)])
+INFO:DTC.noise_correction:Number of remaining safe areas: 10789
+INFO:DTC.noise_correction:Safe-areas: dict_keys([(3880.94, 3466.51), (3914.79, 3463.58), (4134.11, 3360.99), (4326.09, 3100.66), (3649.98, 3458.52), (2514.94, 4417.47), (2808.52, 4016.36), (2528.92, 4000.95), (2517.63, 3902.02), (1930.52, 3285.44), (2044.88, 4134.27), (2957.13, 3031.37), (4342.06, 3134.5), (4320.69, 2682.77), (5494.73, 2607.87)]) have been removed in  0.00 seconds
+INFO:DTC.noise_correction:Safe-areas updated in  19.82 seconds
+INFO:DTC.noise_correction:Created the safe-areas: dict_keys([(4313.5, 2672.5), (3880.0, 3463.25), (4339.17, 3133.33), (2050.5, 4132.62), (3647.17, 3464.17), (2529.25, 3996.75), (2511.25, 4418.5), (4146.0, 3357.0), (2520.0, 3904.5), (4324.25, 3098.5), (2808.5, 4009.5), (4326.5, 2691.5), (3913.0, 3462.0), (2957.83, 3040.17), (1925.86, 3283.23)])
+INFO:DTC.noise_correction:Number of remaining safe areas: 10777
+INFO:DTC.noise_correction:Safe-areas: dict_keys([(4236.09, 1207.85)]) have been removed in  0.00 seconds
+INFO:DTC.noise_correction:Safe-areas updated in  19.42 seconds
+INFO:DTC.noise_correction:Created the safe-areas: dict_keys([(4229.5, 1212.5)])
+INFO:DTC.noise_correction:Number of remaining safe areas: 10791
+INFO:DTC.noise_correction:Safe-areas: dict_keys([(4135.8, 3901.82), (4329.77, 3271.02), (4198.5, 3463.5), (4150.69, 4024.53), (2546.01, 4174.29), (4283.09, 4021.18), (4730.87, 3787.87)]) have been removed in  0.00 seconds
+INFO:DTC.noise_correction:Safe-areas updated in  20.26 seconds
+INFO:DTC.noise_correction:Created the safe-areas: dict_keys([(4327.33, 3274.0), (4147.0, 4021.0), (4197.5, 3455.5), (4285.5, 4025.17), (2548.0, 4172.5), (4732.17, 3787.67)])
+INFO:DTC.noise_correction:Number of remaining safe areas: 10785
+INFO:DTC.noise_correction:Safe-areas: dict_keys([(5065.57, 4723.38), (2829.08, 4562.81), (1792.04, 3211.73), (5310.44, 5005.62), (4601.98, 3116.43)]) have been removed in  0.00 seconds
+INFO:DTC.noise_correction:Safe-areas updated in  19.43 seconds
+INFO:DTC.noise_correction:Created the safe-areas: dict_keys([(1796.0, 3205.75), (2836.5, 4561.0), (5305.5, 5008.5), (4604.36, 3113.64), (5064.5, 4712.5)])
+INFO:DTC.noise_correction:Number of remaining safe areas: 10786
+INFO:DTC.noise_correction:Safe-areas: dict_keys([(2396.57, 2650.5)]) have been removed in  0.00 seconds
+INFO:DTC.noise_correction:Safe-areas updated in  19.14 seconds
+INFO:DTC.noise_correction:Created the safe-areas: dict_keys([(2397.83, 2647.83)])
+INFO:DTC.noise_correction:Number of remaining safe areas: 10790
+INFO:DTC.noise_correction:Safe-areas: dict_keys([(2649.8, 3804.47), (3664.94, 3461.08), (3737.01, 3415.59)]) have been removed in  0.00 seconds
+INFO:DTC.noise_correction:Safe-areas updated in  19.48 seconds
+INFO:DTC.noise_correction:Created the safe-areas: dict_keys([(2661.5, 3804.5), (3660.5, 3456.5), (3736.3, 3418.1)])
+INFO:DTC.noise_correction:Number of remaining safe areas: 10788
+INFO:DTC.noise_correction:Safe-areas: dict_keys([(2781.11, 3528.3), (3132.65, 3470.09), (3426.22, 3593.61), (3934.27, 3461.98), (4612.59, 3965.76)]) have been removed in  0.00 seconds
+INFO:DTC.noise_correction:Safe-areas updated in  19.85 seconds
+INFO:DTC.noise_correction:Created the safe-areas: dict_keys([(3132.5, 3468.0), (4609.5, 3966.0), (3424.7, 3597.9), (3933.9, 3467.7)])
+INFO:DTC.noise_correction:Number of remaining safe areas: 10786
+INFO:DTC.noise_correction:Safe-areas: dict_keys([(1750.38, 3220.38)]) have been removed in  0.00 seconds
+INFO:DTC.noise_correction:Safe-areas updated in  19.04 seconds
+INFO:DTC.noise_correction:Created the safe-areas: dict_keys([(1745.5, 3217.5)])
+INFO:DTC.noise_correction:Number of remaining safe areas: 10789
+INFO:DTC.noise_correction:Safe-areas: dict_keys([(5023.06, 3808.4), (4522.0, 3462.31), (4273.54, 3489.67)]) have been removed in  0.00 seconds
+INFO:DTC.noise_correction:Safe-areas updated in  19.25 seconds
+INFO:DTC.noise_correction:Created the safe-areas: dict_keys([(4520.07, 3462.64), (5022.5, 3809.83), (4276.0, 3482.5)])
+INFO:DTC.noise_correction:Number of remaining safe areas: 10787
+INFO:DTC.noise_correction:Safe-areas: dict_keys([(2764.33, 4789.0), (2791.17, 4403.83), (3572.75, 4952.5)]) have been removed in  0.00 seconds
+INFO:DTC.noise_correction:Safe-areas updated in  19.32 seconds
+INFO:DTC.noise_correction:Created the safe-areas: dict_keys([(3568.83, 4950.83), (2764.0, 4789.25)])
+INFO:DTC.noise_correction:Number of remaining safe areas: 10787
+INFO:DTC.noise_correction:Safe-areas: dict_keys([(3186.12, 4177.72), (2545.08, 3991.94), (2478.58, 3798.8), (4138.96, 3628.57), (3722.5, 3818.5), (2928.64, 4036.99), (2760.08, 4345.36)]) have been removed in  0.00 seconds
+INFO:DTC.noise_correction:Safe-areas updated in  19.71 seconds
+INFO:DTC.noise_correction:Created the safe-areas: dict_keys([(2768.17, 4346.83), (2547.25, 3995.0), (3719.83, 3818.17), (2929.5, 4034.17), (2477.5, 3803.17), (3190.17, 4177.83), (4139.33, 3634.67)])
+INFO:DTC.noise_correction:Number of remaining safe areas: 10782
+INFO:DTC.noise_correction:Safe-areas: dict_keys([(5370.5, 5884.5)]) have been removed in  0.00 seconds
+INFO:DTC.noise_correction:Safe-areas updated in  19.02 seconds
+INFO:DTC.noise_correction:Created the safe-areas: dict_keys([])
+INFO:DTC.noise_correction:Number of remaining safe areas: 10788
+INFO:DTC.noise_correction:Safe-areas: dict_keys([(2828.8, 3393.99), (2822.7, 3504.1), (2467.28, 3585.29)]) have been removed in  0.00 seconds
+INFO:DTC.noise_correction:Safe-areas updated in  19.06 seconds
+INFO:DTC.noise_correction:Created the safe-areas: dict_keys([(2823.17, 3505.17), (2830.0, 3392.0), (2466.0, 3583.17)])
+INFO:DTC.noise_correction:Number of remaining safe areas: 10785
+INFO:DTC.noise_correction:Safe-areas: dict_keys([(4430.63, 2655.95), (2522.19, 3458.36), (3048.49, 2223.46), (2395.93, 2892.6), (2678.0, 3827.0), (2720.49, 3970.62)]) have been removed in  0.00 seconds
+INFO:DTC.noise_correction:Safe-areas updated in  18.67 seconds
+INFO:DTC.noise_correction:Created the safe-areas: dict_keys([(2395.93, 2890.36), (2723.7, 3976.7), (2523.0, 3462.0), (3048.0, 2216.0), (4433.83, 2650.83)])
+INFO:DTC.noise_correction:Number of remaining safe areas: 10782
+INFO:DTC.noise_correction:Safe-areas: dict_keys([(4389.53, 3128.84), (4117.44, 1669.92), (3504.75, 3487.53), (2553.36, 3510.08), (2570.98, 3468.36)]) have been removed in  0.00 seconds
+INFO:DTC.noise_correction:Safe-areas updated in  18.79 seconds
+INFO:DTC.noise_correction:Created the safe-areas: dict_keys([(3503.5, 3488.17), (2549.5, 3506.5), (4395.3, 3131.3), (4125.5, 1665.5), (2577.5, 3462.5)])
+INFO:DTC.noise_correction:Number of remaining safe areas: 10782
+INFO:DTC.noise_correction:Safe-areas: dict_keys([(2675.35, 5382.87), (1735.5, 3861.82)]) have been removed in  0.00 seconds
+INFO:DTC.noise_correction:Safe-areas updated in  18.47 seconds
+INFO:DTC.noise_correction:Created the safe-areas: dict_keys([(1734.5, 3862.9)])
+INFO:DTC.noise_correction:Number of remaining safe areas: 10785
+INFO:DTC.noise_correction:Safe-areas: dict_keys([(1719.17, 3900.76)]) have been removed in  0.00 seconds
+INFO:DTC.noise_correction:Safe-areas updated in  17.83 seconds
+INFO:DTC.noise_correction:Created the safe-areas: dict_keys([(1728.5, 3900.5)])
+INFO:DTC.noise_correction:Number of remaining safe areas: 10785
+INFO:DTC.noise_correction:Safe-areas: dict_keys([(3015.82, 4785.22), (4008.75, 4717.87), (4222.12, 4109.83)]) have been removed in  0.00 seconds
+INFO:DTC.noise_correction:Safe-areas updated in  18.61 seconds
+INFO:DTC.noise_correction:Created the safe-areas: dict_keys([(4012.5, 4721.5), (3015.0, 4787.25)])
+INFO:DTC.noise_correction:Number of remaining safe areas: 10783
+INFO:DTC.noise_correction:Safe-areas: dict_keys([(2519.44, 3985.56), (4899.92, 4662.62)]) have been removed in  0.00 seconds
+INFO:DTC.noise_correction:Safe-areas updated in  18.64 seconds
+INFO:DTC.noise_correction:Created the safe-areas: dict_keys([(2518.5, 3984.83)])
+INFO:DTC.noise_correction:Number of remaining safe areas: 10783
+INFO:DTC.noise_correction:Safe-areas: dict_keys([(4633.81, 5754.89)]) have been removed in  0.00 seconds

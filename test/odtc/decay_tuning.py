@@ -12,7 +12,13 @@ from DTC.construct_main_route import ConstructMainRoute
 from DTC.construct_safe_area import ConstructSafeArea
 from math import ceil
 from copy import deepcopy
+import matplotlib.pyplot as plt
+import matplotlib.patches as patches
 import os
+
+def draw_circle(ax, point, radius):
+    circle = plt.Circle(point, radius, color='blue', fill=False)
+    ax.add_patch(circle)
 
 
 def create_point_cloud(records):
@@ -98,6 +104,20 @@ print('    Cleaning and incrementing ...')
 increment_runner.clean_and_increment()
 print(f'    Number of safe areas after incremental: {len(increment_runner.safe_areas)}')
 print(f'Number of safe areas in common: {len(safe_areas.keys() & increment_runner.safe_areas.keys())}')
+
+print("Creating figure")
+fig, axs = plt.subplots(2, 1)
+
+axs[0].scatter(*zip(*safe_areas.keys()), color='g', s=0.1)
+axs[1].scatter(*zip(*increment_runner.safe_areas.keys()), color='g', s=0.1)
+
+axs[0].set_ylim(0, 8000)
+axs[0].set_xlim(0, 8000)
+axs[1].set_ylim(0, 8000)
+axs[1].set_xlim(0, 8000)
+axs[0].set_aspect('equal', 'box')
+axs[1].set_aspect('equal', 'box')
+plt.savefig("safe_areas.png")
 
 # 4. Mål hvor mange punkter der bliver fjernet fra modellen pga time decay
 # 5. Juster time decay så vi får et antal punkter der giver mening

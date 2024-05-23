@@ -16,7 +16,12 @@ confidence_change = 0.01
 cardinality_squish = 0.01
 max_confidence_change = 0.1
 linear_decay = 1 / 86400
+
+# Confidence increase and decrease
 confidence_threshold = 0.5
+confidence_increase = 0.05
+max_confidence_decrease = 0.05
+decrease_scale_factor = 1
 
 
 # Route Skeleton
