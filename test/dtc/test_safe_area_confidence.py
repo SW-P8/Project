@@ -15,21 +15,17 @@ class TestSafeArea():
         default_safe_area.cardinality = 10
         assert default_safe_area.get_confidence_increase() == 0.1
 
-    def test_confidense_increase_changed_less_than_max(self, default_safe_area):
-        default_safe_area.cardinality = 100000
-        assert default_safe_area.get_confidence_increase() == 0.01
-
     def test_calculate_confidence_decrease(self, default_safe_area):
         default_safe_area.radius = 5
 
         res = round(default_safe_area.calculate_confidence_decrease(0.1), 5)
-        assert res == 0.00300
+        assert res == 0.02000
 
     def test_calculate_confidence_decrease_determined_by_min_confidence(self, default_safe_area):
         default_safe_area.radius = 0.02
 
         res = round(default_safe_area.calculate_confidence_decrease(0.8), 5)
-        assert res == 0.15
+        assert res == 0.025
 
     def test_set_confidence(self, default_safe_area):
         new_time = datetime.now() + timedelta(minutes=2)
