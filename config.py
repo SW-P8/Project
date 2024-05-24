@@ -17,8 +17,12 @@ confidence_change = 0.01
 cardinality_squish = 0.01
 max_confidence_change = 0.1
 linear_decay = 1 / 86400
-confidence_threshold = 0.5
 
+# Confidence increase and decrease
+confidence_increase = 0.025
+confidence_decrease_scale_factor = 1
+max_confidence_decrease = 0.025
+confidence_threshold = 0.4
 
 # Route Skeleton
 smooth_radius = 20
@@ -33,3 +37,8 @@ distance_interval = 15  # Distance for sampling.
 # Main Route
 distance_scale = 0.2
 '''Multiplier for distance away from neighborhood in main route extraction.'''
+
+
+# Incremental
+update_time = 24 * 3600 # System updates confidence of all safe-areas every 12 hours, timedelta uses seconds for unit.
+

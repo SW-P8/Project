@@ -11,44 +11,17 @@ class TestSafeArea():
         safe_area = SafeArea.from_cover_set(cover_set, (5, 5), decrease_factor=0.1, timestamp=datetime.now(), confidence_change=0.01, cardinality_squish=0.1, max_confidence_change=0.1)
         return safe_area
 
-    @pytest.mark.parametrize("normalised_cardinality, expected_result",
-        [
-            (0.001, 0.4),# test with values for cardinality_offset with cardinality = 100
-            (1, 0.631),     # test with values for cardinality_offset with cardinality = 100.000
-            (3, 0.853),     # test with values for cardinality_offset with cardinality = 300.000
-            (10, 0.9)     # test with values for cardinality_offset with cardinality = 1.000.000
-        ]
-    )
-    def test_sigmoid_as_used_for_cardinality_offset(self, normalised_cardinality, expected_result, default_safe_area):
-        # Arrange
-        y_offset = -0.1
-        multiplier = 1
-
-        # Act
-        result = default_safe_area.sigmoid(normalised_cardinality, y_offset, multiplier)
-
-        # Assert
-        assert round(result, 3) == expected_result
-
-    def test_confidense_increase_determined_by_max_confidence_change(self, default_safe_area):
-        default_safe_area.cardinality = 10
-        assert default_safe_area.get_confidence_increase() == 0.1
-
-    def test_confidense_increase_changed_less_than_max(self, default_safe_area):
-        default_safe_area.cardinality = 100000
-        assert default_safe_area.get_confidence_increase() == 0.01
-
     def test_calculate_confidence_decrease(self, default_safe_area):
         default_safe_area.radius = 5
 
         res = round(default_safe_area.calculate_confidence_decrease(0.1), 5)
-        assert res == 0.00300
+        assert res == 0.02000
 
     def test_calculate_confidence_decrease_determined_by_min_confidence(self, default_safe_area):
         default_safe_area.radius = 0.02
 
         res = round(default_safe_area.calculate_confidence_decrease(0.8), 5)
-        assert res == 0.15
+        assert res == 0.025
 
     def test_set_confidence(self, default_safe_area):
         new_time = datetime.now() + timedelta(minutes=2)

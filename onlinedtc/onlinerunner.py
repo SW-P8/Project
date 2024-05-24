@@ -31,6 +31,9 @@ class RunCleaning():
                     )
                 self.rebuild = True
             trajectory = self.input_trajectories.pop(0)
+            if not trajectory.points:
+                print(f"Empty trajectory: {trajectory}")
+                continue
             self.current_time = trajectory.points[len(trajectory.points) - 1].timestamp
             self.cleaner.noise_detection(trajectory, self._rebuild_listener)
             self._check_time_call_update(self.current_time)
@@ -61,9 +64,8 @@ class RunCleaning():
         self.current_time + timedelta(days=days, hours=hours, minutes=minutes, seconds=seconds)
 
     def _check_time_call_update(self, time: datetime):
-        update_time = 24 * 3600 # System updates confidence of all safe-areas every 12 hours, timedelta uses seconds for unit.
         unused_safe_areas = []
-        if (time - self.last_check).total_seconds() > update_time:
+        if (time - self.last_check).total_seconds() > config.update_time:
             for safe_area in self.safe_areas.values():
                 safe_area.get_current_confidence(time)
                 if safe_area.confidence < config.confidence_threshold:

@@ -198,11 +198,11 @@ class SafeArea:
         distance_to_safearea = dist - self.radius
         if (distance_to_safearea <= 0):
             (curr_conf, time) = self.get_current_confidence(point.timestamp)
-            self.set_confidence(min(curr_conf + self.get_confidence_increase(), 1.0), time)
+            self.set_confidence(min(curr_conf + config.confidence_increase, 1.0), time)
             self.cardinality += 1
         else:
             self.confidence -= self.calculate_confidence_decrease(distance_to_safearea)
-        if self.confidence < 0.5:  #TODO: Threshold
+        if self.confidence < config.confidence_threshold:
             update_function(self)
     
     def calculate_time_decay(self, delta:float):
@@ -234,14 +234,6 @@ class SafeArea:
             float: The result of `a * x`, representing the decayed value.
         """
         return a*x
-    
-    def sigmoid(self, x: float, y_offset, multiplier: float) -> float:
-        return (1/(1 + np.exp((-x))) + y_offset) * multiplier
-
-    def get_confidence_increase(self):
-        inc = max(min((1 / (self.cardinality * self.cardinality_squish)), self.max_confidence_change), self.confidence_change_factor)
-        return inc
 
     def calculate_confidence_decrease(self, delta):
-        dec = 0.2*tanh((3*delta)/(4 * self.radius))
-        return min(0.15, dec)
+        return min((config.confidence_decrease_scale_factor * (delta / self.radius)), config.max_confidence_decrease)
