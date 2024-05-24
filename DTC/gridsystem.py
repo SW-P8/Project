@@ -6,7 +6,6 @@ import multiprocessing as mp
 from DTC.construct_safe_area import ConstructSafeArea
 from DTC.construct_main_route import ConstructMainRoute
 from DTC.route_skeleton import RouteSkeleton
-from DTC.incremental import Incremental
 from math import floor
 from DTC.collection_utils import CollectionUtils
 import config
@@ -63,9 +62,3 @@ class GridSystem:
 
     def construct_safe_areas(self, decrease_factor: float = config.decrease_factor):
         self.safe_areas = ConstructSafeArea.construct_safe_areas(self.route_skeleton, self.grid, decrease_factor, self.initialization_point, self.max_timestamp)
-
-    def incremental_refinement(self, pc: TrajectoryPointCloud):
-        inc = Incremental(self.safe_areas)
-        for trajectory in pc.trajectories:
-            for p in trajectory.points:
-                inc.incremental_refine(p, self.initialization_point)
