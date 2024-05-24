@@ -128,6 +128,7 @@ def run_decay_tuning(postfix: str):
 
     write_set_of_tuples_to_json(f"Results/safe_areas_before_incremental_{postfix}.json", safe_areas.keys())
     write_set_of_tuples_to_json(f"Results/safe_areas_after_incremental_{postfix}.json", increment_runner.safe_areas.keys())
+    write_safe_areas_to_json(f'Results/SA_after_incremental_{postfix}.json', safe_areas)
 
 # 4. Mål hvor mange punkter der bliver fjernet fra modellen pga time decay
 # 5. Juster time decay så vi får et antal punkter der giver mening

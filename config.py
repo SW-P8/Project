@@ -18,10 +18,10 @@ max_confidence_change = 0.1
 linear_decay = 1 / 86400
 
 # Confidence increase and decrease
-confidence_increase = 0.05
+confidence_increase = 0.025
 confidence_decrease_scale_factor = 1
-max_confidence_decrease = 0.05
-confidence_threshold = 0.5
+max_confidence_decrease = 0.025
+confidence_threshold = 0.4
 
 # Route Skeleton
 smooth_radius = 20
