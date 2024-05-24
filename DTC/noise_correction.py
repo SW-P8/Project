@@ -12,13 +12,17 @@ logger = logging.getLogger(__name__)
 
 
 class NoiseCorrection:
-    def __init__(self, safe_areas, init_point):
+    def __init__(self, safe_areas, init_point, with_iteration: bool = True):
         self.safe_areas = safe_areas
         self.safe_areas_keys_list = list(safe_areas.keys())
         self.safe_areas_keys_kd_tree = KDTree(self.safe_areas_keys_list)
         self.initialization_point = init_point
+        self.with_iteration = with_iteration
 
     def noise_detection(self, trajectory: Trajectory, event_listener=None):
+        if not trajectory.points:
+            return
+
         labels_of_cleaned_points = []
         low_confidence_safe_areas = {}
 
@@ -27,20 +31,18 @@ class NoiseCorrection:
 
         checked_points = []
         discard_after_run = False
-
         self._check_for_noise_front_back(trajectory, labels_of_cleaned_points)
-
         for i, point in enumerate(trajectory.points):
             nearest_anchor, dist = DistanceCalculator.find_nearest_neighbour_from_candidates_with_kd_tree(
                 point, self.safe_areas_keys_list, self.safe_areas_keys_kd_tree, self.initialization_point)
-            self.safe_areas[nearest_anchor].update_confidence(dist, point, update_function)
-            long, lat = DistanceCalculator.calculate_exact_index_for_point(point, self.initialization_point)
-            checked_points.append((point, nearest_anchor, dist))
+            if self.with_iteration:
+                self.safe_areas[nearest_anchor].update_confidence(dist, point, update_function)
+                self.safe_areas[nearest_anchor].add_to_point_cloud(deepcopy(point))
 
-            self.safe_areas[nearest_anchor].add_to_point_cloud(deepcopy(point))
+            checked_points.append((point, nearest_anchor, dist))
             if checked_points[i - 1][2] > self.safe_areas[checked_points[i - 1][1]].radius:
                 if i > 1 and not self._check_consecutive_noise(i, checked_points):
-                    labels_of_cleaned_points.append((point.noise))
+                    labels_of_cleaned_points.append(point.noise)
                     self.correct_noisy_point(trajectory, i)
 
                 else:
@@ -53,7 +55,9 @@ class NoiseCorrection:
             self._update_safe_areas(low_confidence_safe_areas)
 
         if discard_after_run:
-            trajectory.points = None
+            labels_of_correct_points_discarded = [False for point in trajectory.points if not point.noise]
+            labels_of_cleaned_points.extend(labels_of_correct_points_discarded)
+            trajectory.points = []
 
         return labels_of_cleaned_points
 
@@ -97,7 +101,7 @@ class NoiseCorrection:
 
     def _check_for_noise_front_back(self, trajectory: Trajectory, list_of_cleaned_points: list[bool]):
         # first check from front of trajectory if any noise-points can be removed.
-        self._check_list_trajectory(trajectory, list_of_cleaned_points,)
+        self._check_list_trajectory(trajectory, list_of_cleaned_points)
         self._check_list_trajectory(trajectory, list_of_cleaned_points, True)
 
     def _check_list_trajectory(self, trajectory: Trajectory, list_of_cleaned_points: list[bool], fromBack: bool = False):
@@ -115,9 +119,10 @@ class NoiseCorrection:
                 self.initialization_point
             )
             if distance > self.safe_areas[nearest_neighbor].radius:
-                self.safe_areas[nearest_neighbor].add_to_point_cloud(
-                    copy(trajectory.points[iterator])
-                )
+                if self.with_iteration:
+                    self.safe_areas[nearest_neighbor].add_to_point_cloud(
+                        copy(trajectory.points[iterator])
+                    )
                 list_of_cleaned_points.append(
                     copy(trajectory.points[iterator].noise)
                 )
