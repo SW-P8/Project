@@ -21,7 +21,7 @@ pluggy==1.4.0
 polyline==2.0.2
 pooch==1.8.1
 progress==1.6
-psycopg2==2.9.9
+psycopg2-binary==2.9.9
 py-cpuinfo==9.0.0
 pyparsing==3.1.2
 pytest==8.1.1

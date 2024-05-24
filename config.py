@@ -10,11 +10,13 @@ NEIGHBORHOOD_SIZE = 9 # To be determined but DTC uses 9
 
 
 # Safe Area
-decrease_factor = 0.01
+decrease_factor = 0.1
+max_radius = 20
 decay_factor = 1 / (60*60*24)
 confidence_change = 0.01
 cardinality_squish = 0.01
 max_confidence_change = 0.1
+linear_decay = 1 / 86400
 confidence_threshold = 0.5
 
 
