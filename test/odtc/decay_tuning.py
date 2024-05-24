@@ -102,7 +102,7 @@ def run_decay_tuning(postfix: str):
     print('Running incremental ...')
     print('    Creating run cleaning object ...')
     print(f'    Number of safe areas before incremental: {len(safe_areas)}')
-    increment_runner = RunCleaning(deepcopy(safe_areas), initialization_point, smoothed_main_route)
+    increment_runner = RunCleaning(deepcopy(safe_areas), initialization_point)
     print('    Inserting point cloud ...')
     increment_runner.read_trajectories(pc)
     print('    Cleaning and incrementing ...')

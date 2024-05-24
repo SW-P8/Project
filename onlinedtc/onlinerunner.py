@@ -24,7 +24,6 @@ class RunCleaning():
     def clean_and_increment(self):
         bar = Bar('Incrementing... ', max=len(self.input_trajectories), suffix=' %(index)d/%(max)d - %(percent).1f%% - avg %(avg).1fs - elapsed %(elapsed)ds - ETA %(eta)ds')
         while self.input_trajectories:
-            #print(len(self.safe_areas))
             if self.rebuild:
                 self.cleaner = NoiseCorrection(
                     self.safe_areas,
