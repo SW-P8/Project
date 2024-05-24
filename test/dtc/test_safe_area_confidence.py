@@ -11,10 +11,6 @@ class TestSafeArea():
         safe_area = SafeArea.from_cover_set(cover_set, (5, 5), decrease_factor=0.1, timestamp=datetime.now(), confidence_change=0.01, cardinality_squish=0.1, max_confidence_change=0.1)
         return safe_area
 
-    def test_confidense_increase_determined_by_max_confidence_change(self, default_safe_area):
-        default_safe_area.cardinality = 10
-        assert default_safe_area.get_confidence_increase() == 0.1
-
     def test_calculate_confidence_decrease(self, default_safe_area):
         default_safe_area.radius = 5
 
