@@ -24,7 +24,7 @@ ax.set_title('Confidence Decay with Threshold and Events')
 
 ax.legend(fontsize=12)
 
-ax.annotate('Decay', xy=(0.3, 0.73), xytext=(0.2, 0.85),
+ax.annotate('Decay over time', xy=(0.35, 0.73), xytext=(0.05, 0.80),
             arrowprops=dict(facecolor='black', arrowstyle='->'),
             fontsize=12)
 ax.annotate('Point inserted inside safe area', xy=(1, 0.76), xytext=(0.6, 0.85),
