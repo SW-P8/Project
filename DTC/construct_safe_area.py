@@ -152,6 +152,9 @@ class SafeArea:
             filtered_cover_set = {(p, d) for (p, d) in filtered_cover_set if d <= radius}
             removed_count = cover_set_size - len(filtered_cover_set)
 
+        if radius > config.max_radius:
+            radius = config.max_radius
+
         return radius
 
     def get_current_confidence(self, timestamp: datetime) -> tuple[float, datetime]:
@@ -212,7 +215,6 @@ class SafeArea:
         Returns:
             float: The decay factor for confidence.
         """
-        #decay = self.sigmoid(time, -0.5, 2) # -0.5 forces the line to go through (0,0) and 2 normalizes the function such that it maps any number to a value between -1 and 1
         decay = self.linear_decay(delta, config.linear_decay)
         decay = max(decay, 0.0)
         return round(decay, 5)

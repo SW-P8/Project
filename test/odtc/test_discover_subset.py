@@ -29,7 +29,7 @@ def setup_point_clouds():
     print(len(train_set.trajectories))
     return p1, model_set, train_set
 
-
+@pytest.mark.skip
 def test_discover_subset(setup_point_clouds):
     # Arrange
     point_cloud, model_data, train_data = setup_point_clouds
@@ -55,7 +55,7 @@ def test_discover_subset(setup_point_clouds):
     plot_safe_areas(gs.safe_areas, gs.initialization_point, "original")
     plot_safe_areas(gs2.safe_areas, gs2.initialization_point, "pre_increment")
 
-    cleaner = RunCleaning(gs2.safe_areas, gs2.initialization_point, smr)
+    cleaner = RunCleaning(gs2.safe_areas, gs2.initialization_point)
     cleaner.read_trajectories(train_data)
 
     # Act

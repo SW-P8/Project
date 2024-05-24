@@ -8,10 +8,9 @@ import config
 
 
 class RunCleaning():
-    def __init__(self, safe_areas: dict, initialization_point: tuple, smoothed_main_route: defaultdict[set]) -> None:
+    def __init__(self, safe_areas: dict, initialization_point: tuple) -> None:
         self.safe_areas = safe_areas
         self.initialization_point = initialization_point
-        self.smooth_main_route = smoothed_main_route
         self.input_trajectories = []
         self.rebuild = True
         self.cleaner = None
@@ -30,7 +29,6 @@ class RunCleaning():
                 self.cleaner = NoiseCorrection(
                     self.safe_areas,
                     self.initialization_point,
-                    self.smooth_main_route
                     )
                 self.rebuild = True
             trajectory = self.input_trajectories.pop(0)
@@ -40,7 +38,6 @@ class RunCleaning():
             self.current_time = trajectory.points[len(trajectory.points) - 1].timestamp
             self.cleaner.noise_detection(trajectory, self._rebuild_listener)
             self._check_time_call_update(self.current_time)
-            #self._append_to_json(trajectory)
             bar.next()
         bar.finish()
 

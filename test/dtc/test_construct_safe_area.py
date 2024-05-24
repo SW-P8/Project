@@ -4,6 +4,7 @@ from DTC.distance_calculator import DistanceCalculator
 from DTC.trajectory import Trajectory, TrajectoryPointCloud
 from DTC.gridsystem import GridSystem
 import DTC.json_read_write as json_read_write
+from datetime import datetime
 from scipy.spatial import KDTree
 import config
 
@@ -135,7 +136,7 @@ class TestConstructSafeArea():
         cover_set = {((1, 1), 1), ((2, 1), 2)}
         anchor = (0, 1)
         decrease_factor = 0
-        safe_area_from_cover_set = SafeArea.from_cover_set(cover_set, anchor, decrease_factor)
+        safe_area_from_cover_set = SafeArea.from_cover_set(cover_set, anchor, decrease_factor, datetime.now().replace(microsecond=0))
         safe_areas_from_cover_set = {anchor: safe_area_from_cover_set}
 
         json_read_write.write_safe_areas_to_json(safe_area_file, safe_areas_from_cover_set)

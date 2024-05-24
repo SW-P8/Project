@@ -24,8 +24,8 @@ class Visualizer():
         self.sk_ax.set_title('Route skeleton')
 
     def visualize(self):
-        #self.draw_point_cloud()
-        #self.draw_main_route()
+        self.draw_point_cloud()
+        self.draw_main_route()
         self.draw_route_skeleton()
         self.draw_safe_area()
         plt.tight_layout()
