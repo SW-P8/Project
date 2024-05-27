@@ -14,13 +14,14 @@ import config
 
 class ConstructSafeArea:
     @staticmethod
-    def construct_safe_areas(route_skeleton: set, grid: dict, decrease_factor: float = config.decrease_factor, find_relaxed_nn: bool = True) -> dict:
+    def construct_safe_areas(route_skeleton: set, grid: dict, decrease_factor: float = config.decrease_factor, find_relaxed_nn: bool = True, max_timestamp: datetime = None) -> dict:
         cs = ConstructSafeArea._create_cover_sets(route_skeleton, grid, find_relaxed_nn)
 
         safe_areas = dict()
 
         for anchor in route_skeleton:
-            safe_areas[anchor] = SafeArea.from_cover_set(cs[anchor], anchor, decrease_factor)
+            safe_areas[anchor] = SafeArea.from_cover_set(cs[anchor], anchor, decrease_factor, max_timestamp)
+
 
         return safe_areas
 
@@ -91,7 +92,7 @@ class ConstructSafeArea:
         return ({a for a, d in candidates if d <= min_dist + distance_to_corner_of_cell})
 
 class SafeArea:
-    def __init__(self, anchor: tuple[float, float], radius: float, cardinality: int, confidence_change, cardinality_squish, max_confidence_change) -> None:
+    def __init__(self, anchor: tuple[float, float], radius: float, cardinality: int, timestamp: datetime, confidence_change, cardinality_squish, max_confidence_change) -> None:
         """
         Initializes a SafeArea instance.
 
@@ -111,7 +112,7 @@ class SafeArea:
         self.confidence = 1.0
         self.confidence_change_factor = confidence_change
         self.decay_factor = config.decay_factor # Set as the fraction of a day 1 second represents. Done as TimeDelta is given in seconds.
-        self.timestamp = None
+        self.timestamp = timestamp
         self.cardinality_squish = cardinality_squish
         self.max_confidence_change = max_confidence_change
         self.points_in_safe_area = Trajectory()
@@ -127,14 +128,14 @@ class SafeArea:
         self.points_in_safe_area = Trajectory()
 
     @classmethod
-    def from_cover_set(cls, cover_set: set, anchor: tuple[float, float], decrease_factor: float, confidence_change: float = config.confidence_change, cardinality_squish: float = config.cardinality_squish, max_confidence_change: float = config.max_confidence_change):
+    def from_cover_set(cls, cover_set: set, anchor: tuple[float, float], decrease_factor: float, timestamp: datetime,confidence_change: float = config.confidence_change, cardinality_squish: float = config.cardinality_squish, max_confidence_change: float = config.max_confidence_change):
         radius = SafeArea.calculate_radius(cover_set, decrease_factor)
         cardinality = len(cover_set)
-        return cls(anchor, radius, cardinality, confidence_change, cardinality_squish, max_confidence_change)
+        return cls(anchor, radius, cardinality, timestamp, confidence_change, cardinality_squish, max_confidence_change)
     
     @classmethod
-    def from_meta_data(cls, anchor: tuple[float, float], radius: float, cardinality: float, confidence_change: float = config.confidence_change, cardinality_squish: float = config.cardinality_squish, max_confidence_change: float = config.max_confidence_change):
-        return cls(anchor, radius, cardinality, confidence_change, cardinality_squish, max_confidence_change)
+    def from_meta_data(cls, anchor: tuple[float, float], radius: float, cardinality: float, timestamp: datetime, confidence_change: float = config.confidence_change, cardinality_squish: float = config.cardinality_squish, max_confidence_change: float = config.max_confidence_change):
+        return cls(anchor, radius, cardinality, timestamp, confidence_change, cardinality_squish, max_confidence_change)
 
        
     @staticmethod   
@@ -150,6 +151,9 @@ class SafeArea:
             radius *= (1 - decrease_factor)
             filtered_cover_set = {(p, d) for (p, d) in filtered_cover_set if d <= radius}
             removed_count = cover_set_size - len(filtered_cover_set)
+
+        if radius > config.max_radius:
+            radius = config.max_radius
 
         return radius
 
@@ -194,11 +198,11 @@ class SafeArea:
         distance_to_safearea = dist - self.radius
         if (distance_to_safearea <= 0):
             (curr_conf, time) = self.get_current_confidence(point.timestamp)
-            self.set_confidence(min(curr_conf + self.get_confidence_increase(), 1.0), time)
+            self.set_confidence(min(curr_conf + config.confidence_increase, 1.0), time)
             self.cardinality += 1
         else:
             self.confidence -= self.calculate_confidence_decrease(distance_to_safearea)
-        if self.confidence < 0.5:  # TODO: Threshold
+        if self.confidence < config.confidence_threshold:
             update_function(self)
     
     def calculate_time_decay(self, delta:float):
@@ -211,19 +215,25 @@ class SafeArea:
         Returns:
             float: The decay factor for confidence.
         """
-        time = delta * self.decay_factor
-        decay = self.sigmoid(time, -0.5, 2) # -0.5 forces the line to go through (0,0) and 2 normalizes the function such that it maps any number to a value between -1 and 1
+        decay = self.linear_decay(delta, config.linear_decay)
         decay = max(decay, 0.0)
         return round(decay, 5)
     
     
-    def sigmoid(self, x: float, y_offset, multiplier: float) -> float:
-        return (1/(1 + np.exp((-x))) + y_offset) * multiplier
+    def linear_decay(self, x: float, a: float):
+        """
+        Compute the linear decay of a given value.
 
-    def get_confidence_increase(self):
-        inc = max(min((1 / (self.cardinality * self.cardinality_squish)), self.max_confidence_change), self.confidence_change_factor)
-        return inc
+        This method applies a linear decay function to the input value `x` using the coefficient `a`.
+
+        Args:
+            x (float): The input value to which the linear decay is applied.
+            a (float): The decay coefficient.
+
+        Returns:
+            float: The result of `a * x`, representing the decayed value.
+        """
+        return a*x
 
     def calculate_confidence_decrease(self, delta):
-        dec = 0.2*tanh((3*delta)/(4 * self.radius))
-        return min(0.15, dec)
+        return min((config.confidence_decrease_scale_factor * (delta / self.radius)), config.max_confidence_decrease)

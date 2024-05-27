@@ -41,6 +41,7 @@ class RouteSkeleton:
             sub_smoothed_main_route = pipe_list[i].recv()
             task.join()
             smoothed_main_route = smoothed_main_route.union(sub_smoothed_main_route)
+        
         return smoothed_main_route
     
     @staticmethod

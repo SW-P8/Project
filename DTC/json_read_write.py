@@ -32,8 +32,10 @@ def read_set_of_tuples_from_json(file_name: str) -> set[tuple[float, float]]:
     return {eval(v) for v in rsk_data}
 
 def write_safe_areas_to_json(file_name: str, safe_areas: dict) -> None:
+    def timestamp_to_iso(timestamp: datetime):
+        return timestamp.isoformat()
     with open(file_name, "w") as outfile: 
-        json.dump({str(k): [v.radius, v.cardinality] for k, v in safe_areas.items()}, outfile, indent=4) 
+        json.dump({str(k): [v.radius, v.cardinality, v.timestamp] for k, v in safe_areas.items()}, outfile, default=timestamp_to_iso, indent=4) 
 
 def read_safe_areas_from_json(file_name: str, max_confidence_change: float = config.max_confidence_change) -> dict:
     with open(file_name, "r") as safe_areas_file:
@@ -42,7 +44,7 @@ def read_safe_areas_from_json(file_name: str, max_confidence_change: float = con
     safe_areas = dict()
     for key, value in safe_areas_data.items():
         key_tuple = eval(key)
-        safe_area_object = SafeArea.from_meta_data(key_tuple, value[0], value[1], max_confidence_change=max_confidence_change)
+        safe_area_object = SafeArea.from_meta_data(key_tuple, value[0], value[1], None if len(value) < 3  else datetime.datetime.strptime(value[2], '%Y-%m-%dT%H:%M:%S'), max_confidence_change=max_confidence_change)
         safe_areas[key_tuple] = safe_area_object
         
     return safe_areas

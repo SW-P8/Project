@@ -2,7 +2,6 @@
 from DTC.trajectory import Trajectory
 from DTC.noise_correction import NoiseCorrection
 from DTC.construct_safe_area import SafeArea
-from DTC.distance_calculator import DistanceCalculator
 from unittest.mock import patch
 from copy import deepcopy
 from datetime import datetime
@@ -13,8 +12,8 @@ import pytest
 def safe_areas():
     safe_areas = {}
     for i in range(5):
-        safe_areas[(i * 2.5, i * 2.5)] = SafeArea.from_meta_data((i * 2.5, i * 2.5), 2, 10)
-    safe_areas[1000, 1000] = SafeArea.from_meta_data((1000, 1000), 2, 10)
+        safe_areas[(i * 2.5, i * 2.5)] = SafeArea.from_meta_data((i * 2.5, i * 2.5), 2, 10, datetime.now())
+    safe_areas[1000, 1000] = SafeArea.from_meta_data((1000, 1000), 2, 10, datetime.now())
     return safe_areas
 
 

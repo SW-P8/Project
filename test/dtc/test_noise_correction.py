@@ -368,7 +368,7 @@ class TestNoiseCorrection():
 
         # Act
         for i in range(len(trajectory.points)):
-            triggered.append(nc._check_consecutive_noise(i, checked_points))
+            triggered.append(nc._check_consecutive_noise(i, checked_points)[0])
 
         # Assert
         assert True in triggered
@@ -399,7 +399,7 @@ class TestNoiseCorrection():
 
         # Act
         for i in range(8):
-            triggered.append(nc._check_consecutive_noise(i + 2, checked_points))
+            triggered.append(nc._check_consecutive_noise(i + 2, checked_points)[0])
 
         # Assert
         assert True in triggered

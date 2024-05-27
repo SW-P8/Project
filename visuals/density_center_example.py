@@ -67,7 +67,7 @@ for cell, density_center, active in main_route:
     x_c, y_c = cell
     x_d, y_d = density_center
     color = 'green' if active else 'red'
-    label = ('Main Route' if first_active and active else
+    label = ('Main route' if first_active and active else
             ('Not included in main route' if first_inactive and not active else None))
     
     ax_cmr.add_patch(plt.Rectangle(cell, 1, 1, color=color, alpha=0.375, label=label))
@@ -78,9 +78,9 @@ for cell, density_center, active in main_route:
     if first_inactive and not active:
         first_inactive = False
 
-ax_cmr.scatter(*zip(*points), color='g', label='Point')
-ax_cmr.scatter(*zip(*density_centers.values()), color='orange',
-               marker='D', label='Density center')
+ax_cmr.scatter(*zip(*points), color='b', label='Point')
+ax_cmr.scatter(*zip(*density_centers.values()), color='Black',
+               marker='D', label='Density centre')
 ax_cmr.add_patch(plt.Rectangle((2.02, 2.02), 2.98, 2.98, linestyle='--', fill=False, color='green', linewidth=2))
 ax_cmr.text(3.65, 3.40, r'$\Omega_{1,1}=(1.5, 1.5)$')
 # Safe Area Construction Figure
@@ -92,10 +92,12 @@ for anchor in anchors:
 ax_cnn.add_patch(plt.Circle((5.5, 5.5), min_dist + np.sqrt(2), alpha=0.2, color='r'))
 ax_cnn.add_patch(plt.Circle((5.5, 5.5), min_dist, alpha=0.5, color='g'))
 ax_cnn.scatter(*zip(*psi_points), color='b', label='Point')
-ax_cnn.scatter(*zip(*anchors), color='gold', marker='D', label='Anchor')
+ax_cnn.scatter(*zip(*anchors), color='black', marker='D', label='Anchor')
 
 # Region -- Figure configurations
+i = 0
 for ax in [ax_cmr, ax_cnn]:
+    i += 1
     ax.set_xticks(np.arange(0, 100, 1))
     ax.set_yticks(np.arange(0, 100, 1))
     ax.grid()
@@ -107,4 +109,5 @@ for ax in [ax_cmr, ax_cnn]:
                    labelbottom=False, bottom=False)
     ax.legend()
 
-plt.savefig("relaxed_NN.png")
+fig_cmr.savefig("figure1.png")
+fig_cnn.savefig("figure2.png")

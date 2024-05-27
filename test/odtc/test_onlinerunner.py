@@ -10,6 +10,7 @@ from onlinedtc.onlinerunner import RunCleaning
 from math import ceil
 from DTC.gridsystem import GridSystem
 from DTC.route_skeleton import RouteSkeleton
+from DTC.construct_safe_area import ConstructSafeArea
 from DTC.trajectory import TrajectoryPointCloud, Trajectory
 from DTC.noise_correction import NoiseCorrection
 from DTC.distance_calculator import DistanceCalculator
@@ -40,46 +41,34 @@ def point_cloud(trajectory):
         pc.add_trajectory(trajectory)
     return pc
 
-
-def test_init_no_grid_raises_error(point_cloud):
-    # Arrange
-    grid_system = GridSystem(point_cloud)
-    smooth_main_route = set()
-
-    # Act + Assert
-    with pytest.raises(AttributeError):
-        RunCleaning(grid_system, smooth_main_route)
-
-
 @pytest.fixture
-def grid_system(point_cloud):
+def initial_model(point_cloud):
     gs = GridSystem(point_cloud)
-    rs = RouteSkeleton()
     gs.create_grid_system()
     gs.extract_main_route()
     min_pts = ceil(len(gs.main_route) * config.min_pts_from_mr)
-    smr = rs.smooth_main_route(gs.main_route)
-    fmr = rs.graph_based_filter(data=smr, min_pts=min_pts)
-    gs.route_skeleton = rs.filter_sparse_points(fmr, config.distance_interval)
-    gs.construct_safe_areas()
-    return gs, smr
+    smoothed_main_route = RouteSkeleton.smooth_main_route(gs.main_route)
+    filtered_main_route = RouteSkeleton.graph_based_filter(data=smoothed_main_route, min_pts=min_pts)
+    route_skeleton = RouteSkeleton.filter_sparse_points(filtered_main_route, config.distance_interval)
+    safe_areas = ConstructSafeArea.construct_safe_areas(route_skeleton, gs.grid, max_timestamp=point_cloud.max_timestamp)
+    return safe_areas, gs.initialization_point, smoothed_main_route
 
-
-def test_init_when_filled_grid_should_build_class(grid_system):
+def test_init_when_filled_grid_should_build_class(initial_model):
     # Arrange
-    gs, smr = grid_system
+    safe_areas, initialization_point, _ = initial_model
 
     # Act
-    result = RunCleaning(gs, smr)
+    result = RunCleaning(safe_areas, initialization_point)
 
     # Assert
     assert result is not None
 
 
 @pytest.fixture
-def clean_runner(grid_system):
-    gs, smr = grid_system
-    cr = RunCleaning(gs, smr)
+def clean_runner(initial_model):
+    safe_areas, initialization_point, _ = initial_model
+
+    cr = RunCleaning(safe_areas, initialization_point)
     return cr
 
 
@@ -120,12 +109,10 @@ def test_clean_and_increment_calls_noise_detection(clean_runner, point_cloud):
 
     # Act
     with patch.object(NoiseCorrection, 'noise_detection') as mock_noise_detection:
-        with patch.object(RunCleaning, '_append_to_json') as mock_append_to_json:
-            clean_runner.clean_and_increment()
+        clean_runner.clean_and_increment()
 
     # Assert
     assert 10 == mock_noise_detection.call_count
-    assert 10 == mock_append_to_json.call_count
 
 
 def test_append_to_json_creates_file(clean_runner, trajectory):
@@ -179,12 +166,12 @@ def test_clean_and_iterate_delete_unused_safe_areas(clean_runner):
     local_points_cloud.add_trajectory(t2)
 
     clean_runner.read_trajectories(local_points_cloud)
-    old_safe_areas = deepcopy(clean_runner.grid_system.safe_areas)
+    old_safe_areas = deepcopy(clean_runner.safe_areas)
 
     clean_runner.clean_and_increment()
 
-    assert clean_runner.grid_system.safe_areas != old_safe_areas
-    assert len(clean_runner.grid_system.safe_areas) == 1
+    assert clean_runner.safe_areas != old_safe_areas
+    assert len(clean_runner.safe_areas) == 1
 
 def test_clean_and_iterate_add_appendage_road(clean_runner):
     # Arrange

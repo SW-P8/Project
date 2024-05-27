@@ -137,7 +137,7 @@ class TestGridsystem():
 
     def test_construct_safe_areas_returns_correctly_with_two_points_and_single_anchor(self, two_point_grid):
         two_point_grid.route_skeleton = {(4, 4)}
-        two_point_grid.construct_safe_areas()
+        two_point_grid.construct_safe_areas(0.01)
         
         expected_r = DistanceCalculator.calculate_euclidian_distance_between_cells((8, 8), (4, 4)) * 0.99
 
@@ -146,7 +146,7 @@ class TestGridsystem():
 
     def test_construct_safe_areas_returns_correctly_with_five_points_and_single_anchor(self, five_point_grid):
         five_point_grid.route_skeleton = {(4, 4)}
-        five_point_grid.construct_safe_areas()
+        five_point_grid.construct_safe_areas(0.01)
         
         expected_r = DistanceCalculator.calculate_euclidian_distance_between_cells((8, 8), (4, 4)) * 0.99
 
@@ -171,7 +171,7 @@ class TestGridsystem():
     def test_construct_safe_areas_returns_correctly_with_five_points_and_two_anchors(self, five_point_grid):
         # With this split, p1 and p2 belongs to first anchor and p3, p4 and p5 belongs to 2nd anchor
         five_point_grid.route_skeleton = {(3, 3), (8, 8)}
-        five_point_grid.construct_safe_areas()
+        five_point_grid.construct_safe_areas(0.01)
         
         # As mentioned above, the refining radius of safe areas with these splits, will mean that p2 and p3 are removed respectively
         # Thereby yielding radius values just shy of their distance to the anchor points
