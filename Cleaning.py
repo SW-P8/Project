@@ -3,10 +3,10 @@ from math import floor
 import DTC.json_read_write as json_read_write
 import pickle
 
-for i in range(0,30):
-    a = 1 if i < 10 else 2 if i < 20 else 3
+for i in range(0,40):
+    a = 3 if i < 10 else 1 if i < 20 else 2 if i < 30 else 3
     print("pickle done")
-    files = ["AllcitySA01", "SAAllcityRSK201515", "SAAllcityRSK201520", "AllcitySA10"]
+    files = ["AllcitySA01", "AllcitySA02", "AllcitySA05", "AllcitySA10"]
     safe_areas = json_read_write.read_safe_areas_from_json(f"{files[a]}.json")
     initialization_point = (116.20287663548845, 39.75112986803514)
     avg = 0
@@ -17,8 +17,8 @@ for i in range(0,30):
         list_of_points.append(copy.copy(v.radius))
         maximum = max(maximum, v.radius)
         avg += v.radius
-        if v.radius > 20:
-            v.radius = 20
+        #if v.radius > 20:
+        #    v.radius = 20
         i += 1
     print((avg/i),  "avg", "max", maximum)
     list_of_points.sort()
@@ -37,7 +37,7 @@ for i in range(0,30):
     from DTC.noise_correction import NoiseCorrection
     point_cloud = pointcloud
     randomly_elected_trajectories = random.sample(point_cloud.trajectories, 1467)
-    noise_corrector = NoiseCorrection(safe_areas, initialization_point)
+    noise_corrector = NoiseCorrection(safe_areas, initialization_point, False)
 
     points_cleaned = 0
     total_points = 0
@@ -45,8 +45,8 @@ for i in range(0,30):
         if len(trajectory.points) == 0:
             continue
         labels_of_cleaned_points = noise_corrector.noise_detection(trajectory)
+        total_points += len(trajectory.points) 
         points_cleaned += len(labels_of_cleaned_points)
-        total_points += len(trajectory.points)
     print("Points in randomly elected trajectories: ", total_points)
     print("Points cleaned: ", points_cleaned)
 
