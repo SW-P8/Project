@@ -9,7 +9,7 @@ def process_results(dir_path):
     for file in files:
         with open(dir_path + "/" + file, "r") as matched_data:
             json_in = json.load(matched_data)        
-        df = pd.DataFrame.from_records(list(json_in.values()), columns=["radius", "cardinality"])
+        df = pd.DataFrame.from_records(list(json_in.values()), columns=["radius", "cardinality", "timestamp"])
 
         # Calculate descriptive statistics for the distance column
         distance_stats = df["radius"].describe().to_dict()
