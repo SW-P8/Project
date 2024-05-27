@@ -30,7 +30,7 @@ class NoiseCorrection:
             low_confidence_safe_areas[data.anchor] = data
 
         checked_points = []
-        discard_after_run = (False, 0)
+        discard_after_run = False
         noise_indices = set()
         self._check_for_noise_front_back(trajectory, labels_of_cleaned_points)
         for i, point in enumerate(trajectory.points):
