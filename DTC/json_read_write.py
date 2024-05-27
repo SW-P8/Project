@@ -44,7 +44,7 @@ def read_safe_areas_from_json(file_name: str, max_confidence_change: float = con
     safe_areas = dict()
     for key, value in safe_areas_data.items():
         key_tuple = eval(key)
-        safe_area_object = SafeArea.from_meta_data(key_tuple, value[0], value[1], datetime.datetime.strptime(value[2], '%Y-%m-%dT%H:%M:%S'), max_confidence_change=max_confidence_change)
+        safe_area_object = SafeArea.from_meta_data(key_tuple, value[0], value[1], None if len(value) < 3  else datetime.datetime.strptime(value[2], '%Y-%m-%dT%H:%M:%S'), max_confidence_change=max_confidence_change)
         safe_areas[key_tuple] = safe_area_object
         
     return safe_areas
