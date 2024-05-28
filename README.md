@@ -1,5 +1,5 @@
 # Project
-The main code base for the project
+An online data-driven trajectory cleaning approach for dynamic road networks. It constructs a road network model from historical GPS points, which is then used to detect and clean noise in incoming trajectories. Confidence controls recalculation of the road network model.
 
 # Install
 
